@@ -1,3 +1,8 @@
+To remove carriage return
+```bash
+sed -i 's/\r$//' /home/gabrielinteras/Documents/gtech/belomax/belomax-nest-api/src/modules/users/services/create-user.service.ts
+```
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
