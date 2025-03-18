@@ -16,6 +16,38 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@config/*": [
+        "config/*"
+      ],
+      "@database/*": [
+        "database/*"
+      ],
+      "@test/*": [
+        "test/*"
+      ],
+      "@users/*": [
+        "users/*"
+      ],
+      "@http/*": [
+        "http/*"
+      ],
+      "@services/*": [
+        "services/*"
+      ],
+      "@modules/*": [
+        "modules/*"
+      ],
+      "@lib/*": [
+        "lib/*"
+      ],
+      "@helpers/*": [
+        "helpers/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ]
+    }
   }
 }

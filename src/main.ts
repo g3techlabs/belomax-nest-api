@@ -1,8 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
+const PORT = process.env.PORT ?? 3000;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+
+  app.enableCors({
+    origin: '*',
+  });
+
+  await app.listen(PORT, () => {
+    console.log(`[BELOMAX-API] HTTP server is running on port ${PORT} 🚀`);
+  });
 }
 bootstrap();

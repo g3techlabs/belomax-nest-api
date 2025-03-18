@@ -2,6 +2,10 @@
   "extends": ["@rocketseat/eslint-config/node"],
   "rules": {
     "no-useless-constructor": "off",
-    "array-callback-return": "off"
+    "array-callback-return": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-return": "off"
   }
 }
