@@ -18,14 +18,77 @@ enum Role {
   ADMIN
 }
 
+enum ProcessType {
+  CONTRACHEQUE_PENSIONISTAS
+  TERMOS_EXTRATO
+}
+
+enum ProcessStatus {
+  PENDING
+  FINISHED
+  CANCELLED
+  FAILED
+}
+
+enum StatementBank {
+  BB
+  BRADESCO
+  CAIXA
+}
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id        String    @id @default(cuid())
+  email     String    @unique
   name      String
   password  String
-  role      String   @default("USER")
+  role      String    @default("USER")
+  processes Process[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("user")
+}
+
+model Customer {
+  id            String    @id @default(cuid())
+  name          String
+  cpf           String    @unique
+  rg            String    @unique
+  address       String
+  citizenship   String
+  maritalStatus String
+  occupation    String?
+  email         String?
+  phone         String?
+  processes     Process[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("customer")
+}
+
+model Process {
+  id          String     @id @default(cuid())
+  description String
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  customer    Customer   @relation(fields: [customerId], references: [id])
+  customerId  String
+  documents   Document[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("process")
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  processId String
+  process   Process  @relation(fields: [processId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("user")
+  @@map("document")
 }
