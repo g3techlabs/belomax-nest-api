@@ -68,15 +68,18 @@ model Customer {
 }
 
 model Process {
-  id          String     @id @default(cuid())
+  id          String        @id @default(cuid())
   description String
+  status      ProcessStatus
   userId      String
-  user        User       @relation(fields: [userId], references: [id])
-  customer    Customer   @relation(fields: [customerId], references: [id])
+  user        User          @relation(fields: [userId], references: [id])
+  customer    Customer      @relation(fields: [customerId], references: [id])
   customerId  String
   documents   Document[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  contracheque_pensionista ContrachequePensionista?
 
   @@map("process")
 }
@@ -91,4 +94,24 @@ model Document {
   updatedAt DateTime @updatedAt
 
   @@map("document")
+}
+
+model ContrachequePensionista {
+  id        String  @id @default(cuid())
+  processId String  @unique
+  process   Process @relation(fields: [processId], references: [id])
+
+  registration String
+  bond         String
+  cpf          String
+  number       String
+  startMonth   String
+  startYear    String
+  endMonth     String
+  endYear      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contracheque_pensionista")
 }
