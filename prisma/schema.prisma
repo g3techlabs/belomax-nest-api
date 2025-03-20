@@ -37,7 +37,7 @@ enum StatementBank {
 }
 
 model User {
-  id        String    @id @default(cuid())
+  id        String    @id @default(uuid())
   email     String    @unique
   name      String
   password  String
@@ -50,7 +50,7 @@ model User {
 }
 
 model Customer {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   name          String
   cpf           String    @unique
   rg            String    @unique
@@ -68,7 +68,7 @@ model Customer {
 }
 
 model Process {
-  id          String        @id @default(cuid())
+  id          String        @id @default(uuid())
   description String
   status      ProcessStatus
   userId      String
@@ -85,7 +85,7 @@ model Process {
 }
 
 model Document {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   name      String
   url       String
   processId String
@@ -97,7 +97,7 @@ model Document {
 }
 
 model ContrachequePensionista {
-  id        String  @id @default(cuid())
+  id        String  @id @default(uuid())
   processId String  @unique
   process   Process @relation(fields: [processId], references: [id])
 
