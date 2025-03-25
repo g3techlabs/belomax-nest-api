@@ -11,7 +11,7 @@ import { FindUserService } from '../services/find-user.service';
 import { CreateUserService } from '../services/create-user.service';
 import { CreateUserInput } from '../inputs/create-user.input';
 import { AuthenticateUserInput } from '../inputs/authenticate-user.input';
-import { AuthenticateUserDTO } from '../dtos/authenticate-user';
+import { AuthenticateUserDTO } from '../dtos/authenticate-user.dto';
 import { AuthenticateUserService } from '../services/authenticate-user.service';
 import { User } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
