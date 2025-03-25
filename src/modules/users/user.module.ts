@@ -9,6 +9,7 @@ import { jwtConstants } from 'src/auth/constants';
 import { AuthenticateUserService } from './services/authenticate-user.service';
 import { UpdateUserService } from './services/update-user.service';
 import { ChangePasswordService } from './services/change-password.service';
+import { FindManyUserService } from './services/find-many-user.service';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ChangePasswordService } from './services/change-password.service';
     AuthenticateUserService,
     UpdateUserService,
     ChangePasswordService,
+    FindManyUserService,
   ],
 })
 export class UserModule {}

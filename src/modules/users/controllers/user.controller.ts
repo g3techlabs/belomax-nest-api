@@ -20,6 +20,8 @@ import { UpdateUserInput } from '../inputs/update-user.input';
 import { UpdateUserService } from '../services/update-user.service';
 import { ChangePasswordService } from '../services/change-password.service';
 import { ChangePasswordInput } from '../inputs/change-password.input';
+import { FindManyUserInput } from '../inputs/find-many-user.input';
+import { FindManyUserService } from '../services/find-many-user.service';
 @Controller('users')
 export class UserController {
   constructor(
@@ -28,6 +30,7 @@ export class UserController {
     private readonly authenticateUserService: AuthenticateUserService,
     private readonly updateUserService: UpdateUserService,
     private readonly changePasswordService: ChangePasswordService,
+    private readonly findManyUserService: FindManyUserService,
   ) {}
 
   @Post('authenticate')
@@ -65,5 +68,11 @@ export class UserController {
     @Body() data: ChangePasswordInput,
   ): Promise<User> {
     return await this.changePasswordService.execute(id, data);
+  }
+
+  @UseGuards(AuthGuard, AdminGuard)
+  @Get('/')
+  async findManyUser(@Body() data: FindManyUserInput): Promise<User[]> {
+    return await this.findManyUserService.execute(data);
   }
 }

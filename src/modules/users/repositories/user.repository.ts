@@ -3,6 +3,7 @@ import { PrismaService } from 'src/database/prisma/prisma.service';
 import { CreateUserInput } from '../inputs/create-user.input';
 import { User } from '@prisma/client';
 import { UpdateUserInput } from '../inputs/update-user.input';
+import { FindManyUserInput } from '../inputs/find-many-user.input';
 
 @Injectable()
 export class UserRepository {
@@ -47,6 +48,30 @@ export class UserRepository {
       data: {
         password,
       },
+    });
+  }
+
+  async findMany({
+    name,
+    email,
+    role,
+    page,
+    take,
+  }: FindManyUserInput): Promise<User[]> {
+    return await this.prisma.user.findMany({
+      where: {
+        name:
+          name && name.trim() !== ''
+            ? { contains: name, mode: 'insensitive' }
+            : undefined,
+        email:
+          email && email.trim() !== ''
+            ? { contains: email, mode: 'insensitive' }
+            : undefined,
+        role: role ? { equals: role, mode: 'insensitive' } : undefined,
+      },
+      take: take || 10,
+      skip: page ? (page - 1) * (take || 10) : 0,
     });
   }
 }
