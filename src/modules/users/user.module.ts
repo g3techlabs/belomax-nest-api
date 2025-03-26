@@ -10,6 +10,9 @@ import { AuthenticateUserService } from './services/authenticate-user.service';
 import { UpdateUserService } from './services/update-user.service';
 import { ChangePasswordService } from './services/change-password.service';
 import { FindManyUserService } from './services/find-many-user.service';
+import { BullModule } from '@nestjs/bullmq';
+import { SendTokenEmailService } from './services/send-token-email.service';
+import { TokenEmailConsumer } from './jobs/consumers/send-token-email.consumer';
 
 @Module({
   imports: [
@@ -18,6 +21,9 @@ import { FindManyUserService } from './services/find-many-user.service';
       global: true,
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '7d' },
+    }),
+    BullModule.registerQueue({
+      name: 'token-email',
     }),
   ],
   controllers: [UserController],
@@ -32,6 +38,10 @@ import { FindManyUserService } from './services/find-many-user.service';
     UpdateUserService,
     ChangePasswordService,
     FindManyUserService,
+    SendTokenEmailService,
+
+    //Consumers
+    TokenEmailConsumer,
   ],
 })
 export class UserModule {}

@@ -22,6 +22,7 @@ import { ChangePasswordService } from '../services/change-password.service';
 import { ChangePasswordInput } from '../inputs/change-password.input';
 import { FindManyUserInput } from '../inputs/find-many-user.input';
 import { FindManyUserService } from '../services/find-many-user.service';
+import { SendTokenEmailService } from '../services/send-token-email.service';
 @Controller('users')
 export class UserController {
   constructor(
@@ -31,6 +32,7 @@ export class UserController {
     private readonly updateUserService: UpdateUserService,
     private readonly changePasswordService: ChangePasswordService,
     private readonly findManyUserService: FindManyUserService,
+    private readonly sendTokenEmailService: SendTokenEmailService,
   ) {}
 
   @Post('authenticate')
@@ -74,5 +76,10 @@ export class UserController {
   @Get('/')
   async findManyUser(@Body() data: FindManyUserInput): Promise<User[]> {
     return await this.findManyUserService.execute(data);
+  }
+
+  @Post('reset-password/send-email')
+  async sendTokenToEmail(@Body() data: { email: string }): Promise<void> {
+    return await this.sendTokenEmailService.execute(data.email);
   }
 }
