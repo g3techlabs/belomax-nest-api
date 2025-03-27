@@ -7,7 +7,7 @@ import { Queue } from 'bullmq';
 export class SendTokenEmailService {
   constructor(
     private readonly userRepository: UserRepository,
-    @InjectQueue('token-email') private readonly tokenEmailQueue: Queue,
+    @InjectQueue('users-queue') private readonly tokenEmailQueue: Queue,
   ) {}
 
   async execute(email: string): Promise<void> {
@@ -19,7 +19,7 @@ export class SendTokenEmailService {
 
     // criar token
 
-    await this.tokenEmailQueue.add('send', {
+    await this.tokenEmailQueue.add('send-token-by-email', {
       userId: user.id,
       email: user.email,
       // passar token
