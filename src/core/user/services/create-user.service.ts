@@ -2,10 +2,15 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
 import { CreateUserInput } from '../inputs/create-user.input';
 import { hash } from 'bcryptjs';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class CreateUserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    @InjectQueue('users-queue') private readonly usersQueue: Queue,
+  ) {}
 
   async execute(data: CreateUserInput) {
     const { name, email, password, role } = data;
@@ -24,6 +29,13 @@ export class CreateUserService {
       password: hashPassword,
       role,
     });
+
+    if (user) {
+      await this.usersQueue.add('send-credentials-email', {
+        email,
+        password,
+      });
+    }
 
     return user;
   }

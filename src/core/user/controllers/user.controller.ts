@@ -14,8 +14,8 @@ import { AuthenticateUserInput } from '../inputs/authenticate-user.input';
 import { AuthenticateUserDTO } from '../dtos/authenticate-user.dto';
 import { AuthenticateUserService } from '../services/authenticate-user.service';
 import { User } from '@prisma/client';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { AdminGuard } from 'src/auth/admin.guard';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { UpdateUserInput } from '../inputs/update-user.input';
 import { UpdateUserService } from '../services/update-user.service';
 import { ChangePasswordService } from '../services/change-password.service';
@@ -74,5 +74,10 @@ export class UserController {
   @Get('/')
   async findManyUser(@Body() data: FindManyUserInput): Promise<User[]> {
     return await this.findManyUserService.execute(data);
+  }
+
+  @Post('reset-password/send-email')
+  async sendTokenToEmail(@Body() data: { email: string }): Promise<void> {
+    // return await this.sendTokenEmailService.execute(data.email);
   }
 }

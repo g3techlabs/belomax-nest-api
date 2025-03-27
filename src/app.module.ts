@@ -1,12 +1,28 @@
-import { CreateUserService } from './modules/users/services/create-user.service';
-import { UserModule } from './modules/users/user.module';
+import { MailModule } from './infrastructure/mail/mail.module';
+import { QueueModule } from './infrastructure/queue/queue.module';
+import { UserModule } from './core/user/user.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-// import { UserController } from './modules/users/controllers/user.controller';
+import { BullModule } from '@nestjs/bullmq';
+// import { MailerModule } from '@nestjs-modules/mailer';
+// import { configConstants } from './auth/constants';
+// import { join } from 'path';
+// import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
-  imports: [UserModule],
+  imports: [
+    MailModule,
+    QueueModule,
+    UserModule,
+    BullModule.forRoot({
+      connection: {
+        host: 'localhost',
+        port: 6379,
+      },
+      // prefix: 'belomax-',
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,6 +1,6 @@
-import { NestFactory } from '@nestjs/core';
+import { NestApplication, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 
 const PORT = process.env.PORT ?? 3000;
 
@@ -13,7 +13,8 @@ async function bootstrap() {
   });
 
   await app.listen(PORT, () => {
-    console.log(`[BELOMAX-API] HTTP server is running on port ${PORT} 🚀`);
+    const logger = new Logger(NestApplication.name);
+    logger.log(`BELOMAX API HTTP server is running on port ${PORT}`);
   });
 }
 

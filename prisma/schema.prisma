@@ -37,16 +37,31 @@ enum StatementBank {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  name      String
-  password  String
-  role      String    @default("USER")
-  processes Process[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id       String @id @default(uuid())
+  email    String @unique
+  name     String
+  password String
+  role     String @default("USER")
+
+  processes  Process[]
+  resetToken ResetToken?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("user")
+}
+
+model ResetToken {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @db.VarChar(6)
+  expiresAt DateTime @default(dbgenerated("NOW() + interval '15 minutes'"))
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reset_token")
 }
 
 model Customer {
@@ -79,7 +94,7 @@ model Process {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  contracheque_pensionista ContrachequePensionista?
+  pensioner_paycheck PensionerPaycheck?
 
   @@map("process")
 }
@@ -96,7 +111,7 @@ model Document {
   @@map("document")
 }
 
-model ContrachequePensionista {
+model PensionerPaycheck {
   id        String  @id @default(uuid())
   processId String  @unique
   process   Process @relation(fields: [processId], references: [id])
@@ -113,5 +128,5 @@ model ContrachequePensionista {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("contracheque_pensionista")
+  @@map("pensioner_paycheck")
 }
