@@ -1,7 +1,3 @@
-/*
-https://docs.nestjs.com/modules
-*/
-
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { join } from 'path';
@@ -12,16 +8,22 @@ import { CredentialsEmail } from './emails/credentials.email';
   imports: [
     MailerModule.forRoot({
       transport: {
-        host: process.env.MAIL_HOST,
-        port: Number(process.env.MAIL_PORT),
-        secure: true,
+        // host: process.env.MAIL_HOST,
+        // port: Number(process.env.MAIL_PORT),
+        // secure: true,
+        // auth: {
+        //   user: process.env.MAIL_USER,
+        //   pass: process.env.MAIL_PASS,
+        // },
+        host: 'smtp.ethereal.email',
+        port: 587,
         auth: {
-          user: process.env.MAIL_USER,
-          pass: process.env.MAIL_PASS,
+          user: 'eulah.mertz@ethereal.email',
+          pass: 'mNDZcfDqT5Y8GU3pm9',
         },
       },
       defaults: {
-        from: `Os meus ovos <${process.env.MAIL_USER}>`,
+        from: `B&M <eulah.mertz@ethereal.email>`,
       },
       template: {
         dir: join(__dirname, 'templates'),

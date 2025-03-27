@@ -10,8 +10,15 @@ export class CredentialsEmail {
     await this.mailerService
       .sendMail({
         to: email,
-        subject: 'Oiii Jonass',
-        html: `<h1> Olá Jonas! Sua senha por acaso é \n${password}? </h1>`,
+        subject: 'Credenciais de Acesso - B&M',
+        template: 'credentials',
+        context: {
+          userName: 'Bruce',
+          userEmail: email,
+          temporaryPassword: password,
+          resetPasswordUrl: 'https://www.google.com',
+          currentYear: new Date().getFullYear(),
+        },
       })
       .then((res) => console.log(res))
       .catch((error) => console.error(error));

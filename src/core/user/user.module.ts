@@ -10,15 +10,13 @@ import { UpdateUserService } from './services/update-user.service';
 import { ChangePasswordService } from './services/change-password.service';
 import { FindManyUserService } from './services/find-many-user.service';
 import { BullModule } from '@nestjs/bullmq';
-import { SendTokenEmailService } from './services/send-token-email.service';
 
 @Module({
   imports: [
     DatabaseModule,
     JwtModule.register({
       global: true,
-      // secret: configConstants.JWT_SECRET,
-      secret: '8d3894ef06f85e3fef81cb4b44b84287',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '7d' },
     }),
     BullModule.registerQueue({
@@ -37,7 +35,6 @@ import { SendTokenEmailService } from './services/send-token-email.service';
     UpdateUserService,
     ChangePasswordService,
     FindManyUserService,
-    SendTokenEmailService,
   ],
 })
 export class UserModule {}

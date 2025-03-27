@@ -22,27 +22,6 @@ import { BullModule } from '@nestjs/bullmq';
       },
       // prefix: 'belomax-',
     }),
-    // MailerModule.forRoot({
-    //   options: {
-    //     host: configConstants.email.MAIL_HOST,
-    //     port: Number(configConstants.email.MAIL_PORT),
-    //     secure: true,
-    //     auth: {
-    //       user: configConstants.email.MAIL_USER,
-    //       pass: configConstants.email.MAIL_PASS,
-    //     },
-    //   },
-    //   defaults: {
-    //     from: `Os meus ovos <${configConstants.email.MAIL_USER}>`,
-    //   },
-    //   template: {
-    //     dir: join(__dirname, 'templates'),
-    //     adapter: new HandlebarsAdapter(),
-    //     options: {
-    //       strict: true,
-    //     },
-    //   },
-    // }),
   ],
   controllers: [AppController],
   providers: [AppService],
