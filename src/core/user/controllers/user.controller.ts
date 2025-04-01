@@ -76,8 +76,8 @@ export class UserController {
     return await this.findManyUserService.execute(data);
   }
 
-  @Post('reset-password/send-email')
-  async sendTokenToEmail(@Body() data: { email: string }): Promise<void> {
-    // return await this.sendTokenEmailService.execute(data.email);
-  }
+  // @Post('reset-password/send-email')
+  // async sendTokenToEmail(@Body() data: { email: string }): Promise<void> {
+  //   return await this.sendTokenEmailService.execute(data.email);
+  // }
 }
