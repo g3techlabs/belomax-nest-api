@@ -9,6 +9,7 @@ import { BullModule } from '@nestjs/bullmq';
 // import { configConstants } from './auth/constants';
 // import { join } from 'path';
 // import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { ResetTokenModule } from './core/reset-token/reset-token.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { BullModule } from '@nestjs/bullmq';
       },
       // prefix: 'belomax-',
     }),
+    ResetTokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],

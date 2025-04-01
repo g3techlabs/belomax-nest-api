@@ -10,6 +10,7 @@ import { UpdateUserService } from './services/update-user.service';
 import { ChangePasswordService } from './services/change-password.service';
 import { FindManyUserService } from './services/find-many-user.service';
 import { BullModule } from '@nestjs/bullmq';
+import { ResetTokenRepository } from '../reset-token/repositories/reset-token.repository';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { BullModule } from '@nestjs/bullmq';
   providers: [
     //Repositories
     UserRepository,
-
+    ResetTokenRepository,
     //Services
     FindUserService,
     CreateUserService,
