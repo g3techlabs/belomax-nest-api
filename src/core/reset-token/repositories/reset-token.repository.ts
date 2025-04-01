@@ -9,4 +9,17 @@ export class ResetTokenRepository {
   async register(data: RegisterTokenInput) {
     return await this.prisma.resetToken.create({ data });
   }
+
+  async findByUserId(userId: string) {
+    return await this.prisma.resetToken.findUnique({
+      where: { userId }
+    })
+  }
+
+  async updateToken(userId: string, token: string) {
+    return await this.prisma.resetToken.update({
+      where: { userId },
+      data: { token }
+    })
+  }
 }

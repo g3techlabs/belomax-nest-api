@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { CredentialsEmail } from './emails/credentials.email';
+import { TokenEmail } from './emails/token.email';
 
 @Module({
   imports: [
@@ -35,7 +36,7 @@ import { CredentialsEmail } from './emails/credentials.email';
     }),
   ],
   controllers: [],
-  providers: [CredentialsEmail],
-  exports: [CredentialsEmail],
+  providers: [CredentialsEmail, TokenEmail],
+  exports: [CredentialsEmail, TokenEmail],
 })
 export class MailModule {}
