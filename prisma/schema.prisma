@@ -18,12 +18,12 @@ enum Role {
   ADMIN
 }
 
-enum ProcessType {
+enum AutomationType {
   CONTRACHEQUE_PENSIONISTAS
   TERMOS_EXTRATO
 }
 
-enum ProcessStatus {
+enum AutomationStatus {
   PENDING
   FINISHED
   CANCELLED
@@ -43,8 +43,8 @@ model User {
   password String
   role     String @default("USER")
 
-  processes  Process[]
-  resetToken ResetToken?
+  automations Automation[]
+  resetToken  ResetToken?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -65,56 +65,57 @@ model ResetToken {
 }
 
 model Customer {
-  id            String    @id @default(uuid())
+  id            String       @id @default(uuid())
   name          String
-  cpf           String    @unique
-  rg            String    @unique
+  cpf           String       @unique
+  rg            String       @unique
   address       String
   citizenship   String
   maritalStatus String
   occupation    String?
   email         String?
   phone         String?
-  processes     Process[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  automations   Automation[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 
   @@map("customer")
 }
 
-model Process {
-  id          String        @id @default(uuid())
+model Automation {
+  id          String           @id @default(uuid())
   description String
-  status      ProcessStatus
+  status      AutomationStatus
   userId      String
-  user        User          @relation(fields: [userId], references: [id])
-  customer    Customer      @relation(fields: [customerId], references: [id])
+  user        User             @relation(fields: [userId], references: [id])
+  customer    Customer         @relation(fields: [customerId], references: [id])
   customerId  String
   documents   Document[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   pensioner_paycheck PensionerPaycheck?
+  statement_extract  StatementExtract?
 
-  @@map("process")
+  @@map("automation")
 }
 
 model Document {
-  id        String   @id @default(uuid())
-  name      String
-  url       String
-  processId String
-  process   Process  @relation(fields: [processId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String     @id @default(uuid())
+  name         String
+  url          String
+  automationId String
+  automation   Automation @relation(fields: [automationId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
   @@map("document")
 }
 
 model PensionerPaycheck {
-  id        String  @id @default(uuid())
-  processId String  @unique
-  process   Process @relation(fields: [processId], references: [id])
+  id           String     @id @default(uuid())
+  automationId String     @unique
+  automation   Automation @relation(fields: [automationId], references: [id])
 
   registration String
   bond         String
@@ -129,4 +130,46 @@ model PensionerPaycheck {
   updatedAt DateTime @updatedAt
 
   @@map("pensioner_paycheck")
+}
+
+model StatementTerms {
+  id          String @id @default(uuid())
+  description String
+
+  bank   StatementBank
+  active Boolean
+
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  StatementTermsToExtract StatementTermsToExtract[]
+
+  @@map("statement_terms")
+}
+
+model StatementTermsToExtract {
+  id               String         @id @default(uuid())
+  statementTermsId String
+  statementTerms   StatementTerms @relation(fields: [statementTermsId], references: [id])
+
+  statementExtractId String
+  statementExtract   StatementExtract @relation(fields: [statementExtractId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("statement_terms_to_extract")
+}
+
+model StatementExtract {
+  id           String     @id @default(uuid())
+  automationId String     @unique
+  automation   Automation @relation(fields: [automationId], references: [id])
+
+  bank          StatementBank
+  selectedTerms StatementTermsToExtract[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("statement_extract")
 }
