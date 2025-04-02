@@ -17,7 +17,7 @@ export class TokenEmail {
           token: token,
           expiryTime: 15,
           userEmail: email,
-          resetPasswordUrl: `${process.env.BELOMAX_URL}/reset-password`,
+          resetPasswordUrl: 'https://www.google.com',
           currentYear: new Date().getFullYear(),
           logoUrl: 'public/images/email-logo.png',
         },

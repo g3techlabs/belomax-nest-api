@@ -25,6 +25,8 @@ import { ChangePasswordInput } from '../inputs/change-password.input';
 import { FindManyUserInput } from '../inputs/find-many-user.input';
 import { FindManyUserService } from '../services/find-many-user.service';
 import { ResetPasswordService } from '../services/reset-password.service';
+import { VerifyTokenService } from '../services/verify-token.service';
+import { VerifyTokenInput } from '../inputs/verify-token.input';
 @Controller('users')
 export class UserController {
   constructor(
@@ -35,6 +37,7 @@ export class UserController {
     private readonly changePasswordService: ChangePasswordService,
     private readonly findManyUserService: FindManyUserService,
     private readonly resetPasswordService: ResetPasswordService,
+    private readonly verifyTokenService: VerifyTokenService
   ) {}
 
   @Post('authenticate')
@@ -84,5 +87,11 @@ export class UserController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async sendTokenToEmail(@Body() data: { email: string }): Promise<void> {
     return await this.resetPasswordService.sendEmailToken(data.email);
+  }
+
+  @Post('reset-password/:id')
+  @HttpCode(HttpStatus.OK)
+  async verifyToken(@Param('id') id: string, @Body() data: VerifyTokenInput) {
+    return await this.verifyTokenService.verify(id, data.token)
   }
 }

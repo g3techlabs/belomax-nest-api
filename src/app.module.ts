@@ -10,12 +10,14 @@ import { BullModule } from '@nestjs/bullmq';
 // import { join } from 'path';
 // import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ResetTokenModule } from './core/reset-token/reset-token.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     MailModule,
     QueueModule,
     UserModule,
+    ConfigModule.forRoot({ isGlobal: true }),
     BullModule.forRoot({
       connection: {
         host: 'localhost',
