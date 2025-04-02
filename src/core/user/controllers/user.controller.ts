@@ -27,6 +27,7 @@ import { FindManyUserService } from '../services/find-many-user.service';
 import { ResetPasswordService } from '../services/reset-password.service';
 import { VerifyTokenService } from '../services/verify-token.service';
 import { VerifyTokenInput } from '../inputs/verify-token.input';
+import { SendTokenEmailInput } from '../inputs/send-token-email.input';
 @Controller('users')
 export class UserController {
   constructor(
@@ -85,7 +86,7 @@ export class UserController {
 
   @Post('reset-password/send-email')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async sendTokenToEmail(@Body() data: { email: string }): Promise<void> {
+  async sendTokenToEmail(@Body() data: SendTokenEmailInput): Promise<void> {
     return await this.resetPasswordService.sendEmailToken(data.email);
   }
 
