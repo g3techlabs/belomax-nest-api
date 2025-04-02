@@ -19,7 +19,14 @@ export class ResetTokenRepository {
   async updateToken(userId: string, token: string) {
     return await this.prisma.resetToken.update({
       where: { userId },
-      data: { token }
+      data: { token , expiresAt: new Date(Date.now() + 15 * 60 * 1000)}
+    })
+  }
+
+  async expireToken(userId: string) {
+    return await this.prisma.resetToken.update({
+      where: { userId },
+      data: { expiresAt: new Date(0) }
     })
   }
 }

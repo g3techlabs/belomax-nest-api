@@ -11,8 +11,9 @@ import { ChangePasswordService } from './services/change-password.service';
 import { FindManyUserService } from './services/find-many-user.service';
 import { BullModule } from '@nestjs/bullmq';
 import { ResetTokenRepository } from '../reset-token/repositories/reset-token.repository';
-import { ResetPasswordService } from './services/reset-password.service';
+import { SendEmailTokenService } from './services/send-token.service';
 import { VerifyTokenService } from './services/verify-token.service';
+import { ResetPasswordService } from './services/reset-password.service';
 
 @Module({
   imports: [
@@ -38,8 +39,9 @@ import { VerifyTokenService } from './services/verify-token.service';
     UpdateUserService,
     ChangePasswordService,
     FindManyUserService,
-    ResetPasswordService,
-    VerifyTokenService
+    SendEmailTokenService,
+    VerifyTokenService,
+    ResetPasswordService
   ],
 })
 export class UserModule {}

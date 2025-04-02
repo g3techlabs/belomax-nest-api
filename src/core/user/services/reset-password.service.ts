@@ -1,49 +1,41 @@
-import { ResetTokenRepository } from './../../reset-token/repositories/reset-token.repository';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Injectable } from '@nestjs/common';
-import { Queue } from 'bullmq';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ResetPasswordInput } from '../inputs/reset-password.input';
 import { UserRepository } from '../repositories/user.repository';
-import * as mod from "node:crypto"
+import { JwtService } from '@nestjs/jwt';
+import { hash } from 'bcryptjs';
+import { ResetTokenRepository } from 'src/core/reset-token/repositories/reset-token.repository';
 
 @Injectable()
 export class ResetPasswordService {
   constructor(
-    @InjectQueue('users-queue') private usersQueue: Queue,
-    private userRepository: UserRepository,
-    private resetTokenRepository: ResetTokenRepository,
+    private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
+    private readonly resetTokenRepository: ResetTokenRepository,
   ) {}
 
-  async sendEmailToken(email: string) {
-    const user = await this.userRepository.findByEmail(email);
+  async resetPassword(userId: string, { password, tokenToReset }: ResetPasswordInput): Promise<{ message: string }> {
+    const user = await this.userRepository.findById(userId);
 
-    if (!user) return;
+    if (!user) throw new NotFoundException('User not found');
 
-    const hasToken = await this.resetTokenRepository.findByUserId(user.id)
-
-    if (hasToken) {
-      if (hasToken.expiresAt.getTime() < Date.now()) {
-        await this.usersQueue.add('send-token-email', {
-          token: hasToken.token, email: user.email, name: user.name
-        });
-      } 
-      else {
-        const token = mod.randomInt(100000, 999999).toString()
-
-        const newToken = await this.resetTokenRepository.updateToken(user.id, token)
-
-        await this.usersQueue.add('send-token-email', {
-          token: newToken.token, email: user.email, name: user.name
-        });
-      }
-      return
+    // ? Do a blacklist JWT
+    try {
+      await this.jwtService.verifyAsync(tokenToReset);
+    } catch {
+      throw new UnauthorizedException('You do not have enough credentials to perform this action',);
     }
 
-    const token = mod.randomInt(100000, 999999).toString()
+    const hashedPass = await hash(password, 12);
 
-    const tokenRegistered = await this.resetTokenRepository.register({ userId: user.id, token }) 
+    await this.userRepository.changePassword(userId, hashedPass);
 
-    await this.usersQueue.add('send-token-email', {
-      token: tokenRegistered.token, email: user.email, name: user.name
-    });
+    await this.resetTokenRepository.expireToken(userId);
+
+    return { message: 'Password successfully reseted' };
   }
 }

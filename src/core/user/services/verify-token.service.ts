@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { ResetTokenRepository } from 'src/core/reset-token/repositories/reset-token.repository';
 
 @Injectable()
 export class VerifyTokenService {
-    constructor(private resetTokenRepository: ResetTokenRepository) {}
+    constructor(private resetTokenRepository: ResetTokenRepository, private readonly jwtService: JwtService) {}
 
     async verify(userId: string, token: string) {
         const tokenData = await this.resetTokenRepository.findByUserId(userId)
@@ -13,8 +14,10 @@ export class VerifyTokenService {
 
         if (token !== tokenData.token) throw new UnauthorizedException("Wrong token")
 
-        if (Date.now() >= tokenData.expiresAt.getTime()) throw new UnauthorizedException("Expired token")
+        if (Date.now() > tokenData.expiresAt.getTime()) throw new UnauthorizedException("Expired token")
 
-        return { message: "Token successfully verified" }
+        const tokenToReset = await this.jwtService.signAsync({ token })
+
+        return { message: "Token successfully verified", tokenToReset }
     }
 }

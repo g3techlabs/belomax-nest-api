@@ -24,10 +24,12 @@ import { ChangePasswordService } from '../services/change-password.service';
 import { ChangePasswordInput } from '../inputs/change-password.input';
 import { FindManyUserInput } from '../inputs/find-many-user.input';
 import { FindManyUserService } from '../services/find-many-user.service';
-import { ResetPasswordService } from '../services/reset-password.service';
+import { SendEmailTokenService } from '../services/send-token.service';
 import { VerifyTokenService } from '../services/verify-token.service';
 import { VerifyTokenInput } from '../inputs/verify-token.input';
-import { SendTokenEmailInput } from '../inputs/send-token-email.input';
+import { SendTokenEmailInput } from '../inputs/send-email-token.input';
+import { ResetPasswordInput } from '../inputs/reset-password.input';
+import { ResetPasswordService } from '../services/reset-password.service';
 @Controller('users')
 export class UserController {
   constructor(
@@ -37,8 +39,9 @@ export class UserController {
     private readonly updateUserService: UpdateUserService,
     private readonly changePasswordService: ChangePasswordService,
     private readonly findManyUserService: FindManyUserService,
-    private readonly resetPasswordService: ResetPasswordService,
-    private readonly verifyTokenService: VerifyTokenService
+    private readonly sendEmailTokenService: SendEmailTokenService,
+    private readonly verifyTokenService: VerifyTokenService,
+    private readonly resetPaswordService: ResetPasswordService
   ) {}
 
   @Post('authenticate')
@@ -87,12 +90,18 @@ export class UserController {
   @Post('reset-password/send-email')
   @HttpCode(HttpStatus.NO_CONTENT)
   async sendTokenToEmail(@Body() data: SendTokenEmailInput): Promise<void> {
-    return await this.resetPasswordService.sendEmailToken(data.email);
+    return await this.sendEmailTokenService.send(data.email);
+  }
+
+  @Post('reset-password/verify-token/:id')
+  @HttpCode(HttpStatus.OK)
+  async verifyToken(@Param('id') id: string, @Body() data: VerifyTokenInput) {
+    return await this.verifyTokenService.verify(id, data.token)
   }
 
   @Post('reset-password/:id')
   @HttpCode(HttpStatus.OK)
-  async verifyToken(@Param('id') id: string, @Body() data: VerifyTokenInput) {
-    return await this.verifyTokenService.verify(id, data.token)
+  async resetPassword(@Param('id') id: string, @Body() data: ResetPasswordInput) {
+    return await this.resetPaswordService.resetPassword(id, data)
   }
 }
