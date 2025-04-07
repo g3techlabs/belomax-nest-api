@@ -12,6 +12,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 // import { configConstants } from './auth/constants';
 // import { join } from 'path';
 // import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { ResetTokenModule } from './core/reset-token/reset-token.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       // prefix: 'belomax-',
     }),
     ConfigModule.forRoot({ isGlobal: true }),
+    ResetTokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],

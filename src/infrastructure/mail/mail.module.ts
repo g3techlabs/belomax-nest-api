@@ -3,39 +3,38 @@ import { Module } from '@nestjs/common';
 import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { CredentialsEmail } from './emails/credentials.email';
+import { TokenEmail } from './emails/token.email';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    MailerModule.forRoot({
-      transport: {
-        // host: process.env.MAIL_HOST,
-        // port: Number(process.env.MAIL_PORT),
-        // secure: true,
-        // auth: {
-        //   user: process.env.MAIL_USER,
-        //   pass: process.env.MAIL_PASS,
-        // },
-        host: 'smtp.ethereal.email',
-        port: 587,
-        auth: {
-          user: 'eulah.mertz@ethereal.email',
-          pass: 'mNDZcfDqT5Y8GU3pm9',
+    MailerModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        transport: {
+          host: configService.get<string>('MAIL_HOST'),
+          port: configService.get<number>('MAIL_PORT'),
+          auth: {
+            user: configService.get<string>('MAIL_USER'),
+            pass: configService.get<string>('MAIL_PASS'),
+          },
+          secure: true
         },
-      },
-      defaults: {
-        from: `B&M <eulah.mertz@ethereal.email>`,
-      },
-      template: {
-        dir: join(__dirname, 'templates'),
-        adapter: new HandlebarsAdapter(),
-        options: {
-          strict: true,
+        defaults: {
+          from: `B&M <${configService.get<string>('MAIL_USER')}>`,
         },
-      },
+        template: {
+          dir: join(__dirname, 'templates'),
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true,
+          },
+        }
+      }),
+      inject: [ConfigService]
     }),
   ],
   controllers: [],
-  providers: [CredentialsEmail],
-  exports: [CredentialsEmail],
+  providers: [CredentialsEmail, TokenEmail],
+  exports: [CredentialsEmail, TokenEmail],
 })
 export class MailModule {}
