@@ -10,7 +10,7 @@ export class TokenEmail {
     await this.mailerService
       .sendMail({
         to: email,
-        subject: 'Seu token para mudar de senha - B&M',
+        subject: `Seu token é ${token} - B&M`,
         template: 'token',
         context: {
           userName: name,

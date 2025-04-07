@@ -1,5 +1,4 @@
 import {
-  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -18,8 +17,8 @@ export class ResetPasswordService {
     private readonly resetTokenRepository: ResetTokenRepository,
   ) {}
 
-  async resetPassword(userId: string, { password, tokenToReset }: ResetPasswordInput): Promise<{ message: string }> {
-    const user = await this.userRepository.findById(userId);
+  async resetPassword({ email, password, tokenToReset }: ResetPasswordInput): Promise<{ message: string }> {
+    const user = await this.userRepository.findByEmail(email);
 
     if (!user) throw new NotFoundException('User not found');
 
@@ -32,9 +31,9 @@ export class ResetPasswordService {
 
     const hashedPass = await hash(password, 12);
 
-    await this.userRepository.changePassword(userId, hashedPass);
+    await this.userRepository.changePassword(user.id, hashedPass);
 
-    await this.resetTokenRepository.expireToken(userId);
+    await this.resetTokenRepository.expireToken(user.id);
 
     return { message: 'Password successfully reseted' };
   }

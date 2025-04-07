@@ -45,6 +45,7 @@ export class UserController {
   ) {}
 
   @Post('authenticate')
+  @HttpCode(HttpStatus.OK)
   async authenticate(
     @Body() data: AuthenticateUserInput,
   ): Promise<AuthenticateUserDTO> {
@@ -93,15 +94,15 @@ export class UserController {
     return await this.sendEmailTokenService.send(data.email);
   }
 
-  @Post('reset-password/verify-token/:id')
+  @Post('reset-password/verify-token')
   @HttpCode(HttpStatus.OK)
-  async verifyToken(@Param('id') id: string, @Body() data: VerifyTokenInput) {
-    return await this.verifyTokenService.verify(id, data.token)
+  async verifyToken(@Body() data: VerifyTokenInput) {
+    return await this.verifyTokenService.verify(data)
   }
 
-  @Post('reset-password/:id')
+  @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  async resetPassword(@Param('id') id: string, @Body() data: ResetPasswordInput) {
-    return await this.resetPaswordService.resetPassword(id, data)
+  async resetPassword(@Body() data: ResetPasswordInput) {
+    return await this.resetPaswordService.resetPassword(data)
   }
 }

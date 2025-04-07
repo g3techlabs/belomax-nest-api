@@ -12,21 +12,27 @@ export class ResetTokenRepository {
 
   async findByUserId(userId: string) {
     return await this.prisma.resetToken.findUnique({
-      where: { userId }
+      where: { userId },
+    });
+  }
+
+  async findByEmail(email: string) {
+    return await this.prisma.resetToken.findFirst({
+      where: { user: { email } },
     })
   }
 
   async updateToken(userId: string, token: string) {
     return await this.prisma.resetToken.update({
       where: { userId },
-      data: { token , expiresAt: new Date(Date.now() + 15 * 60 * 1000)}
-    })
+      data: { token, expiresAt: new Date(Date.now() + 15 * 60 * 1000) },
+    });
   }
 
   async expireToken(userId: string) {
     return await this.prisma.resetToken.update({
       where: { userId },
-      data: { expiresAt: new Date(0) }
-    })
+      data: { expiresAt: new Date(0) },
+    });
   }
 }
