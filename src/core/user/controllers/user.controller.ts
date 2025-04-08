@@ -30,6 +30,8 @@ import { VerifyTokenInput } from '../inputs/verify-token.input';
 import { SendTokenEmailInput } from '../inputs/send-email-token.input';
 import { ResetPasswordInput } from '../inputs/reset-password.input';
 import { ResetPasswordService } from '../services/reset-password.service';
+import { SetPasswordInput } from '../inputs/set-password.input';
+import { SetPasswordService } from '../services/set-password.service';
 @Controller('users')
 export class UserController {
   constructor(
@@ -41,7 +43,8 @@ export class UserController {
     private readonly findManyUserService: FindManyUserService,
     private readonly sendEmailTokenService: SendEmailTokenService,
     private readonly verifyTokenService: VerifyTokenService,
-    private readonly resetPaswordService: ResetPasswordService
+    private readonly resetPaswordService: ResetPasswordService,
+    private readonly setPasswordService: SetPasswordService
   ) {}
 
   @Post('authenticate')
@@ -104,5 +107,11 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() data: ResetPasswordInput) {
     return await this.resetPaswordService.resetPassword(data)
+  }
+
+  @Post('set-password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async setPassword(@Body() data: SetPasswordInput) {
+    return await this.setPasswordService.execute(data)
   }
 }

@@ -2,9 +2,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { CredentialsEmail } from './emails/credentials.email';
 import { TokenEmail } from './emails/token.email';
 import { ConfigService } from '@nestjs/config';
+import { WelcomeEmail } from './emails/welcome.email';
 
 @Module({
   imports: [
@@ -34,7 +34,7 @@ import { ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [],
-  providers: [CredentialsEmail, TokenEmail],
-  exports: [CredentialsEmail, TokenEmail],
+  providers: [WelcomeEmail, TokenEmail],
+  exports: [WelcomeEmail, TokenEmail],
 })
 export class MailModule {}

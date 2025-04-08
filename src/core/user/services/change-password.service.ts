@@ -14,7 +14,7 @@ export class ChangePasswordService {
       throw new NotFoundException('User not found');
     }
 
-    const passwordMatch = await compare(data.password, user.password);
+    const passwordMatch = await compare(data.password, user.password ?? "");
 
     if (!passwordMatch) {
       throw new UnauthorizedException('Invalid password');
@@ -26,7 +26,7 @@ export class ChangePasswordService {
       );
     }
 
-    const hashPassword = await hash(data.newPassword, 10);
+    const hashPassword = await hash(data.newPassword, 12);
 
     return await this.userRepository.changePassword(id, hashPassword);
   }

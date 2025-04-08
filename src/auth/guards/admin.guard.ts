@@ -43,7 +43,7 @@ export class AdminGuard implements CanActivate {
     });
 
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new UnauthorizedException('User not found');
     }
 
     if (user.role !== 'ADMIN') {
