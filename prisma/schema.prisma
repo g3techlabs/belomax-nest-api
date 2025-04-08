@@ -30,6 +30,10 @@ enum AutomationStatus {
   FAILED
 }
 
+enum PensionerPaycheckTermType {
+  VALUE
+}
+
 enum StatementBank {
   BB
   BRADESCO
@@ -68,10 +72,10 @@ model Customer {
   id            String  @id @default(uuid())
   name          String
   cpf           String  @unique
-  rg            String  @unique
-  address       String
-  citizenship   String
-  maritalStatus String
+  rg            String? @unique
+  address       String?
+  citizenship   String?
+  maritalStatus String?
   occupation    String?
   email         String?
   phone         String?
@@ -128,13 +132,38 @@ model PensionerPaycheck {
   month           String
   year            String
 
+  consignableMargin Float
+  totalBenefits     Float
+  netToReceive      Float
+
   automationId String
   automation   Automation @relation(fields: [automationId], references: [id])
+
+  terms PensionerPaycheckTerm[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("pensioner_paycheck")
+}
+
+model PensionerPaycheckTerm {
+  id String @id @default(uuid())
+
+  month String
+  year  String
+
+  code           Int
+  discrimination String
+  value          Float
+
+  pensionerPaycheckId String
+  pensionerPaycheck   PensionerPaycheck @relation(fields: [pensionerPaycheckId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("pensioner_paycheck_item")
 }
 
 model StatementTerm {
