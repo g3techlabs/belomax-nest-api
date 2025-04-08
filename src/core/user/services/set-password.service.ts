@@ -25,7 +25,7 @@ export class SetPasswordService {
       await this.userRepository.changePassword(user.id, hashedPassword);
 
     } catch {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException('Invalid password token');
     }
   }
 }
