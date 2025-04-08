@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 // import { TokenEmailConsumer } from './consumers/send-token-email.consumer';
-import { SendCredentialsEmailConsumer } from './consumers/send-credentials-email.consumer';
+import { SendWelcomeEmailConsumer } from './consumers/send-welcome-email.consumer';
 import { QueueService } from './queue.service';
 import { MailModule } from '../mail/mail.module';
-import { SendTokenEmailConsumer } from './consumers/token-email.consumer';
+import { SendTokenEmailConsumer } from './consumers/send-token-email.consumer';
 
 @Module({
   imports: [MailModule],
   controllers: [],
-  providers: [SendCredentialsEmailConsumer, QueueService, SendTokenEmailConsumer],
-  exports: [SendCredentialsEmailConsumer],
+  providers: [SendWelcomeEmailConsumer, QueueService, SendTokenEmailConsumer],
+  exports: [SendWelcomeEmailConsumer],
 })
 export class QueueModule {}

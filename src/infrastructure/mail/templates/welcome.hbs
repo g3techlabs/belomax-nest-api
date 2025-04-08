@@ -90,36 +90,28 @@
     <div class="content">
       <p>Olá {{userName}},</p>
       
-      <p>Seja bem-vindo à nossa plataforma! Sua conta foi criada com sucesso. Abaixo estão suas credenciais de acesso:</p>
+      <p>Seja bem-vindo à nossa plataforma! Sua conta foi criada com sucesso.</p>
       
-      <div class="credentials-box">
-        <div class="credentials-item">
-          <span class="credentials-label">E-mail:</span>
-          <div class="credentials-value">{{userEmail}}</div>
-        </div>
-        
-        <div class="credentials-item">
-          <span class="credentials-label">Senha Temporária:</span>
-          <div class="credentials-value">{{temporaryPassword}}</div>
-        </div>
-      </div>
+      <p>Para completar o seu cadastro, você precisa apenas <span class="highlight">definir sua senha</span>. Este é o último passo para ter acesso completo à plataforma.</p>
       
-      <p><span class="warning">Importante:</span> Por motivos de segurança, você precisará alterar sua senha após o primeiro login.</p>
+      <p><span class="warning">Importante:</span> Por motivos de segurança, recomendamos utilizar uma senha forte com letras, números e caracteres especiais.</p>
       
-      <p>Para começar, clique no botão abaixo para fazer login:</p>
+      <p>Para definir sua senha, clique no botão abaixo:</p>
       
       <div style="text-align: center;">
-        <a href="{{resetPasswordUrl}}" class="button">Acessar e Redefinir Senha</a>
+        <a href="{{setPasswordUrl}}" class="button">Definir Senha</a>
       </div>
+      
+      <p>Este link é válido por 7 dias. Após este período, você precisará solicitar um novo link de definição de senha.</p>
       
       <p>Se tiver alguma dúvida ou precisar de ajuda, não hesite em entrar em contato com nosso suporte.</p>
       
-      <p>Atenciosamente,<br>Equipe</p>
+      <p>Atenciosamente,<br>Equipe Belo & Max</p>
     </div>
     
     <div class="footer">
       <p>Este e-mail foi enviado para {{userEmail}}. Se você não solicitou este e-mail, por favor ignore ou entre em contato com o suporte.</p>
-      <p>&copy; {{currentYear}} Sua Empresa. Todos os direitos reservados.</p>
+      <p>&copy; {{currentYear}} Belo & Max. Todos os direitos reservados.</p>
     </div>
   </div>
 </body>

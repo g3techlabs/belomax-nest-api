@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { AwsModule } from './infrastructure/aws/aws.module';
 import { MailModule } from './infrastructure/mail/mail.module';
 import { QueueModule } from './infrastructure/queue/queue.module';
@@ -8,12 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-// import { MailerModule } from '@nestjs-modules/mailer';
-// import { configConstants } from './auth/constants';
-// import { join } from 'path';
-// import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ResetTokenModule } from './core/reset-token/reset-token.module';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -29,7 +23,6 @@ import { ConfigModule } from '@nestjs/config';
         }
       }),
       inject: [ConfigService],
-      // prefix: 'belomax-',
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     ResetTokenModule,
