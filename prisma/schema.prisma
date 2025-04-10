@@ -31,7 +31,8 @@ enum AutomationStatus {
 }
 
 enum PensionerPaycheckTermType {
-  VALUE
+  BENEFIT
+  DISCOUNT
 }
 
 enum StatementBank {
@@ -153,6 +154,7 @@ model PensionerPaycheckTerm {
   month String
   year  String
 
+  type           PensionerPaycheckTermType
   code           Int
   discrimination String
   value          Float
@@ -163,7 +165,7 @@ model PensionerPaycheckTerm {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("pensioner_paycheck_item")
+  @@map("pensioner_paycheck_term")
 }
 
 model StatementTerm {
