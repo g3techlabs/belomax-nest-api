@@ -70,16 +70,17 @@ model ResetToken {
 }
 
 model Customer {
-  id            String  @id @default(uuid())
-  name          String
-  cpf           String  @unique
-  rg            String? @unique
+  id            String    @id @default(uuid())
+  name          String    @db.VarChar(11)
+  cpf           String    @unique
+  rg            String?   @unique
   address       String?
   citizenship   String?
   maritalStatus String?
   occupation    String?
   email         String?
   phone         String?
+  birthDate     DateTime?
 
   automations Automation[]
 
@@ -128,7 +129,7 @@ model PensionerPaycheck {
 
   registration    String
   bond            String
-  cpf             String
+  cpf             String @db.VarChar(11)
   pensionerNumber String
   month           String
   year            String

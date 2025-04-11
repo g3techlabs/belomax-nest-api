@@ -1,3 +1,4 @@
+import { CustomerModule } from './core/customer/customer.module';
 /* eslint-disable */
 import { AwsModule } from './infrastructure/aws/aws.module';
 import { MailModule } from './infrastructure/mail/mail.module';
@@ -13,10 +14,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 // import { join } from 'path';
 // import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ResetTokenModule } from './core/reset-token/reset-token.module';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    CustomerModule,
     AwsModule,
     MailModule,
     QueueModule,
@@ -26,7 +27,7 @@ import { ConfigModule } from '@nestjs/config';
         connection: {
           host: configService.get('REDIS_HOST'),
           port: configService.get('REDIS_PORT'),
-        }
+        },
       }),
       inject: [ConfigService],
       // prefix: 'belomax-',
