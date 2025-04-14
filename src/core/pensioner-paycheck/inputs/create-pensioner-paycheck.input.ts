@@ -17,7 +17,7 @@ export class CreatePensionerPaycheckInput {
   customerId?: string;
 
   @IsString()
-  registation: string;
+  registration: string;
 
   @IsString()
   bond: string;
