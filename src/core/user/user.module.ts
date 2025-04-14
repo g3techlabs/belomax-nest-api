@@ -41,7 +41,7 @@ import { ResetPasswordService } from './services/reset-password.service';
     FindManyUserService,
     SendEmailTokenService,
     VerifyTokenService,
-    ResetPasswordService
+    ResetPasswordService,
   ],
 })
 export class UserModule {}
