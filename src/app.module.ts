@@ -1,3 +1,4 @@
+import { PensionerPaycheckModule } from './core/pensioner-paycheck/pensioner-paycheck.module';
 import { CustomerModule } from './core/customer/customer.module';
 /* eslint-disable */
 import { AwsModule } from './infrastructure/aws/aws.module';
@@ -17,6 +18,7 @@ import { ResetTokenModule } from './core/reset-token/reset-token.module';
 
 @Module({
   imports: [
+    PensionerPaycheckModule,
     CustomerModule,
     AwsModule,
     MailModule,
