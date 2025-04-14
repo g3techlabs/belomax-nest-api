@@ -15,6 +15,9 @@ import { FindManyCustomerService } from '../services/find-many-customer.service'
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { UpdateCustomerService } from '../services/update-customer.service';
+import { FindManyCustomerDto } from '../dto/find-many-customer.dto';
+import { Customer } from '@prisma/client';
+import { UpdateCustomerInput } from '../inputs/update-customer.input';
 
 @Controller('customers')
 export class CustomerController {
@@ -27,25 +30,30 @@ export class CustomerController {
 
   @UseGuards(AuthGuard, AdminGuard)
   @Get()
-  async findMany(@Body() data: FindManyCustomerInput) {
+  async findMany(
+    @Body() data: FindManyCustomerInput,
+  ): Promise<FindManyCustomerDto> {
     return await this.findManyCustomerService.execute(data);
   }
 
   @UseGuards(AuthGuard, AdminGuard)
   @Get(':id')
-  async findById(@Param('id') id: string) {
+  async findById(@Param('id') id: string): Promise<Customer> {
     return await this.findByIdCustomerService.execute(id);
   }
 
   @UseGuards(AuthGuard, AdminGuard)
   @Post()
-  async create(@Body() data: CreateCustomerInput) {
+  async create(@Body() data: CreateCustomerInput): Promise<Customer> {
     return await this.createCustomerService.execute(data);
   }
 
   @UseGuards(AuthGuard, AdminGuard)
   @Put(':id')
-  async update(@Param('id') id: string, @Body() data: CreateCustomerInput) {
+  async update(
+    @Param('id') id: string,
+    @Body() data: UpdateCustomerInput,
+  ): Promise<Customer> {
     return await this.updateCustomerService.execute(id, data);
   }
 }
