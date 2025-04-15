@@ -1,13 +1,13 @@
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
-import { SendCredentialsEmailConsumer } from './consumers/send-credentials-email.consumer';
-import { SendTokenEmailConsumer } from './consumers/token-email.consumer';
+import { SendWelcomeEmailConsumer } from './consumers/send-welcome-email.consumer';
+import { SendTokenEmailConsumer } from './consumers/send-token-email.consumer';
 
 @Processor('users-queue')
 export class QueueService extends WorkerHost {
   constructor(
-    private readonly sendCredentialsEmailConsumer: SendCredentialsEmailConsumer,
+    private readonly sendWelcomeEmailConsumer: SendWelcomeEmailConsumer,
     private readonly sendTokenEmailConsumer: SendTokenEmailConsumer,
   ) {
     super();
@@ -21,8 +21,8 @@ export class QueueService extends WorkerHost {
 
   async process(job: Job) {
     switch (job.name) {
-      case 'send-credentials-email':
-        await this.sendCredentialsEmailConsumer.execute(job);
+      case 'send-welcome-email':
+        await this.sendWelcomeEmailConsumer.execute(job);
         break;
       case 'send-token-email':
         await this.sendTokenEmailConsumer.execute(job);

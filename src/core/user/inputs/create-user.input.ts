@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateUserInput {
@@ -7,10 +8,7 @@ export class CreateUserInput {
   @IsEmail()
   email: string;
 
-  @IsNotEmpty()
-  password: string;
-
   @IsEnum(['ADMIN', 'USER'])
   @IsOptional()
-  role?: string;
+  role?: Role
 }

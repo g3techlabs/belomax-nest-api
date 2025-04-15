@@ -19,6 +19,7 @@ export class S3Provider {
 
     this.s3 = new S3Client({
       region: this.configService.get('AWS_REGION'),
+      endpoint: this.configService.get<string>('AWS_LOCALSTACK_ENDPOINT'),
       credentials:
         accessKeyId && secretAccessKey
           ? {

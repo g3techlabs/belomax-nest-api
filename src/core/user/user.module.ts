@@ -14,6 +14,7 @@ import { ResetTokenRepository } from '../reset-token/repositories/reset-token.re
 import { SendEmailTokenService } from './services/send-token.service';
 import { VerifyTokenService } from './services/verify-token.service';
 import { ResetPasswordService } from './services/reset-password.service';
+import { SetPasswordService } from './services/set-password.service';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ResetPasswordService } from './services/reset-password.service';
     SendEmailTokenService,
     VerifyTokenService,
     ResetPasswordService,
+    SetPasswordService
   ],
 })
 export class UserModule {}
