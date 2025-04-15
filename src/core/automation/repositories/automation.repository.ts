@@ -10,10 +10,26 @@ export class AutomationRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateAutomationInput): Promise<Automation> {
-    return await this.prisma.automation.create({ data });
+    return await this.prisma.automation.create({
+      data: {
+        description: data.description,
+        user: {
+          connect: {
+            id: data.userId,
+          },
+        },
+        customer: {
+          connect: {
+            id: data.customerId,
+          },
+        },
+      },
+    });
   }
 
   async findMany(data: FindManyAutomationInput): Promise<Automation[]> {
+    const { page, limit } = data;
+
     return await this.prisma.automation.findMany({
       where: {
         description: data.description
@@ -22,7 +38,7 @@ export class AutomationRepository {
         status: data.status,
       },
       take: data.limit,
-      skip: data.page ? (data.page - 1) * data.limit : undefined,
+      skip: page && limit ? (page - 1) * limit : undefined,
     });
   }
 

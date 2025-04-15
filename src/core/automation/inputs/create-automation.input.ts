@@ -1,14 +1,9 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { AutomationStatus } from '@prisma/client';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateAutomationInput {
   @IsString()
   @IsNotEmpty()
   description: string;
-
-  @IsEnum(AutomationStatus)
-  @IsOptional()
-  status?: AutomationStatus;
 
   @IsString()
   @IsOptional()
