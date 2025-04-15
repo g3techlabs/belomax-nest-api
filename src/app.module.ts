@@ -16,6 +16,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 // import { join } from 'path';
 // import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ResetTokenModule } from './core/reset-token/reset-token.module';
+import { StatementExtractModule } from './core/statement-extract/statement-extract.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ResetTokenModule } from './core/reset-token/reset-token.module';
     MailModule,
     QueueModule,
     UserModule,
+    StatementExtractModule,
     BullModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         connection: {
