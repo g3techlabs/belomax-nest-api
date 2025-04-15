@@ -14,7 +14,7 @@ export class CreatePensionerPaycheckInput {
 
   @IsString()
   @IsOptional()
-  customerId?: string;
+  customerName?: string;
 
   @IsString()
   registration: string;

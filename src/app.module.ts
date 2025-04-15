@@ -1,3 +1,4 @@
+import { AutomationModule } from './core/automation/automation.module';
 import { PensionerPaycheckModule } from './core/pensioner-paycheck/pensioner-paycheck.module';
 import { CustomerModule } from './core/customer/customer.module';
 /* eslint-disable */
@@ -18,6 +19,7 @@ import { ResetTokenModule } from './core/reset-token/reset-token.module';
 
 @Module({
   imports: [
+    AutomationModule,
     PensionerPaycheckModule,
     CustomerModule,
     AwsModule,

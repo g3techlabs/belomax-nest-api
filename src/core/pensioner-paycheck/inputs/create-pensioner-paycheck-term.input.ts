@@ -1,6 +1,6 @@
 import { IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
 
-export class CreatePensionerPaycheckInput {
+export class CreatePensionerPaycheckTermInput {
   @IsString()
   month: string;
 

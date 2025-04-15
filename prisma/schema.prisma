@@ -94,7 +94,7 @@ model Automation {
   id          String @id @default(uuid())
   description String
 
-  status AutomationStatus
+  status AutomationStatus @default(PENDING)
 
   userId     String?
   user       User?     @relation(fields: [userId], references: [id])
@@ -107,7 +107,7 @@ model Automation {
   updatedAt DateTime @updatedAt
 
   statementExtract  StatementExtract?
-  pensionerPaycheck PensionerPaycheck[]
+  pensionerPaycheck PensionerPaycheck?
 
   @@map("automation")
 }
@@ -138,7 +138,7 @@ model PensionerPaycheck {
   totalBenefits     Float
   netToReceive      Float
 
-  automationId String
+  automationId String     @unique
   automation   Automation @relation(fields: [automationId], references: [id])
 
   terms PensionerPaycheckTerm[]
