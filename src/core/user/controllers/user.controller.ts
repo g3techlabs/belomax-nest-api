@@ -100,13 +100,13 @@ export class UserController {
   @Post('reset-password/verify-token')
   @HttpCode(HttpStatus.OK)
   async verifyToken(@Body() data: VerifyTokenInput) {
-    return await this.verifyTokenService.verify(data)
+    return await this.verifyTokenService.verify(data);
   }
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() data: ResetPasswordInput) {
-    return await this.resetPaswordService.resetPassword(data)
+    return await this.resetPaswordService.resetPassword(data);
   }
 
   @Post('set-password')

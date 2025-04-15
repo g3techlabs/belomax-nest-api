@@ -1,3 +1,7 @@
+/* eslint-disable */
+import { AutomationModule } from './core/automation/automation.module';
+import { PensionerPaycheckModule } from './core/pensioner-paycheck/pensioner-paycheck.module';
+import { CustomerModule } from './core/customer/customer.module';
 import { AwsModule } from './infrastructure/aws/aws.module';
 import { MailModule } from './infrastructure/mail/mail.module';
 import { QueueModule } from './infrastructure/queue/queue.module';
@@ -8,19 +12,24 @@ import { AppService } from './app.service';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ResetTokenModule } from './core/reset-token/reset-token.module';
+import { StatementExtractModule } from './core/statement-extract/statement-extract.module';
 
 @Module({
   imports: [
+    AutomationModule,
+    PensionerPaycheckModule,
+    CustomerModule,
     AwsModule,
     MailModule,
     QueueModule,
     UserModule,
+    StatementExtractModule,
     BullModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         connection: {
           host: configService.get('REDIS_HOST'),
           port: configService.get('REDIS_PORT'),
-        }
+        },
       }),
       inject: [ConfigService],
     }),

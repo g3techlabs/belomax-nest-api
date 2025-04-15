@@ -30,6 +30,11 @@ enum AutomationStatus {
   FAILED
 }
 
+enum PensionerPaycheckTermType {
+  BENEFIT
+  DISCOUNT
+}
+
 enum StatementBank {
   BB
   BRADESCO
@@ -65,37 +70,44 @@ model ResetToken {
 }
 
 model Customer {
-  id            String       @id @default(uuid())
+  id            String    @id @default(uuid())
   name          String
-  cpf           String       @unique
-  rg            String       @unique
-  address       String
-  citizenship   String
-  maritalStatus String
+  cpf           String    @unique @db.VarChar(11)
+  rg            String?   @unique
+  address       String?
+  citizenship   String?
+  maritalStatus String?
   occupation    String?
   email         String?
   phone         String?
-  automations   Automation[]
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  birthDate     DateTime?
+
+  automations Automation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("customer")
 }
 
 model Automation {
-  id          String           @id @default(uuid())
+  id          String @id @default(uuid())
   description String
-  status      AutomationStatus
-  userId      String
-  user        User             @relation(fields: [userId], references: [id])
-  customer    Customer         @relation(fields: [customerId], references: [id])
-  customerId  String
-  documents   Document[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
 
-  pensioner_paycheck PensionerPaycheck?
-  statement_extract  StatementExtract?
+  status AutomationStatus @default(PENDING)
+
+  userId     String?
+  user       User?     @relation(fields: [userId], references: [id])
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  customerId String?
+
+  documents Document[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  statementExtract  StatementExtract?
+  pensionerPaycheck PensionerPaycheck?
 
   @@map("automation")
 }
@@ -113,18 +125,23 @@ model Document {
 }
 
 model PensionerPaycheck {
-  id           String     @id @default(uuid())
+  id String @id @default(uuid())
+
+  registration    String
+  bond            String
+  cpf             String @db.VarChar(11)
+  pensionerNumber String
+  month           String
+  year            String
+
+  consignableMargin Float
+  totalBenefits     Float
+  netToReceive      Float
+
   automationId String     @unique
   automation   Automation @relation(fields: [automationId], references: [id])
 
-  registration String
-  bond         String
-  cpf          String
-  number       String
-  startMonth   String
-  startYear    String
-  endMonth     String
-  endYear      String
+  terms PensionerPaycheckTerm[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -132,24 +149,45 @@ model PensionerPaycheck {
   @@map("pensioner_paycheck")
 }
 
-model StatementTerms {
+model PensionerPaycheckTerm {
+  id String @id @default(uuid())
+
+  month String
+  year  String
+
+  type           PensionerPaycheckTermType
+  code           Int
+  discrimination String
+  value          Float
+
+  pensionerPaycheckId String
+  pensionerPaycheck   PensionerPaycheck @relation(fields: [pensionerPaycheckId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("pensioner_paycheck_term")
+}
+
+model StatementTerm {
   id          String @id @default(uuid())
   description String
 
   bank   StatementBank
   active Boolean
 
-  createdAt               DateTime                  @default(now())
-  updatedAt               DateTime                  @updatedAt
-  StatementTermsToExtract StatementTermsToExtract[]
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  StatementTermsToExtract StatementTermToExtract[]
 
+  @@unique([description, bank])
   @@map("statement_terms")
 }
 
-model StatementTermsToExtract {
-  id               String         @id @default(uuid())
-  statementTermsId String
-  statementTerms   StatementTerms @relation(fields: [statementTermsId], references: [id])
+model StatementTermToExtract {
+  id              String        @id @default(uuid())
+  statementTermId String
+  statementTerm   StatementTerm @relation(fields: [statementTermId], references: [id])
 
   statementExtractId String
   statementExtract   StatementExtract @relation(fields: [statementExtractId], references: [id])
@@ -166,7 +204,7 @@ model StatementExtract {
   automation   Automation @relation(fields: [automationId], references: [id])
 
   bank          StatementBank
-  selectedTerms StatementTermsToExtract[]
+  selectedTerms StatementTermToExtract[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
