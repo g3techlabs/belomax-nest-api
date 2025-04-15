@@ -180,6 +180,7 @@ model StatementTerm {
   updatedAt               DateTime                 @updatedAt
   StatementTermsToExtract StatementTermToExtract[]
 
+  @@unique([description, bank])
   @@map("statement_terms")
 }
 
