@@ -115,7 +115,7 @@ model Automation {
 model Document {
   id           String     @id @default(uuid())
   name         String
-  url          String
+  urlExpiresAt DateTime   @default(dbgenerated("NOW() + interval '15 minutes'"))
   automationId String
   automation   Automation @relation(fields: [automationId], references: [id])
   createdAt    DateTime   @default(now())

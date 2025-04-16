@@ -34,3 +34,5 @@ export class S3Provider {
     return this.s3;
   }
 }
+
+// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-s3/

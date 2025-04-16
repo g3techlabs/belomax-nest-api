@@ -4,8 +4,4 @@ export class UpdateDocumentInput {
   @IsString()
   @IsOptional()
   name?: string;
-
-  @IsString()
-  @IsOptional()
-  url?: string;
 }

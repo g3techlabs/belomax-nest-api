@@ -21,9 +21,9 @@ export class S3AddFileService {
           Body: file,
           ContentType: mimeType,
         }),
-      ).then(res => console.log(res))
+      )
 
-      return `https://${this.configService.get('AWS_S3_BUCKET')}.s3.${this.configService.get('AWS_REGION')}.amazonaws.com/${encodeURIComponent(name)}`
+      return true
     } catch (error) {
       console.log('Error uploading file to S3:', error);
       throw new Error('Failed to upload file to S3');

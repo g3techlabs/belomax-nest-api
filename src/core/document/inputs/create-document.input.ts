@@ -19,6 +19,5 @@ export class CreateDocumentServiceInput {
 export class CreateDocumentDataInput {
   name: string;
   automationId: string;
-  url: string;
   file: Express.Multer.File;
 }

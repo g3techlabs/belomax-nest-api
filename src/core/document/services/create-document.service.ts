@@ -31,19 +31,20 @@ export class CreateDocumentService {
       throw new NotFoundException('Automation not found');
     }
 
-    console.log(file);
+    const s3DocumentName = `${automation.id}-${new Date().toISOString()}-${file.originalname}`;
 
-    const documentUrl = await this.s3AddFileService.execute({
+    const fileUploaded = await this.s3AddFileService.execute({
       file: file.buffer,
-      name: `${automation.id}-${new Date().toISOString()}-${file.originalname}`,
+      name: s3DocumentName,
       mimeType: file.mimetype,
     });
 
-    console.log(documentUrl);
+    if (!fileUploaded) {
+      throw new BadRequestException('Failed to upload file');
+    }
 
     return await this.documentRepository.create({
       ...data,
-      url: documentUrl,
     });
   }
 }

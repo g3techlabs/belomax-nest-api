@@ -13,7 +13,6 @@ export class DocumentRepository {
     return await this.prisma.document.create({
       data: {
         name: data.name,
-        url: data.url,
         automation: {
           connect: {
             id: data.automationId,
