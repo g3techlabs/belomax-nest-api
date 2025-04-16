@@ -8,6 +8,8 @@ export class CreateDocumentRequestInput {
   @IsString()
   @IsNotEmpty()
   automationId: string;
+
+  file?: Express.Multer.File;
 }
 
 export class CreateDocumentServiceInput {
