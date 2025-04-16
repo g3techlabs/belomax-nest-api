@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { S3Provider } from './s3/s3.provider';
-import { S3AddFileService } from './s3/services/add-file.service';
+import { S3AddFileService } from './s3/services/upload-s3-file.service';
 
 @Module({
   imports: [],

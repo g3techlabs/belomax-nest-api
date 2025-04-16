@@ -44,7 +44,7 @@ export class UserController {
     private readonly sendEmailTokenService: SendEmailTokenService,
     private readonly verifyTokenService: VerifyTokenService,
     private readonly resetPaswordService: ResetPasswordService,
-    private readonly setPasswordService: SetPasswordService
+    private readonly setPasswordService: SetPasswordService,
   ) {}
 
   @Post('authenticate')
@@ -61,7 +61,7 @@ export class UserController {
     return await this.findUserService.execute(id);
   }
 
-  @UseGuards(AuthGuard, AdminGuard)
+  // @UseGuards(AuthGuard, AdminGuard)
   @Post()
   async create(@Body() data: CreateUserInput): Promise<User | null> {
     return await this.createUserService.execute(data);
@@ -112,6 +112,6 @@ export class UserController {
   @Post('set-password')
   @HttpCode(HttpStatus.NO_CONTENT)
   async setPassword(@Body() data: SetPasswordInput) {
-    return await this.setPasswordService.execute(data)
+    return await this.setPasswordService.execute(data);
   }
 }

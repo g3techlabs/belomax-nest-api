@@ -42,11 +42,11 @@ enum StatementBank {
 }
 
 model User {
-  id       String @id @default(uuid())
-  email    String @unique
+  id       String  @id @default(uuid())
+  email    String  @unique
   name     String
   password String?
-  role     String @default("USER")
+  role     String  @default("USER")
 
   automations Automation[]
   resetToken  ResetToken?

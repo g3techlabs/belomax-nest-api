@@ -12,4 +12,6 @@ export class CreateDocumentInput {
   @IsString()
   @IsNotEmpty()
   automationId: string;
+
+  file?: Express.Multer.File;
 }
