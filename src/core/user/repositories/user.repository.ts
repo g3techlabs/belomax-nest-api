@@ -31,7 +31,7 @@ export class UserRepository {
     return await this.prisma.user.create({
       data: {
         ...rest,
-        password,
+        password: password ?? null,
       },
     });
   }
