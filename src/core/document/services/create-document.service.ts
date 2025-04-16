@@ -45,6 +45,7 @@ export class CreateDocumentService {
 
     return await this.documentRepository.create({
       ...data,
+      name: s3DocumentName,
     });
   }
 }
