@@ -16,6 +16,10 @@ export class UpdateDocumentService {
 
     const updatedDocument = await this.documentRepository.update(id, data);
 
+    // to change name, create a new s3 object with the new name, keep the date and time
+    // and delete the old one
+    // need to implement delete s3 object
+
     return updatedDocument;
   }
 }

@@ -12,9 +12,18 @@ import { CreateStatementTermsService } from './services/create-statement-terms.s
 import { AutomationModule } from '../automation/automation.module';
 import { UserModule } from '../user/user.module';
 import { DocumentModule } from '../document/document.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
-  imports: [DatabaseModule, AutomationModule, UserModule, DocumentModule],
+  imports: [
+    DatabaseModule,
+    AutomationModule,
+    UserModule,
+    DocumentModule,
+    BullModule.registerQueue({
+      name: 'belomax-queue',
+    }),
+  ],
   controllers: [StatementExtractController, StatementTermController],
   providers: [
     StatementExtractRepository,
