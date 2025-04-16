@@ -10,34 +10,40 @@ export class AutomationRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateAutomationInput): Promise<Automation> {
+    const { description, userId, customerId } = data;
+
     return await this.prisma.automation.create({
       data: {
-        description: data.description,
-        user: {
-          connect: {
-            id: data.userId,
-          },
-        },
-        customer: {
-          connect: {
-            id: data.customerId,
-          },
-        },
+        description,
+        user: userId
+          ? {
+              connect: {
+                id: userId,
+              },
+            }
+          : undefined,
+        customer: customerId
+          ? {
+              connect: {
+                id: data.customerId,
+              },
+            }
+          : undefined,
       },
     });
   }
 
   async findMany(data: FindManyAutomationInput): Promise<Automation[]> {
-    const { page, limit } = data;
+    const { page, limit, description, status } = data;
 
     return await this.prisma.automation.findMany({
       where: {
-        description: data.description
-          ? { contains: data.description, mode: 'insensitive' }
+        description: description
+          ? { contains: description, mode: 'insensitive' }
           : undefined,
-        status: data.status,
+        status: status ? { equals: status } : undefined,
       },
-      take: data.limit,
+      take: limit || undefined,
       skip: page && limit ? (page - 1) * limit : undefined,
     });
   }

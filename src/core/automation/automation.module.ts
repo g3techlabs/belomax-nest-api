@@ -23,5 +23,6 @@ import { UpdateAutomationService } from './services/update-automation.service';
     FindByIdAutomationService,
     UpdateAutomationService,
   ],
+  exports: [FindByIdAutomationService],
 })
 export class AutomationModule {}

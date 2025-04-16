@@ -13,11 +13,10 @@ export class UpdateStatementExtractService {
     id: string,
     data: UpdateStatementExtractInput,
   ): Promise<StatementExtract> {
-    const existingStatementExtract =
-      await this.statementExtractRepository.findById(id);
+    const statementExtract = await this.statementExtractRepository.findById(id);
 
-    if (!existingStatementExtract) {
-      throw new NotFoundException(`StatementExtract with ID ${id} not found`);
+    if (!statementExtract) {
+      throw new NotFoundException('StatementExtract not found');
     }
     return await this.statementExtractRepository.update(id, data);
   }
