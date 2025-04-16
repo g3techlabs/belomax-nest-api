@@ -8,6 +8,7 @@ import { FindByIdDocumentService } from './services/find-by-id-document.service'
 import { UpdateDocumentService } from './services/update-document.service';
 import { AutomationModule } from '../automation/automation.module';
 import { AwsModule } from 'src/infrastructure/aws/aws.module';
+import { GetDocumentUrlService } from './services/get-document-url.service';
 
 @Module({
   imports: [DatabaseModule, AutomationModule, AwsModule],
@@ -20,7 +21,8 @@ import { AwsModule } from 'src/infrastructure/aws/aws.module';
     FindManyDocumentService,
     FindByIdDocumentService,
     UpdateDocumentService,
+    GetDocumentUrlService,
   ],
-  exports: [CreateDocumentService],
+  exports: [CreateDocumentService, GetDocumentUrlService],
 })
 export class DocumentModule {}
