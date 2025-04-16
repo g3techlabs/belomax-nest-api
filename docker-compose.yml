@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: belomax-nest-api
+    working_dir: /usr/src/app
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:13
+    container_name: belomax-db
+    environment:
+      POSTGRES_USER: belomax
+      POSTGRES_PASSWORD: belomaxpassword
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis
+    container_name: belomax-redis
+    ports:
+      - "6379:6379"
