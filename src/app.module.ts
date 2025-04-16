@@ -15,6 +15,7 @@ import { ResetTokenModule } from './core/reset-token/reset-token.module';
 import { StatementExtractModule } from './core/statement-extract/statement-extract.module';
 import { DocumentModule } from './core/document/document.module';
 import { AuthModule } from './auth/auth.module';
+import { DocumentModule } from './core/document/document.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AuthModule } from './auth/auth.module';
     ResetTokenModule,
     DocumentModule,
     AuthModule,
+    DocumentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
