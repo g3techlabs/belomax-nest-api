@@ -13,6 +13,10 @@ import { CreateDocumentService } from '../../document/services/create-document.s
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { StatementExtract } from '@prisma/client';
+import { FindUserService } from '../../user/services/find-user.service';
+import { StatementTermRepository } from '../repositories/statement-term.repository';
+import { CreateAutomationService } from '../../automation/services/create-automation.service';
+import { CreateDocumentService } from '../../document/services/create-document.service';
 
 @Injectable()
 export class CreateStatementExtractService {

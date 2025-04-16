@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -32,24 +34,28 @@ export class AutomationController {
 
   @UseGuards(AuthGuard)
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async create(@Body() data: CreateAutomationInput): Promise<Automation> {
     return await this.createAutomationService.execute(data);
   }
 
   @UseGuards(AuthGuard)
   @Get()
+  @HttpCode(HttpStatus.OK)
   async findMany(@Body() data: FindManyAutomationInput): Promise<Automation[]> {
     return await this.findManyAutomationService.execute(data);
   }
 
   @UseGuards(AuthGuard)
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   async findById(@Param('id') id: string): Promise<Automation> {
     return await this.findByIdAutomationService.execute(id);
   }
 
   @UseGuards(AuthGuard, AdminGuard)
   @Put(':id')
+  @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
     @Body() data: UpdateAutomationInput,
@@ -59,6 +65,7 @@ export class AutomationController {
 
   @UseGuards(AuthGuard)
   @Put(':id/status')
+  @HttpCode(HttpStatus.OK)
   async changeStatus(
     @Param('id') id: string,
     @Body() data: ChangeStatusAutomationInput,

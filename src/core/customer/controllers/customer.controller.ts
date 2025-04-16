@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -29,6 +31,7 @@ export class CustomerController {
 
   @UseGuards(AuthGuard)
   @Get()
+  @HttpCode(HttpStatus.OK)
   async findMany(
     @Body() data: FindManyCustomerInput,
   ): Promise<FindManyCustomerDto> {
@@ -37,18 +40,21 @@ export class CustomerController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   async findById(@Param('id') id: string): Promise<Customer> {
     return await this.findByIdCustomerService.execute(id);
   }
 
   @UseGuards(AuthGuard)
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async create(@Body() data: CreateCustomerInput): Promise<Customer> {
     return await this.createCustomerService.execute(data);
   }
 
   @UseGuards(AuthGuard)
   @Put(':id')
+  @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
     @Body() data: UpdateCustomerInput,

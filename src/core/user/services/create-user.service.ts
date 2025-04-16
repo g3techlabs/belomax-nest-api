@@ -11,7 +11,7 @@ export class CreateUserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
-    @InjectQueue('users-queue') private readonly usersQueue: Queue,
+    @InjectQueue('belomax-queue') private readonly usersQueue: Queue,
   ) {}
 
   async execute(data: CreateUserInput) {

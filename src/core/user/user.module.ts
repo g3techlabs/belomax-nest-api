@@ -26,8 +26,9 @@ import { AuthModule } from 'src/auth/auth.module';
       signOptions: { expiresIn: '7d' },
     }),
     BullModule.registerQueue({
-      name: 'users-queue',
+      name: 'belomax-queue',
     }),
+    forwardRef(() => AuthModule),
   ],
   controllers: [UserController],
   providers: [
@@ -46,6 +47,6 @@ import { AuthModule } from 'src/auth/auth.module';
     ResetPasswordService,
     SetPasswordService,
   ],
-  exports: [UserRepository, JwtModule, FindUserService],
+  exports: [UserRepository, FindUserService],
 })
 export class UserModule {}

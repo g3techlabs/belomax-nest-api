@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateStatementTermsInput } from '../inputs/create-statement-terms.input';
 import { CreateStatementTermsService } from '../services/create-statement-terms.service';
 import { StatementTerm } from '@prisma/client';
@@ -13,6 +20,7 @@ export class StatementTermController {
 
   @UseGuards(AuthGuard, AdminGuard)
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() data: CreateStatementTermsInput,
   ): Promise<StatementTerm[]> {

@@ -9,9 +9,10 @@ import { UpdateDocumentService } from './services/update-document.service';
 import { AutomationModule } from '../automation/automation.module';
 import { AwsModule } from 'src/infrastructure/aws/aws.module';
 import { GetDocumentUrlService } from './services/get-document-url.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [DatabaseModule, AutomationModule, AwsModule],
+  imports: [DatabaseModule, AutomationModule, AwsModule, AuthModule],
   controllers: [DocumentController],
   providers: [
     // Repositories

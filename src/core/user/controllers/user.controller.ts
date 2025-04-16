@@ -33,6 +33,8 @@ import { ResetPasswordInput } from '../inputs/reset-password.input';
 import { ResetPasswordService } from '../services/reset-password.service';
 import { SetPasswordInput } from '../inputs/set-password.input';
 import { SetPasswordService } from '../services/set-password.service';
+import { UserWithoutPassword } from '../entities/user-without-password';
+
 @Controller('api/users')
 export class UserController {
   constructor(
@@ -58,18 +60,21 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   async findById(@Param('id') id: string): Promise<User | null> {
     return await this.findUserService.execute(id);
   }
 
   // @UseGuards(AuthGuard, AdminGuard)
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async create(@Body() data: CreateUserInput): Promise<User | null> {
     return await this.createUserService.execute(data);
   }
 
   @UseGuards(AuthGuard)
   @Put(':id')
+  @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
     @Body() data: UpdateUserInput,
@@ -79,6 +84,7 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Put(':id/change-password')
+  @HttpCode(HttpStatus.OK)
   async changePassword(
     @Param('id') id: string,
     @Body() data: ChangePasswordInput,
@@ -88,6 +94,7 @@ export class UserController {
 
   @UseGuards(AuthGuard, AdminGuard)
   @Get('/')
+  @HttpCode(HttpStatus.OK)
   async findManyUser(
     @Query() data: FindManyUserInput,
   ): Promise<UserWithoutPassword[]> {

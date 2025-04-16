@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -33,6 +35,7 @@ export class StatementExtractController {
   @UseGuards(AuthGuard, AdminGuard)
   @UseInterceptors(FileInterceptor('file'))
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async triggerAutomation(
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
@@ -47,18 +50,21 @@ export class StatementExtractController {
 
   @UseGuards(AuthGuard, AdminGuard)
   @Get()
+  @HttpCode(HttpStatus.OK)
   async findMany(): Promise<StatementExtract[]> {
     return await this.findManyStatementExtractService.execute();
   }
 
   @UseGuards(AuthGuard, AdminGuard)
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   async findById(@Param('id') id: string): Promise<StatementExtract> {
     return await this.findByIdStatementExtractService.execute(id);
   }
 
   @UseGuards(AuthGuard, AdminGuard)
   @Put(':id')
+  @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
     @Body() data: UpdateStatementExtractInput,

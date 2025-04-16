@@ -24,7 +24,7 @@ import { AuthModule } from 'src/auth/auth.module';
     BullModule.registerQueue({
       name: 'belomax-queue',
     }),
-    AuthModule
+    AuthModule,
   ],
   controllers: [StatementExtractController, StatementTermController],
   providers: [

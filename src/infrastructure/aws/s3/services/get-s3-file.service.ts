@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { S3Provider } from '../s3.provider';
 import { ConfigService } from '@nestjs/config';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
@@ -7,7 +7,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 @Injectable()
 export class S3GetFileService {
   constructor(
-    @Inject(S3Provider) private readonly s3: S3Provider,
+    private readonly s3: S3Provider,
     private readonly configService: ConfigService,
   ) {}
 
@@ -22,7 +22,7 @@ export class S3GetFileService {
 
       const command = new GetObjectCommand(params);
       const url = await getSignedUrl(this.s3.getClient(), command, {
-        expiresIn: 3600,
+        expiresIn: 900, // 15 minutes
       });
 
       const response = await this.s3.getClient().send(command);

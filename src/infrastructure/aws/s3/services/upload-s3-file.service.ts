@@ -21,7 +21,7 @@ export class S3AddFileService {
           Body: file,
           ContentType: mimeType,
         }),
-      )
+      ).then(res => console.log(res))
 
       return true
     } catch (error) {
