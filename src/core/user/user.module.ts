@@ -43,7 +43,8 @@ import { SetPasswordService } from './services/set-password.service';
     SendEmailTokenService,
     VerifyTokenService,
     ResetPasswordService,
-    SetPasswordService
+    SetPasswordService,
   ],
+  exports: [FindUserService],
 })
 export class UserModule {}

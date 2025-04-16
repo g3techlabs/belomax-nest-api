@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
-import { CreateDocumentInput } from '../inputs/create-document.input';
+import { CreateDocumentDataInput } from '../inputs/create-document.input';
 import { UpdateDocumentInput } from '../inputs/update-document.input';
 import { Document } from '@prisma/client';
 import { FindManyDocumentInput } from '../inputs/find-many-document.input';
@@ -9,7 +9,7 @@ import { FindManyDocumentInput } from '../inputs/find-many-document.input';
 export class DocumentRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateDocumentInput): Promise<Document> {
+  async create(data: CreateDocumentDataInput): Promise<Document> {
     return await this.prisma.document.create({
       data: {
         name: data.name,

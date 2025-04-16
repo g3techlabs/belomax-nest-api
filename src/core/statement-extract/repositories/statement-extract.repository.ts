@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
-import { CreateStatementExtractInput } from '../inputs/create-statement-extract.input';
+import { CreateStatementExtractDataInput } from '../inputs/create-statement-extract.input';
 import { UpdateStatementExtractInput } from '../inputs/update-statement-extract.input';
 import { StatementExtract } from '@prisma/client';
 
@@ -8,7 +8,9 @@ import { StatementExtract } from '@prisma/client';
 export class StatementExtractRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateStatementExtractInput): Promise<StatementExtract> {
+  async create(
+    data: CreateStatementExtractDataInput,
+  ): Promise<StatementExtract> {
     return await this.prisma.statementExtract.create({
       data: {
         automationId: data.automationId,

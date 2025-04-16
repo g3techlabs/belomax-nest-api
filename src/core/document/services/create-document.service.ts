@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { DocumentRepository } from '../repositories/document.repository';
-import { CreateDocumentInput } from '../inputs/create-document.input';
+import { CreateDocumentServiceInput } from '../inputs/create-document.input';
 import { Document } from '@prisma/client';
 import { FindByIdAutomationService } from 'src/core/automation/services/find-by-id-automation.service';
 import { S3AddFileService } from 'src/infrastructure/aws/s3/services/upload-s3-file.service';
@@ -17,7 +17,7 @@ export class CreateDocumentService {
     private readonly s3AddFileService: S3AddFileService,
   ) {}
 
-  async execute(data: CreateDocumentInput): Promise<Document> {
+  async execute(data: CreateDocumentServiceInput): Promise<Document> {
     const { automationId, file } = data;
 
     if (!file) {
@@ -31,11 +31,15 @@ export class CreateDocumentService {
       throw new NotFoundException('Automation not found');
     }
 
+    console.log(file);
+
     const documentUrl = await this.s3AddFileService.execute({
       file: file.buffer,
-      name: `${automation.id}-${file.originalname}-${new Date().toISOString()}`,
+      name: `${automation.id}-${new Date().toISOString()}-${file.originalname}`,
       mimeType: file.mimetype,
     });
+
+    console.log(documentUrl);
 
     return await this.documentRepository.create({
       ...data,

@@ -4,13 +4,13 @@ import {
   Controller,
   Get,
   Param,
-  Post,
   Put,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
+  // Post,
+  // UploadedFile,
+  // UseInterceptors,
 } from '@nestjs/common';
-import { CreateDocumentInput } from '../inputs/create-document.input';
+// import { CreateDocumentRequestInput } from '../inputs/create-document.input';
 import { CreateDocumentService } from '../services/create-document.service';
 import { UpdateDocumentInput } from '../inputs/update-document.input';
 import { FindManyDocumentService } from '../services/find-many-document.service';
@@ -20,7 +20,7 @@ import { Document } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { FindManyDocumentInput } from '../inputs/find-many-document.input';
-import { FileInterceptor } from '@nestjs/platform-express';
+// import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('documents')
 export class DocumentController {
@@ -31,15 +31,15 @@ export class DocumentController {
     private readonly findByIdDocumentService: FindByIdDocumentService,
   ) {}
 
-  @UseGuards(AuthGuard, AdminGuard)
-  @UseInterceptors(FileInterceptor('file'))
-  @Post()
-  async create(
-    @Body() data: CreateDocumentInput,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<Document> {
-    return await this.createDocumentService.execute({ ...data, file });
-  }
+  // @UseGuards(AuthGuard, AdminGuard)
+  // @UseInterceptors(FileInterceptor('file'))
+  // @Post()
+  // async create(
+  //   @Body() data: CreateDocumentRequestInput,
+  //   @UploadedFile() file: Express.Multer.File,
+  // ): Promise<Document> {
+  //   return await this.createDocumentService.execute({ ...data, file });
+  // }
 
   @UseGuards(AuthGuard, AdminGuard)
   @Get()

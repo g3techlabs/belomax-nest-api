@@ -1,17 +1,24 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateDocumentInput {
+export class CreateDocumentRequestInput {
   @IsString()
   @IsNotEmpty()
   name: string;
 
   @IsString()
   @IsNotEmpty()
-  url: string;
-
-  @IsString()
-  @IsNotEmpty()
   automationId: string;
+}
 
-  file?: Express.Multer.File;
+export class CreateDocumentServiceInput {
+  name: string;
+  automationId: string;
+  file: Express.Multer.File;
+}
+
+export class CreateDocumentDataInput {
+  name: string;
+  automationId: string;
+  url: string;
+  file: Express.Multer.File;
 }
