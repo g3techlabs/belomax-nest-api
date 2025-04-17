@@ -59,12 +59,14 @@ export class CreateStatementExtractService {
       automationId: automation.id,
     });
 
-    await this.belomaxQueue.add('new-statement-extract', {
+    const queueData = {
       fileUrl,
       automationId: automation.id,
       bank,
       terms: selectedTerms,
-    });
+    };
+
+    await this.belomaxQueue.add('new-statement-extract', queueData);
 
     return await this.statementExtractRepository.create({
       ...data,
