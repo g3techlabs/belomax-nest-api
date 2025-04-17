@@ -5,11 +5,14 @@ import {
 } from '@nestjs/common';
 import { StatementExtractRepository } from '../repositories/statement-extract.repository';
 import { CreateStatementExtractServiceInput } from '../inputs/create-statement-extract.input';
-import { StatementExtract } from '@prisma/client';
+// import { StatementExtract } from '@prisma/client';
 import { FindUserService } from '../../user/services/find-user.service';
 import { StatementTermRepository } from '../repositories/statement-term.repository';
 import { CreateAutomationService } from '../../automation/services/create-automation.service';
 import { CreateDocumentService } from '../../document/services/create-document.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import { StatementExtract } from '@prisma/client';
 
 @Injectable()
 export class CreateStatementExtractService {
@@ -19,6 +22,7 @@ export class CreateStatementExtractService {
     private readonly findUserService: FindUserService,
     private readonly createAutomationService: CreateAutomationService,
     private readonly createDocumentService: CreateDocumentService,
+    @InjectQueue('belomax-queue') private readonly belomaxQueue: Queue,
   ) {}
 
   async execute(
@@ -53,6 +57,13 @@ export class CreateStatementExtractService {
       name: `${automation.id}-${new Date().toISOString()}-${file.originalname}`,
       file: file,
       automationId: automation.id,
+    });
+
+    await this.belomaxQueue.add('new-statement-extract', {
+      fileUrl,
+      automationId: automation.id,
+      bank,
+      terms: selectedTerms,
     });
 
     return await this.statementExtractRepository.create({

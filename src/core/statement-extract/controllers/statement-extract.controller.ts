@@ -33,7 +33,7 @@ export class StatementExtractController {
   @UseGuards(AuthGuard, AdminGuard)
   @UseInterceptors(FileInterceptor('file'))
   @Post()
-  async create(
+  async triggerAutomation(
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
     @Body() data: CreateStatementExtractRequestInput,
