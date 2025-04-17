@@ -68,10 +68,10 @@ export class UserRepository {
           email && email.trim() !== ''
             ? { contains: email, mode: 'insensitive' }
             : undefined,
-        role: role ? { equals: role, mode: 'insensitive' } : undefined,
+        role: role ? { equals: role } : undefined,
       },
-      take: take || 10,
-      skip: page ? (page - 1) * (take || 10) : 0,
+      take: take ?? 10,
+      skip: page ? (page - 1) * (take ?? 10) : 0,
     });
   }
 }

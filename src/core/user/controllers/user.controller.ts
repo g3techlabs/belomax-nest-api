@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { FindUserService } from '../services/find-user.service';
@@ -32,6 +33,7 @@ import { ResetPasswordInput } from '../inputs/reset-password.input';
 import { ResetPasswordService } from '../services/reset-password.service';
 import { SetPasswordInput } from '../inputs/set-password.input';
 import { SetPasswordService } from '../services/set-password.service';
+import { UserWithoutPassword } from '../entities/user-without-password';
 @Controller('users')
 export class UserController {
   constructor(
@@ -87,7 +89,7 @@ export class UserController {
 
   @UseGuards(AuthGuard, AdminGuard)
   @Get('/')
-  async findManyUser(@Body() data: FindManyUserInput): Promise<User[]> {
+  async findManyUser(@Query() data: FindManyUserInput): Promise<UserWithoutPassword[]> {
     return await this.findManyUserService.execute(data);
   }
 
