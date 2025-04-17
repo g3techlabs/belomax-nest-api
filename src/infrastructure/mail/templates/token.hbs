@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redefinição de Senha</title>
+  <style>
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      line-height: 1.6;
+      color: #252525;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 1px solid #ebebeb;
+    }
+    .logo {
+      max-width: 150px;
+      margin-bottom: 20px;
+    }
+    .content {
+      padding: 30px 20px;
+      background-color: #ffffff;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #8e8e8e;
+      background-color: #f8f8f8;
+    }
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #2196F3;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      margin: 20px 0;
+    }
+    .token-box {
+      background-color: #f8f8f8;
+      border: 1px solid #ebebeb;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .token-value {
+      font-family: monospace;
+      font-size: 24px;
+      letter-spacing: 2px;
+      background-color: #ffffff;
+      padding: 12px 16px;
+      border: 1px solid #ebebeb;
+      border-radius: 5px;
+      display: inline-block;
+      margin: 10px 0;
+    }
+    .highlight {
+      color: #2196F3;
+      font-weight: 600;
+    }
+    .warning {
+      color: #F44336;
+      font-weight: 600;
+    }
+    .expiry-info {
+      font-size: 14px;
+      color: #8e8e8e;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      {{!-- <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Cidade_de_Francisco_Dantas-RN.jpg" alt="Logo da Empresa" class="logo"> --}}
+      <h1>Redefinição de Senha</h1>
+    </div>
+    
+    <div class="content">
+      <p>Olá {{userName}},</p>
+      
+      <p>Para redefinir sua senha, utilize o token abaixo ou clique no botão:</p>
+      
+      <div class="token-box">
+        <p>Seu token de redefinição de senha:</p>
+        <div class="token-value">{{token}}</div>
+        <p class="expiry-info">Este token expira em <span class="highlight">{{expiryTime}}</span> minutos.</p>
+      </div>
+      
+      <p><span class="warning">Importante:</span> Nunca compartilhe este token com outras pessoas.</p>
+      
+      <div style="text-align: center;">
+        <a href="{{resetPasswordUrl}}" class="button">Redefinir Senha</a>
+      </div>
+      
+      <p>Recebemos uma solicitação para redefinir a senha da sua conta. Se você não solicitou esta alteração, por favor ignore este e-mail ou entre em contato com nosso suporte.</p>
+      
+      <p>Atenciosamente,<br>Equipe Belo & Max</p>
+    </div>
+    
+    <div class="footer">
+      <p>Este e-mail foi enviado para {{userEmail}}. Se você não solicitou este e-mail, por favor ignore ou entre em contato com o suporte.</p>
+      <p>&copy; {{currentYear}} Belo & Max. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</body>
+</html>
