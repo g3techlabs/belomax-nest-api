@@ -9,9 +9,10 @@ import { UpdateStatementExtractService } from './services/update-statement-extra
 import { StatementTermController } from './controllers/statement-term.controller';
 import { StatementTermRepository } from './repositories/statement-term.repository';
 import { CreateStatementTermsService } from './services/create-statement-terms.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AuthModule],
   controllers: [StatementExtractController, StatementTermController],
   providers: [
     StatementExtractRepository,
