@@ -17,29 +17,32 @@ import { UpdateAutomationInput } from '../inputs/update-automation.input';
 import { Automation } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
+import { ChangeStatusAutomationInput } from '../inputs/change-status-automation.input';
+import { ChangeStatusAutomationService } from '../services/change-status-automation.service';
 
-@Controller('automations')
+@Controller('api/automations')
 export class AutomationController {
   constructor(
     private readonly createAutomationService: CreateAutomationService,
     private readonly findManyAutomationService: FindManyAutomationService,
     private readonly findByIdAutomationService: FindByIdAutomationService,
     private readonly updateAutomationService: UpdateAutomationService,
+    private readonly changeStatusAutomationService: ChangeStatusAutomationService,
   ) {}
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @Post()
   async create(@Body() data: CreateAutomationInput): Promise<Automation> {
     return await this.createAutomationService.execute(data);
   }
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @Get()
   async findMany(@Body() data: FindManyAutomationInput): Promise<Automation[]> {
     return await this.findManyAutomationService.execute(data);
   }
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @Get(':id')
   async findById(@Param('id') id: string): Promise<Automation> {
     return await this.findByIdAutomationService.execute(id);
@@ -52,5 +55,14 @@ export class AutomationController {
     @Body() data: UpdateAutomationInput,
   ): Promise<Automation> {
     return await this.updateAutomationService.execute(id, data);
+  }
+
+  @UseGuards(AuthGuard)
+  @Put(':id/status')
+  async changeStatus(
+    @Param('id') id: string,
+    @Body() data: ChangeStatusAutomationInput,
+  ) {
+    return await this.changeStatusAutomationService.execute(id, data);
   }
 }

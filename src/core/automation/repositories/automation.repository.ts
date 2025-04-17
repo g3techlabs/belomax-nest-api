@@ -3,7 +3,7 @@ import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service
 import { CreateAutomationInput } from '../inputs/create-automation.input';
 import { UpdateAutomationInput } from '../inputs/update-automation.input';
 import { FindManyAutomationInput } from '../inputs/find-many-automation.input';
-import { Automation } from '@prisma/client';
+import { Automation, AutomationStatus } from '@prisma/client';
 
 @Injectable()
 export class AutomationRepository {
@@ -56,6 +56,16 @@ export class AutomationRepository {
     return await this.prisma.automation.update({
       where: { id },
       data,
+    });
+  }
+
+  async changeStatus(
+    id: string,
+    status: AutomationStatus,
+  ): Promise<Automation> {
+    return await this.prisma.automation.update({
+      where: { id },
+      data: { status },
     });
   }
 }

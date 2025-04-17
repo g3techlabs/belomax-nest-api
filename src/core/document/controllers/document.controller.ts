@@ -22,7 +22,7 @@ import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { FindManyDocumentInput } from '../inputs/find-many-document.input';
 // import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('documents')
+@Controller('api/documents')
 export class DocumentController {
   constructor(
     // private readonly createDocumentService: CreateDocumentService,

@@ -32,7 +32,7 @@ import { ResetPasswordInput } from '../inputs/reset-password.input';
 import { ResetPasswordService } from '../services/reset-password.service';
 import { SetPasswordInput } from '../inputs/set-password.input';
 import { SetPasswordService } from '../services/set-password.service';
-@Controller('users')
+@Controller('api/users')
 export class UserController {
   constructor(
     private readonly findUserService: FindUserService,
