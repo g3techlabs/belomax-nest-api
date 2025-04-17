@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
 import { FindManyUserInput } from '../inputs/find-many-user.input';
-import { User } from '@prisma/client';
+import { UserWithoutPassword } from '../entities/user-without-password';
 
 @Injectable()
 export class FindManyUserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(data: FindManyUserInput): Promise<User[]> {
+  async execute(data: FindManyUserInput): Promise<UserWithoutPassword[]> {
     const allUsers = await this.userRepository.findMany(data);
 
-    return allUsers;
+    const usersWithoutPassword = allUsers.map(({ password, ...user }) => user)
+
+    return usersWithoutPassword;
   }
 }

@@ -46,7 +46,7 @@ model User {
   email    String  @unique
   name     String
   password String?
-  role     String  @default("USER")
+  role     Role    @default(USER)
 
   automations Automation[]
   resetToken  ResetToken?

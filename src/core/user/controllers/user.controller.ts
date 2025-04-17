@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { FindUserService } from '../services/find-user.service';
@@ -87,7 +88,9 @@ export class UserController {
 
   @UseGuards(AuthGuard, AdminGuard)
   @Get('/')
-  async findManyUser(@Body() data: FindManyUserInput): Promise<User[]> {
+  async findManyUser(
+    @Query() data: FindManyUserInput,
+  ): Promise<UserWithoutPassword[]> {
     return await this.findManyUserService.execute(data);
   }
 

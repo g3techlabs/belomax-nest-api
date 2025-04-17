@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class FindManyUserInput {
@@ -12,7 +13,7 @@ export class FindManyUserInput {
   @IsString()
   @IsEnum(['ADMIN', 'USER'])
   @IsOptional()
-  role?: 'ADMIN' | 'USER';
+  role?: Role;
 
   @IsNumber()
   @IsOptional()
