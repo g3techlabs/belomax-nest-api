@@ -1,11 +1,13 @@
 import {
   CanActivate,
   ExecutionContext,
+  forwardRef,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
-import { Request } from 'express';
+import { UserRepository } from 'src/core/user/repositories/user.repository';
+import { CustomRequest } from '../current-user';
 
 export interface AuthUser {
   id: string;
@@ -14,17 +16,12 @@ export interface AuthUser {
   role: string;
 }
 
-export interface CustomRequest extends Request {
-  user: AuthUser;
-}
-
 @Injectable()
 export class AdminGuard implements CanActivate {
-  private prisma: PrismaClient;
-
-  constructor() {
-    this.prisma = new PrismaClient();
-  }
+  constructor(
+    @Inject(forwardRef(() => UserRepository))
+    private readonly userRepository: UserRepository,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: CustomRequest = context.switchToHttp().getRequest();
@@ -35,11 +32,7 @@ export class AdminGuard implements CanActivate {
       throw new UnauthorizedException('User is not authenticated');
     }
 
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id: reqUser.id,
-      },
-    });
+    const user = await this.userRepository.findById(reqUser.id);
 
     if (!user) {
       throw new UnauthorizedException('User not found');

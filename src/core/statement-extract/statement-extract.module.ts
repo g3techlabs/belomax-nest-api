@@ -13,6 +13,7 @@ import { AutomationModule } from '../automation/automation.module';
 import { UserModule } from '../user/user.module';
 import { DocumentModule } from '../document/document.module';
 import { BullModule } from '@nestjs/bullmq';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { BullModule } from '@nestjs/bullmq';
     BullModule.registerQueue({
       name: 'belomax-queue',
     }),
+    AuthModule
   ],
   controllers: [StatementExtractController, StatementTermController],
   providers: [
