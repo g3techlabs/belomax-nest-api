@@ -1,0 +1,52 @@
+name: 🚀 Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+  # ou para deploy manual:
+  # workflow_dispatch:
+
+jobs:
+  deploy:
+    name: 🏠 Deploy NestJS app to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ✅ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⚖️ Validate required secrets
+        run: |
+          if [ -z "$HOST" ] || [ -z "$SSH_PRIVATE_KEY" ] || [ -z "$DEPLOY_PATH" ]; then
+            echo "Erro: Variáveis de ambiente HOST, SSH_PRIVATE_KEY ou DEPLOY_PATH não configuradas."
+            exit 1
+          fi
+        env:
+          HOST: ${{ secrets.HOST }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+
+      - name: ⚖️ Adiciona chave SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 🔧 Deploy via SSH na EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.HOST }} << EOF
+            set -e
+            echo "🔄 Entrando na pasta $DEPLOY_PATH"
+            cd $DEPLOY_PATH
+
+            echo "🔄 Atualizando repositório"
+            git pull origin main
+
+            echo "🛠️ Reconstruindo containers"
+            docker compose down
+            docker compose up -d --build
+
+            echo "✅ Deploy concluído com sucesso"
+          EOF
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
