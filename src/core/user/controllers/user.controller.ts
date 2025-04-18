@@ -34,7 +34,8 @@ import { ResetPasswordService } from '../services/reset-password.service';
 import { SetPasswordInput } from '../inputs/set-password.input';
 import { SetPasswordService } from '../services/set-password.service';
 import { UserWithoutPassword } from '../entities/user-without-password';
-@Controller('users')
+
+@Controller('api/users')
 export class UserController {
   constructor(
     private readonly findUserService: FindUserService,
@@ -46,7 +47,7 @@ export class UserController {
     private readonly sendEmailTokenService: SendEmailTokenService,
     private readonly verifyTokenService: VerifyTokenService,
     private readonly resetPaswordService: ResetPasswordService,
-    private readonly setPasswordService: SetPasswordService
+    private readonly setPasswordService: SetPasswordService,
   ) {}
 
   @Post('authenticate')
@@ -59,18 +60,21 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   async findById(@Param('id') id: string): Promise<User | null> {
     return await this.findUserService.execute(id);
   }
 
-  @UseGuards(AuthGuard, AdminGuard)
+  // @UseGuards(AuthGuard, AdminGuard)
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async create(@Body() data: CreateUserInput): Promise<User | null> {
     return await this.createUserService.execute(data);
   }
 
   @UseGuards(AuthGuard)
   @Put(':id')
+  @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
     @Body() data: UpdateUserInput,
@@ -80,6 +84,7 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Put(':id/change-password')
+  @HttpCode(HttpStatus.OK)
   async changePassword(
     @Param('id') id: string,
     @Body() data: ChangePasswordInput,
@@ -89,7 +94,10 @@ export class UserController {
 
   @UseGuards(AuthGuard, AdminGuard)
   @Get('/')
-  async findManyUser(@Query() data: FindManyUserInput): Promise<UserWithoutPassword[]> {
+  @HttpCode(HttpStatus.OK)
+  async findManyUser(
+    @Query() data: FindManyUserInput,
+  ): Promise<UserWithoutPassword[]> {
     return await this.findManyUserService.execute(data);
   }
 
@@ -114,6 +122,6 @@ export class UserController {
   @Post('set-password')
   @HttpCode(HttpStatus.NO_CONTENT)
   async setPassword(@Body() data: SetPasswordInput) {
-    return await this.setPasswordService.execute(data)
+    return await this.setPasswordService.execute(data);
   }
 }

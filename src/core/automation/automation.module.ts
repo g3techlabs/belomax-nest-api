@@ -11,6 +11,7 @@ import { FindManyAutomationService } from './services/find-many-automation.servi
 import { FindByIdAutomationService } from './services/find-by-id-automation.service';
 import { UpdateAutomationService } from './services/update-automation.service';
 import { AuthModule } from 'src/auth/auth.module';
+import { ChangeStatusAutomationService } from './services/change-status-automation.service';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
@@ -23,6 +24,12 @@ import { AuthModule } from 'src/auth/auth.module';
     FindManyAutomationService,
     FindByIdAutomationService,
     UpdateAutomationService,
+    ChangeStatusAutomationService,
+  ],
+  exports: [
+    CreateAutomationService,
+    UpdateAutomationService,
+    FindByIdAutomationService,
   ],
 })
 export class AutomationModule {}

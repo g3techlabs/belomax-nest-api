@@ -1,21 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AutomationRepository } from '../repositories/automation.repository';
-import { UpdateAutomationInput } from '../inputs/update-automation.input';
-import { Automation } from '@prisma/client';
+import { ChangeStatusAutomationInput } from '../inputs/change-status-automation.input';
 
 @Injectable()
-export class UpdateAutomationService {
+export class ChangeStatusAutomationService {
   constructor(private readonly automationRepository: AutomationRepository) {}
 
-  async execute(id: string, data: UpdateAutomationInput): Promise<Automation> {
+  async execute(id: string, data: ChangeStatusAutomationInput): Promise<void> {
     const automation = await this.automationRepository.findById(id);
 
     if (!automation) {
       throw new NotFoundException('Automation not found');
     }
 
-    const updatedAutomation = await this.automationRepository.update(id, data);
-
-    return updatedAutomation;
+    await this.automationRepository.update(id, { status: data.status });
   }
 }
