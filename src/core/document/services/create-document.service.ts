@@ -8,6 +8,7 @@ import { CreateDocumentServiceInput } from '../inputs/create-document.input';
 import { Document } from '@prisma/client';
 import { FindByIdAutomationService } from 'src/core/automation/services/find-by-id-automation.service';
 import { S3AddFileService } from 'src/infrastructure/aws/s3/services/upload-s3-file.service';
+import { S3GetFileService } from 'src/infrastructure/aws/s3/services/get-s3-file.service';
 
 @Injectable()
 export class CreateDocumentService {
@@ -15,6 +16,7 @@ export class CreateDocumentService {
     private readonly documentRepository: DocumentRepository,
     private readonly findByIdAutomationService: FindByIdAutomationService,
     private readonly s3AddFileService: S3AddFileService,
+    private readonly s3GetFileService: S3GetFileService,
   ) {}
 
   async execute(data: CreateDocumentServiceInput): Promise<Document> {
