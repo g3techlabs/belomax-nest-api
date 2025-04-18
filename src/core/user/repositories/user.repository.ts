@@ -26,8 +26,13 @@ export class UserRepository {
   }
 
   async create(data: CreateUserInput): Promise<User> {
+    const { password, ...rest } = data;
+
     return await this.prisma.user.create({
-      data,
+      data: {
+        ...rest,
+        password: password ?? null,
+      },
     });
   }
 
@@ -68,10 +73,10 @@ export class UserRepository {
           email && email.trim() !== ''
             ? { contains: email, mode: 'insensitive' }
             : undefined,
-        role: role ? { equals: role, mode: 'insensitive' } : undefined,
+        role: role ? { equals: role } : undefined,
       },
-      take: take || 10,
-      skip: page ? (page - 1) * (take || 10) : 0,
+      take: take ?? 10,
+      skip: page ? (page - 1) * (take ?? 10) : 0,
     });
   }
 }

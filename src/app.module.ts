@@ -13,6 +13,8 @@ import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ResetTokenModule } from './core/reset-token/reset-token.module';
 import { StatementExtractModule } from './core/statement-extract/statement-extract.module';
+import { DocumentModule } from './core/document/document.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -34,7 +36,9 @@ import { StatementExtractModule } from './core/statement-extract/statement-extra
       inject: [ConfigService],
     }),
     ConfigModule.forRoot({ isGlobal: true }),
-    ResetTokenModule,
+    ResetTokenModule
+    DocumentModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

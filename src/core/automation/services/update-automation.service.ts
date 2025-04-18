@@ -14,6 +14,8 @@ export class UpdateAutomationService {
       throw new NotFoundException('Automation not found');
     }
 
-    return await this.automationRepository.update(id, data);
+    const updatedAutomation = await this.automationRepository.update(id, data);
+
+    return updatedAutomation;
   }
 }

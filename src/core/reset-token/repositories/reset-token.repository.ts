@@ -19,7 +19,7 @@ export class ResetTokenRepository {
   async findByEmail(email: string) {
     return await this.prisma.resetToken.findFirst({
       where: { user: { email } },
-    })
+    });
   }
 
   async updateToken(userId: string, token: string) {

@@ -4,7 +4,7 @@ import { Job } from 'bullmq';
 import { SendWelcomeEmailConsumer } from './consumers/send-welcome-email.consumer';
 import { SendTokenEmailConsumer } from './consumers/send-token-email.consumer';
 
-@Processor('users-queue')
+@Processor('belomax-queue')
 export class QueueService extends WorkerHost {
   constructor(
     private readonly sendWelcomeEmailConsumer: SendWelcomeEmailConsumer,

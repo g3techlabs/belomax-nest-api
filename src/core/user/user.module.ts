@@ -1,5 +1,5 @@
 import { UserController } from './controllers/user.controller';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { FindUserService } from './services/find-user.service';
 import { CreateUserService } from './services/create-user.service';
 import { UserRepository } from './repositories/user.repository';
@@ -15,6 +15,7 @@ import { SendEmailTokenService } from './services/send-token.service';
 import { VerifyTokenService } from './services/verify-token.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import { SetPasswordService } from './services/set-password.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -25,8 +26,9 @@ import { SetPasswordService } from './services/set-password.service';
       signOptions: { expiresIn: '7d' },
     }),
     BullModule.registerQueue({
-      name: 'users-queue',
+      name: 'belomax-queue',
     }),
+    forwardRef(() => AuthModule),
   ],
   controllers: [UserController],
   providers: [
@@ -43,7 +45,8 @@ import { SetPasswordService } from './services/set-password.service';
     SendEmailTokenService,
     VerifyTokenService,
     ResetPasswordService,
-    SetPasswordService
+    SetPasswordService,
   ],
+  exports: [UserRepository, FindUserService],
 })
 export class UserModule {}

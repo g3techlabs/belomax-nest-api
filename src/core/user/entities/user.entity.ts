@@ -1,11 +1,11 @@
 import { Role } from '@prisma/client';
 
 export class User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   password: string;
   role: Role;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }

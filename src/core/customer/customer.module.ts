@@ -11,9 +11,10 @@ import { CustomerController } from './controllers/customer.controller';
 import { CustomerRepository } from './repositories/customer.repository';
 import { FindByCpfCustomerService } from './services/find-by-cpf-customer.service';
 import { UpdateCustomerService } from './services/update-customer.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AuthModule],
   controllers: [CustomerController],
   providers: [
     //Repositories
