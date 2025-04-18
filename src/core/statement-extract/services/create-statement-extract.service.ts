@@ -13,6 +13,7 @@ import { CreateDocumentService } from '../../document/services/create-document.s
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { StatementExtract } from '@prisma/client';
+import { S3GetFileService } from 'src/infrastructure/aws/s3/services/get-s3-file.service';
 
 @Injectable()
 export class CreateStatementExtractService {
@@ -22,7 +23,8 @@ export class CreateStatementExtractService {
     private readonly findUserService: FindUserService,
     private readonly createAutomationService: CreateAutomationService,
     private readonly createDocumentService: CreateDocumentService,
-    @InjectQueue('belomax-queue') private readonly belomaxQueue: Queue,
+    private readonly s3GetFileService: S3GetFileService,
+    @InjectQueue('belomax-python-queue') private readonly belomaxQueue: Queue,
   ) {}
 
   async execute(
@@ -53,14 +55,14 @@ export class CreateStatementExtractService {
       throw new NotImplementedException('Failed to create automation');
     }
 
-    const fileUrl = await this.createDocumentService.execute({
+    const fileData = await this.createDocumentService.execute({
       name: `${automation.id}-${new Date().toISOString()}-${file.originalname}`,
       file: file,
       automationId: automation.id,
     });
 
     const queueData = {
-      fileUrl,
+      fileAwsName: fileData.name,
       automationId: automation.id,
       bank,
       terms: selectedTerms,
