@@ -38,12 +38,16 @@ export class CreateStatementExtractService {
       throw new BadRequestException('User not found');
     }
 
+    const selectedTermsDescription: string[] = [];
+
     for (const termId of selectedTerms) {
       const termExists = await this.statementTermRepository.findById(termId);
 
       if (!termExists) {
         throw new BadRequestException(`Term with ID ${termId} not found`);
       }
+
+      selectedTermsDescription.push(termExists.description);
     }
 
     const automation = await this.createAutomationService.execute({
@@ -65,7 +69,7 @@ export class CreateStatementExtractService {
       fileAwsName: fileData.name,
       automationId: automation.id,
       bank,
-      terms: selectedTerms,
+      terms: selectedTermsDescription,
     };
 
     await this.belomaxQueue.add('new-statement-extract', queueData);
