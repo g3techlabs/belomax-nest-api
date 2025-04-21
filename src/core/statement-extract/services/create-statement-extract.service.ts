@@ -30,7 +30,7 @@ export class CreateStatementExtractService {
   async execute(
     data: CreateStatementExtractServiceInput,
   ): Promise<StatementExtract> {
-    const { bank, selectedTerms, userId, file } = data;
+    const { bank, selectedTerms, userId, file, token } = data;
 
     const userExists = await this.findUserService.execute(userId);
 
@@ -70,6 +70,7 @@ export class CreateStatementExtractService {
       automationId: automation.id,
       bank,
       terms: selectedTermsDescription,
+      authToken: token,
     };
 
     await this.belomaxQueue.add('new-statement-extract', queueData);
