@@ -14,6 +14,7 @@ export class CreateStatementExtractServiceInput {
   selectedTerms: string[];
   userId: string;
   file: Express.Multer.File;
+  token: string;
 }
 
 export class CreateStatementExtractDataInput {
