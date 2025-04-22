@@ -13,7 +13,6 @@ import { CreateDocumentService } from '../../document/services/create-document.s
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { StatementExtract } from '@prisma/client';
-import { S3GetFileService } from 'src/infrastructure/aws/s3/services/get-s3-file.service';
 
 @Injectable()
 export class CreateStatementExtractService {
@@ -23,7 +22,6 @@ export class CreateStatementExtractService {
     private readonly findUserService: FindUserService,
     private readonly createAutomationService: CreateAutomationService,
     private readonly createDocumentService: CreateDocumentService,
-    private readonly s3GetFileService: S3GetFileService,
     @InjectQueue('belomax-python-queue') private readonly belomaxQueue: Queue,
   ) {}
 

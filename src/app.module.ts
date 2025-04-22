@@ -15,6 +15,7 @@ import { ResetTokenModule } from './core/reset-token/reset-token.module';
 import { StatementExtractModule } from './core/statement-extract/statement-extract.module';
 import { DocumentModule } from './core/document/document.module';
 import { AuthModule } from './auth/auth.module';
+import { PythonApiModule } from './infrastructure/api/python-api/python-api.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AuthModule } from './auth/auth.module';
     ResetTokenModule,
     DocumentModule,
     AuthModule,
+    PythonApiModule
   ],
   controllers: [AppController],
   providers: [AppService],
