@@ -13,7 +13,6 @@ import { CreateDocumentService } from '../../document/services/create-document.s
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { StatementExtract } from '@prisma/client';
-import { S3GetFileService } from 'src/infrastructure/aws/s3/services/get-s3-file.service';
 
 @Injectable()
 export class CreateStatementExtractService {
@@ -23,14 +22,13 @@ export class CreateStatementExtractService {
     private readonly findUserService: FindUserService,
     private readonly createAutomationService: CreateAutomationService,
     private readonly createDocumentService: CreateDocumentService,
-    private readonly s3GetFileService: S3GetFileService,
     @InjectQueue('belomax-python-queue') private readonly belomaxQueue: Queue,
   ) {}
 
   async execute(
     data: CreateStatementExtractServiceInput,
   ): Promise<StatementExtract> {
-    const { bank, selectedTerms, userId, file } = data;
+    const { bank, selectedTerms, userId, file, token } = data;
 
     const userExists = await this.findUserService.execute(userId);
 
@@ -38,12 +36,16 @@ export class CreateStatementExtractService {
       throw new BadRequestException('User not found');
     }
 
+    const selectedTermsDescription: string[] = [];
+
     for (const termId of selectedTerms) {
       const termExists = await this.statementTermRepository.findById(termId);
 
       if (!termExists) {
         throw new BadRequestException(`Term with ID ${termId} not found`);
       }
+
+      selectedTermsDescription.push(termExists.description);
     }
 
     const automation = await this.createAutomationService.execute({
@@ -65,7 +67,8 @@ export class CreateStatementExtractService {
       fileAwsName: fileData.name,
       automationId: automation.id,
       bank,
-      terms: selectedTerms,
+      terms: selectedTermsDescription,
+      authToken: token,
     };
 
     await this.belomaxQueue.add('new-statement-extract', queueData);
