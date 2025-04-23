@@ -1,3 +1,4 @@
+import { WebsocketModule } from './infrastructure/websocket/websocket.module';
 /* eslint-disable */
 import { AutomationModule } from './core/automation/automation.module';
 import { PensionerPaycheckModule } from './core/pensioner-paycheck/pensioner-paycheck.module';
@@ -19,6 +20,7 @@ import { PythonApiModule } from './infrastructure/api/python-api/python-api.modu
 
 @Module({
   imports: [
+    WebsocketModule,
     AutomationModule,
     PensionerPaycheckModule,
     CustomerModule,
@@ -40,7 +42,7 @@ import { PythonApiModule } from './infrastructure/api/python-api/python-api.modu
     ResetTokenModule,
     DocumentModule,
     AuthModule,
-    PythonApiModule
+    PythonApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
