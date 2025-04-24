@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { WebsocketGateway } from '../websocket.gateway';
-import { WsAutomationNewInput } from './inputs/automation-new.input';
+// import { WsAutomationNewInput } from './inputs/automation-new.input';
 import { WsAutomationStatusChangeInput } from './inputs/automation-status-change.input';
 import { WsAutomationDocumentAddedInput } from './inputs/automation-document-added.input';
+import { Automation } from '@prisma/client';
 
 @Injectable()
 export class WsAutomationsService {
   constructor(private readonly ws: WebsocketGateway) {}
 
-  notifyNewAutomation(data: WsAutomationNewInput, userId?: string) {
+  notifyNewAutomation(data: Automation, userId?: string) {
     if (!userId || userId.trim() === '') {
       this.ws.getServer().emit('automation:new', { ...data });
       return;
@@ -17,7 +18,7 @@ export class WsAutomationsService {
     this.ws
       .getServer()
       .to(userId)
-      .emit('automation:new', { userId, ...data });
+      .emit('automation:new', { ...data, userId });
   }
 
   notifyStatusChange(

@@ -32,6 +32,18 @@ export class AutomationRepository {
       },
       include: {
         documents: true,
+        customer: true,
+        user: true,
+        statementExtract: {
+          include: {
+            selectedTerms: true,
+          },
+        },
+        pensionerPaycheck: {
+          include: {
+            terms: true,
+          },
+        },
       },
     });
   }
@@ -48,11 +60,43 @@ export class AutomationRepository {
       },
       take: limit || undefined,
       skip: page && limit ? (page - 1) * limit : undefined,
+      include: {
+        documents: true,
+        customer: true,
+        user: true,
+        statementExtract: {
+          include: {
+            selectedTerms: true,
+          },
+        },
+        pensionerPaycheck: {
+          include: {
+            terms: true,
+          },
+        },
+      },
     });
   }
 
   async findById(id: string): Promise<Automation | null> {
-    return await this.prisma.automation.findUnique({ where: { id } });
+    return await this.prisma.automation.findUnique({
+      where: { id },
+      include: {
+        documents: true,
+        customer: true,
+        user: true,
+        statementExtract: {
+          include: {
+            selectedTerms: true,
+          },
+        },
+        pensionerPaycheck: {
+          include: {
+            terms: true,
+          },
+        },
+      },
+    });
   }
 
   async update(id: string, data: UpdateAutomationInput): Promise<Automation> {
@@ -69,6 +113,21 @@ export class AutomationRepository {
     return await this.prisma.automation.update({
       where: { id },
       data: { status },
+      include: {
+        documents: true,
+        customer: true,
+        user: true,
+        statementExtract: {
+          include: {
+            selectedTerms: true,
+          },
+        },
+        pensionerPaycheck: {
+          include: {
+            terms: true,
+          },
+        },
+      },
     });
   }
 }

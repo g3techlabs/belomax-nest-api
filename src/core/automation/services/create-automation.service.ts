@@ -21,12 +21,7 @@ export class CreateAutomationService {
     if (createdAutomation?.userId) {
       this.wsAutomationsService.notifyNewAutomation(
         {
-          automationId: createdAutomation.id,
-          description: createdAutomation.description,
-          status: createdAutomation.status,
-          createdAt: createdAutomation.createdAt,
-          customerId: createdAutomation?.customerId || undefined,
-          documents: createdAutomation?.documents || undefined,
+          ...createdAutomation,
         },
         createdAutomation?.userId,
       );
