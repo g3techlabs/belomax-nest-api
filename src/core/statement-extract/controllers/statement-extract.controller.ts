@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   HttpCode,
   HttpStatus,
   Param,
@@ -40,11 +41,13 @@ export class StatementExtractController {
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
     @Body() data: CreateStatementExtractRequestInput,
+    @Headers('Authorization') token: string,
   ): Promise<StatementExtract> {
     return await this.createStatementExtractService.execute({
       ...data,
       userId: user.id,
       file,
+      token,
     });
   }
 

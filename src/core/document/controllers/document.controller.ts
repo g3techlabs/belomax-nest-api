@@ -33,7 +33,7 @@ export class DocumentController {
     private readonly findByIdDocumentService: FindByIdDocumentService,
   ) {}
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   @Post()
   @HttpCode(HttpStatus.CREATED)
