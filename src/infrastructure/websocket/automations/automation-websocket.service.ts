@@ -8,26 +8,49 @@ import { WsAutomationDocumentAddedInput } from './inputs/automation-document-add
 export class WsAutomationsService {
   constructor(private readonly ws: WebsocketGateway) {}
 
-  notifyNewAutomation(userId: string, data: WsAutomationNewInput) {
-    this.ws.getServer().to(userId).emit('automation:new', data);
-  }
+  notifyNewAutomation(data: WsAutomationNewInput, userId?: string) {
+    if (!userId || userId.trim() === '') {
+      this.ws.getServer().emit('automation:new', { ...data });
+      return;
+    }
 
-  notifyStatusChange(
-    userId: string,
-    automationId: string,
-    data: WsAutomationStatusChangeInput,
-  ) {
     this.ws
       .getServer()
       .to(userId)
-      .emit('automation:status-update', { automationId, ...data });
+      .emit('automation:new', { userId, ...data });
+  }
+
+  notifyStatusChange(
+    data: WsAutomationStatusChangeInput,
+    automationId: string,
+    userId?: string,
+  ) {
+    if (!userId || userId.trim() === '') {
+      this.ws
+        .getServer()
+        .emit('automation:status-update', { automationId, userId, ...data });
+      return;
+    }
+
+    this.ws
+      .getServer()
+      .to(userId)
+      .emit('automation:status-update', { automationId, userId, ...data });
   }
 
   notifyDocumentAdded(
-    userId: string,
-    automationId: string,
     data: WsAutomationDocumentAddedInput,
+    automationId: string,
+    userId?: string,
   ) {
+    if (!userId || userId.trim() === '') {
+      this.ws.getServer().emit('automation:document-added', {
+        automationId,
+        ...data,
+      });
+      return;
+    }
+
     this.ws
       .getServer()
       .to(userId)

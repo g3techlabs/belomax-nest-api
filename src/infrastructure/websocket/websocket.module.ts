@@ -6,6 +6,6 @@ import { WsAutomationsService } from './automations/automation-websocket.service
   imports: [],
   controllers: [],
   providers: [WebsocketGateway, WsAutomationsService],
-  exports: [WsAutomationsService],
+  exports: [WsAutomationsService, WebsocketGateway],
 })
 export class WebsocketModule {}

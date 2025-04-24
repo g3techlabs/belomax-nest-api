@@ -9,7 +9,7 @@ import { Automation, AutomationStatus } from '@prisma/client';
 export class AutomationRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateAutomationInput): Promise<Automation> {
+  async create(data: CreateAutomationInput) {
     const { description, userId, customerId } = data;
 
     return await this.prisma.automation.create({
@@ -29,6 +29,9 @@ export class AutomationRepository {
               },
             }
           : undefined,
+      },
+      include: {
+        documents: true,
       },
     });
   }
