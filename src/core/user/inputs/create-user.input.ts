@@ -14,10 +14,6 @@ export class CreateUserInput {
   @IsEmail()
   email: string;
 
-  @IsOptional()
-  @IsString()
-  password?: string;
-
   @IsEnum(['ADMIN', 'USER'])
   @IsOptional()
   role?: Role;

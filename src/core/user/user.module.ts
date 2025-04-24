@@ -16,6 +16,7 @@ import { VerifyTokenService } from './services/verify-token.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import { SetPasswordService } from './services/set-password.service';
 import { AuthModule } from 'src/auth/auth.module';
+import { FindUserByEmailService } from './services/find-user-by-email.service';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { AuthModule } from 'src/auth/auth.module';
     UpdateUserService,
     ChangePasswordService,
     FindManyUserService,
+    FindUserByEmailService,
     SendEmailTokenService,
     VerifyTokenService,
     ResetPasswordService,

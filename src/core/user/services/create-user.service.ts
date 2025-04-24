@@ -4,7 +4,6 @@ import { CreateUserInput } from '../inputs/create-user.input';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { JwtService } from '@nestjs/jwt';
-import { hash } from 'bcryptjs';
 
 @Injectable()
 export class CreateUserService {
@@ -15,7 +14,7 @@ export class CreateUserService {
   ) {}
 
   async execute(data: CreateUserInput) {
-    const { name, email, role, password } = data;
+    const { name, email, role } = data;
 
     const userAlreadyExists = await this.userRepository.findByEmail(email);
 
@@ -23,13 +22,10 @@ export class CreateUserService {
       throw new ConflictException('User already exists');
     }
 
-    const hashPassword = password ? await hash(password, 12) : undefined;
-
     const user = await this.userRepository.create({
       name,
       email,
-      role,
-      password: hashPassword,
+      role
     });
 
     const payload = { email: user.email };
