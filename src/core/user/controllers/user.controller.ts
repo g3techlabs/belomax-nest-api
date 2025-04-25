@@ -34,11 +34,13 @@ import { ResetPasswordService } from '../services/reset-password.service';
 import { SetPasswordInput } from '../inputs/set-password.input';
 import { SetPasswordService } from '../services/set-password.service';
 import { UserWithoutPassword } from '../entities/user-without-password';
+import { FindUserByEmailService } from '../services/find-user-by-email.service';
 
 @Controller('api/users')
 export class UserController {
   constructor(
     private readonly findUserService: FindUserService,
+    private readonly findUserByEmailService: FindUserByEmailService,
     private readonly createUserService: CreateUserService,
     private readonly authenticateUserService: AuthenticateUserService,
     private readonly updateUserService: UpdateUserService,
@@ -65,7 +67,13 @@ export class UserController {
     return await this.findUserService.execute(id);
   }
 
-  // @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
+  @Get('/by-email/:email')
+  async findByEmail(@Param('email') email: string): Promise<UserWithoutPassword | null> {
+    return await this.findUserByEmailService.execute(email)
+  }
+
+  @UseGuards(AuthGuard, AdminGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() data: CreateUserInput): Promise<User | null> {

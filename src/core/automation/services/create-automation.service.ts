@@ -8,6 +8,12 @@ export class CreateAutomationService {
   constructor(private readonly automationRepository: AutomationRepository) {}
 
   async execute(data: CreateAutomationInput): Promise<Automation> {
-    return await this.automationRepository.create(data);
+    const createdAutomation = await this.automationRepository.create(data);
+
+    if (!createdAutomation) {
+      throw new Error('Failed to create automation');
+    }
+
+    return createdAutomation;
   }
 }

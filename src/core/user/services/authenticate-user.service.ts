@@ -22,7 +22,10 @@ export class AuthenticateUserService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const passwordIsValid = await compare(password, findUserByEmail.password ?? "");
+    const passwordIsValid = await compare(
+      password,
+      findUserByEmail.password ?? '',
+    );
 
     if (!passwordIsValid) {
       throw new UnauthorizedException('Invalid credentials');

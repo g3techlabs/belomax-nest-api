@@ -8,9 +8,7 @@ import { StatementExtract } from '@prisma/client';
 export class StatementExtractRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(
-    data: CreateStatementExtractDataInput,
-  ): Promise<StatementExtract> {
+  async create(data: CreateStatementExtractDataInput) {
     return await this.prisma.statementExtract.create({
       data: {
         automationId: data.automationId,
@@ -21,19 +19,76 @@ export class StatementExtractRepository {
           })),
         },
       },
+      include: {
+        automation: {
+          include: {
+            documents: true,
+            customer: true,
+            user: true,
+            statementExtract: {
+              include: {
+                selectedTerms: true,
+              },
+            },
+            pensionerPaycheck: {
+              include: {
+                terms: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 
   async findMany(): Promise<StatementExtract[]> {
     return await this.prisma.statementExtract.findMany({
-      include: { selectedTerms: true },
+      include: {
+        automation: {
+          include: {
+            documents: true,
+            customer: true,
+            user: true,
+            statementExtract: {
+              include: {
+                selectedTerms: true,
+              },
+            },
+            pensionerPaycheck: {
+              include: {
+                terms: true,
+              },
+            },
+          },
+        },
+        selectedTerms: true,
+      },
     });
   }
 
   async findById(id: string): Promise<StatementExtract | null> {
     return await this.prisma.statementExtract.findUnique({
       where: { id },
-      include: { selectedTerms: true },
+      include: {
+        automation: {
+          include: {
+            documents: true,
+            customer: true,
+            user: true,
+            statementExtract: {
+              include: {
+                selectedTerms: true,
+              },
+            },
+            pensionerPaycheck: {
+              include: {
+                terms: true,
+              },
+            },
+          },
+        },
+        selectedTerms: true,
+      },
     });
   }
 

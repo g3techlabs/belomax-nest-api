@@ -10,7 +10,9 @@ export class FindManyUserService {
   async execute(data: FindManyUserInput): Promise<UserWithoutPassword[]> {
     const allUsers = await this.userRepository.findMany(data);
 
-    const usersWithoutPassword = allUsers.map(({ password, ...user }) => user)
+    const usersWithoutPassword = allUsers.map(
+      ({ password: _, ...user }) => user,
+    );
 
     return usersWithoutPassword;
   }

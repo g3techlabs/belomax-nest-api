@@ -15,6 +15,9 @@ import { DocumentModule } from '../document/document.module';
 import { BullModule } from '@nestjs/bullmq';
 import { AuthModule } from 'src/auth/auth.module';
 import { AwsModule } from 'src/infrastructure/aws/aws.module';
+import { PythonApiModule } from 'src/infrastructure/api/python-api/python-api.module';
+import { FindExtractTermsService } from './services/extract-terms.service';
+import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 
 @Module({
   imports: [
@@ -27,6 +30,8 @@ import { AwsModule } from 'src/infrastructure/aws/aws.module';
     }),
     AuthModule,
     AwsModule,
+    PythonApiModule,
+    WebsocketModule,
   ],
   controllers: [StatementExtractController, StatementTermController],
   providers: [
@@ -35,8 +40,10 @@ import { AwsModule } from 'src/infrastructure/aws/aws.module';
     FindManyStatementExtractService,
     FindByIdStatementExtractService,
     UpdateStatementExtractService,
-    StatementTermRepository,
     CreateStatementTermsService,
+
+    StatementTermRepository,
+    FindExtractTermsService,
   ],
 })
 export class StatementExtractModule {}

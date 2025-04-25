@@ -13,7 +13,7 @@ import { CreateDocumentService } from '../../document/services/create-document.s
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { StatementExtract } from '@prisma/client';
-import { S3GetFileService } from 'src/infrastructure/aws/s3/services/get-s3-file.service';
+import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
 
 @Injectable()
 export class CreateStatementExtractService {
@@ -23,14 +23,14 @@ export class CreateStatementExtractService {
     private readonly findUserService: FindUserService,
     private readonly createAutomationService: CreateAutomationService,
     private readonly createDocumentService: CreateDocumentService,
-    private readonly s3GetFileService: S3GetFileService,
+    private readonly wsAutomationsService: WsAutomationsService,
     @InjectQueue('belomax-python-queue') private readonly belomaxQueue: Queue,
   ) {}
 
   async execute(
     data: CreateStatementExtractServiceInput,
   ): Promise<StatementExtract> {
-    const { bank, selectedTerms, userId, file } = data;
+    const { bank, selectedTerms, userId, file, token, description } = data;
 
     const userExists = await this.findUserService.execute(userId);
 
@@ -38,16 +38,22 @@ export class CreateStatementExtractService {
       throw new BadRequestException('User not found');
     }
 
+    const selectedTermsDescription: string[] = [];
+
     for (const termId of selectedTerms) {
       const termExists = await this.statementTermRepository.findById(termId);
 
       if (!termExists) {
         throw new BadRequestException(`Term with ID ${termId} not found`);
       }
+
+      selectedTermsDescription.push(termExists.description);
     }
 
     const automation = await this.createAutomationService.execute({
-      description: `Extração de termos de extrato do banco ${bank}`,
+      description: description
+        ? `${description}: Extração de termos - banco ${bank}`
+        : `Extração de termos - banco ${bank}`,
       userId,
     });
 
@@ -65,14 +71,27 @@ export class CreateStatementExtractService {
       fileAwsName: fileData.name,
       automationId: automation.id,
       bank,
-      terms: selectedTerms,
+      terms: selectedTermsDescription,
+      authToken: token,
     };
 
     await this.belomaxQueue.add('new-statement-extract', queueData);
 
-    return await this.statementExtractRepository.create({
-      ...data,
-      automationId: automation.id,
-    });
+    const createdStatementExtract =
+      await this.statementExtractRepository.create({
+        ...data,
+        automationId: automation.id,
+      });
+
+    if (createdStatementExtract.automation?.userId) {
+      this.wsAutomationsService.notifyNewAutomation(
+        {
+          ...createdStatementExtract.automation,
+        },
+        createdStatementExtract.automation?.userId,
+      );
+    }
+
+    return createdStatementExtract;
   }
 }

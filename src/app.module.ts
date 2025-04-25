@@ -1,3 +1,4 @@
+import { WebsocketModule } from './infrastructure/websocket/websocket.module';
 /* eslint-disable */
 import { AutomationModule } from './core/automation/automation.module';
 import { PensionerPaycheckModule } from './core/pensioner-paycheck/pensioner-paycheck.module';
@@ -15,9 +16,11 @@ import { ResetTokenModule } from './core/reset-token/reset-token.module';
 import { StatementExtractModule } from './core/statement-extract/statement-extract.module';
 import { DocumentModule } from './core/document/document.module';
 import { AuthModule } from './auth/auth.module';
+import { PythonApiModule } from './infrastructure/api/python-api/python-api.module';
 
 @Module({
   imports: [
+    WebsocketModule,
     AutomationModule,
     PensionerPaycheckModule,
     CustomerModule,
@@ -36,9 +39,10 @@ import { AuthModule } from './auth/auth.module';
       inject: [ConfigService],
     }),
     ConfigModule.forRoot({ isGlobal: true }),
-    ResetTokenModule
+    ResetTokenModule,
     DocumentModule,
     AuthModule,
+    PythonApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

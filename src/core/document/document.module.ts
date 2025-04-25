@@ -10,9 +10,16 @@ import { AutomationModule } from '../automation/automation.module';
 import { AwsModule } from 'src/infrastructure/aws/aws.module';
 import { GetDocumentUrlService } from './services/get-document-url.service';
 import { AuthModule } from 'src/auth/auth.module';
+import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 
 @Module({
-  imports: [DatabaseModule, AutomationModule, AwsModule, AuthModule],
+  imports: [
+    DatabaseModule,
+    AutomationModule,
+    AwsModule,
+    AuthModule,
+    WebsocketModule,
+  ],
   controllers: [DocumentController],
   providers: [
     // Repositories

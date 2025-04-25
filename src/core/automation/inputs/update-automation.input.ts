@@ -9,4 +9,8 @@ export class UpdateAutomationInput {
   @IsEnum(AutomationStatus)
   @IsOptional()
   status?: AutomationStatus;
+
+  @IsString()
+  @IsOptional()
+  error?: string;
 }
