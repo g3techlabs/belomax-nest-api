@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { DocumentRepository } from '../repositories/document.repository';
 import { CreateDocumentServiceInput } from '../inputs/create-document.input';
-import { Document } from '@prisma/client';
+import { AutomationStatus, Document } from '@prisma/client';
 import { FindByIdAutomationService } from 'src/core/automation/services/find-by-id-automation.service';
 import { S3AddFileService } from 'src/infrastructure/aws/s3/services/upload-s3-file.service';
 import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
@@ -33,6 +33,12 @@ export class CreateDocumentService {
 
     if (!automation) {
       throw new NotFoundException('Automation not found');
+    }
+
+    if (automation.status !== AutomationStatus.PENDING) {
+      throw new BadRequestException(
+        'Automation is not in a valid state to add a document',
+      );
     }
 
     const s3DocumentName = `${automation.id}-${new Date().toISOString()}-${file.originalname}`;

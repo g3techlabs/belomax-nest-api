@@ -30,7 +30,7 @@ export class CreateStatementExtractService {
   async execute(
     data: CreateStatementExtractServiceInput,
   ): Promise<StatementExtract> {
-    const { bank, selectedTerms, userId, file, token } = data;
+    const { bank, selectedTerms, userId, file, token, description } = data;
 
     const userExists = await this.findUserService.execute(userId);
 
@@ -51,7 +51,9 @@ export class CreateStatementExtractService {
     }
 
     const automation = await this.createAutomationService.execute({
-      description: `Extração de termos de extrato do banco ${bank}`,
+      description: description
+        ? `${description}: Extração de termos - banco ${bank}`
+        : `Extração de termos - banco ${bank}`,
       userId,
     });
 
