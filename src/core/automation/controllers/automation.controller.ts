@@ -40,7 +40,7 @@ export class AutomationController {
   }
 
   @UseGuards(AuthGuard)
-  @Get()
+  @Put()
   @HttpCode(HttpStatus.OK)
   async findMany(@Body() data: FindManyAutomationInput): Promise<Automation[]> {
     return await this.findManyAutomationService.execute(data);

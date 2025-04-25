@@ -13,6 +13,7 @@ import { CreateDocumentService } from '../../document/services/create-document.s
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { StatementExtract } from '@prisma/client';
+import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
 
 @Injectable()
 export class CreateStatementExtractService {
@@ -22,6 +23,7 @@ export class CreateStatementExtractService {
     private readonly findUserService: FindUserService,
     private readonly createAutomationService: CreateAutomationService,
     private readonly createDocumentService: CreateDocumentService,
+    private readonly wsAutomationsService: WsAutomationsService,
     @InjectQueue('belomax-python-queue') private readonly belomaxQueue: Queue,
   ) {}
 
@@ -73,9 +75,21 @@ export class CreateStatementExtractService {
 
     await this.belomaxQueue.add('new-statement-extract', queueData);
 
-    return await this.statementExtractRepository.create({
-      ...data,
-      automationId: automation.id,
-    });
+    const createdStatementExtract =
+      await this.statementExtractRepository.create({
+        ...data,
+        automationId: automation.id,
+      });
+
+    if (createdStatementExtract.automation?.userId) {
+      this.wsAutomationsService.notifyNewAutomation(
+        {
+          ...createdStatementExtract.automation,
+        },
+        createdStatementExtract.automation?.userId,
+      );
+    }
+
+    return createdStatementExtract;
   }
 }
