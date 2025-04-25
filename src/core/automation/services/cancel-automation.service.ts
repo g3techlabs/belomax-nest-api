@@ -7,12 +7,14 @@ import { AutomationRepository } from '../repositories/automation.repository';
 import { Automation, AutomationStatus } from '@prisma/client';
 import { CancelAutomationServiceInput } from '../inputs/cancel-automation.input';
 import { FindUserService } from 'src/core/user/services/find-user.service';
+import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
 
 @Injectable()
 export class CancelAutomationService {
   constructor(
     private readonly automationRepository: AutomationRepository,
     private readonly findUserService: FindUserService,
+    private readonly wsAutomationsService: WsAutomationsService,
   ) {}
 
   async execute(data: CancelAutomationServiceInput): Promise<Automation> {
@@ -53,6 +55,14 @@ export class CancelAutomationService {
         status: AutomationStatus.CANCELLED,
         error: errorMessage,
       },
+    );
+
+    this.wsAutomationsService.notifyStatusChange(
+      {
+        status: AutomationStatus.CANCELLED,
+      },
+      data.automationId,
+      automation?.userId || undefined,
     );
 
     return updatedAutomation;
