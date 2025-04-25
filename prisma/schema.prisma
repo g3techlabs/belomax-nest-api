@@ -95,6 +95,7 @@ model Automation {
   description String
 
   status AutomationStatus @default(PENDING)
+  error  String?
 
   userId     String?
   user       User?     @relation(fields: [userId], references: [id])

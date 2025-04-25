@@ -1,4 +1,4 @@
-import { IsEnum, IsArray } from 'class-validator';
+import { IsEnum, IsArray, IsString, IsOptional } from 'class-validator';
 import { StatementBank } from '@prisma/client';
 
 export class CreateStatementExtractRequestInput {
@@ -7,11 +7,16 @@ export class CreateStatementExtractRequestInput {
 
   @IsArray()
   selectedTerms: string[]; // Array of StatementTerm IDs
+
+  @IsString()
+  @IsOptional()
+  description?: string;
 }
 
 export class CreateStatementExtractServiceInput {
   bank: StatementBank;
   selectedTerms: string[];
+  description?: string;
   userId: string;
   file: Express.Multer.File;
   token: string;

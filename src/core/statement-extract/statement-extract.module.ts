@@ -17,6 +17,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { AwsModule } from 'src/infrastructure/aws/aws.module';
 import { PythonApiModule } from 'src/infrastructure/api/python-api/python-api.module';
 import { FindExtractTermsService } from './services/extract-terms.service';
+import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { FindExtractTermsService } from './services/extract-terms.service';
     AuthModule,
     AwsModule,
     PythonApiModule,
+    WebsocketModule,
   ],
   controllers: [StatementExtractController, StatementTermController],
   providers: [

@@ -12,9 +12,12 @@ import { FindByIdAutomationService } from './services/find-by-id-automation.serv
 import { UpdateAutomationService } from './services/update-automation.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { ChangeStatusAutomationService } from './services/change-status-automation.service';
+import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
+import { UserModule } from '../user/user.module';
+import { CancelAutomationService } from './services/cancel-automation.service';
 
 @Module({
-  imports: [DatabaseModule, AuthModule],
+  imports: [DatabaseModule, AuthModule, WebsocketModule, UserModule],
   controllers: [AutomationController],
   providers: [
     // Repositories
@@ -25,6 +28,7 @@ import { ChangeStatusAutomationService } from './services/change-status-automati
     FindByIdAutomationService,
     UpdateAutomationService,
     ChangeStatusAutomationService,
+    CancelAutomationService,
   ],
   exports: [
     CreateAutomationService,

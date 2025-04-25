@@ -23,6 +23,7 @@ import { FindManyDocumentInput } from '../inputs/find-many-document.input';
 import { CreateDocumentRequestInput } from '../inputs/create-document.input';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateDocumentService } from '../services/create-document.service';
+import { GetDocumentUrlService } from '../services/get-document-url.service';
 
 @Controller('api/documents')
 export class DocumentController {
@@ -31,6 +32,7 @@ export class DocumentController {
     private readonly updateDocumentService: UpdateDocumentService,
     private readonly findManyDocumentService: FindManyDocumentService,
     private readonly findByIdDocumentService: FindByIdDocumentService,
+    private readonly getDocumentUrlService: GetDocumentUrlService,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -66,5 +68,12 @@ export class DocumentController {
     @Body() data: UpdateDocumentInput,
   ): Promise<Document> {
     return await this.updateDocumentService.execute(id, data);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get(':id/url')
+  @HttpCode(HttpStatus.OK)
+  async getDocumentUrl(@Param('id') id: string) {
+    return await this.getDocumentUrlService.execute(id);
   }
 }
