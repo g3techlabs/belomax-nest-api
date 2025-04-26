@@ -20,6 +20,11 @@ export class StatementExtractRepository {
         },
       },
       include: {
+        selectedTerms: {
+          include: {
+            statementTerm: true,
+          },
+        },
         automation: {
           include: {
             documents: true,
@@ -44,6 +49,11 @@ export class StatementExtractRepository {
   async findMany(): Promise<StatementExtract[]> {
     return await this.prisma.statementExtract.findMany({
       include: {
+        selectedTerms: {
+          include: {
+            statementTerm: true,
+          },
+        },
         automation: {
           include: {
             documents: true,
@@ -61,7 +71,6 @@ export class StatementExtractRepository {
             },
           },
         },
-        selectedTerms: true,
       },
     });
   }
@@ -87,7 +96,11 @@ export class StatementExtractRepository {
             },
           },
         },
-        selectedTerms: true,
+        selectedTerms: {
+          include: {
+            statementTerm: true,
+          },
+        },
       },
     });
   }

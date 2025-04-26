@@ -18,6 +18,8 @@ import { AwsModule } from 'src/infrastructure/aws/aws.module';
 import { PythonApiModule } from 'src/infrastructure/api/python-api/python-api.module';
 import { FindExtractTermsService } from './services/extract-terms.service';
 import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
+import { FindUniqueStatementTermService } from './services/find-unique-statement-term.service';
+import { FindManyStatementTermByBankService } from './services/find-many-statement-term-by-bank.service';
 
 @Module({
   imports: [
@@ -44,6 +46,8 @@ import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 
     StatementTermRepository,
     FindExtractTermsService,
+    FindUniqueStatementTermService,
+    FindManyStatementTermByBankService,
   ],
 })
 export class StatementExtractModule {}
