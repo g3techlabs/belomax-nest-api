@@ -30,7 +30,11 @@ export class CreateStatementExtractService {
   async execute(
     data: CreateStatementExtractServiceInput,
   ): Promise<StatementExtract> {
-    const { bank, selectedTerms, userId, file, token, description } = data;
+    const { bank, userId, file, token, description } = data;
+
+    const selectedTermsArray = Array.isArray(data.selectedTerms)
+      ? data.selectedTerms
+      : [data.selectedTerms];
 
     const userExists = await this.findUserService.execute(userId);
 
@@ -40,7 +44,7 @@ export class CreateStatementExtractService {
 
     const selectedTermsDescription: string[] = [];
 
-    for (const termId of selectedTerms) {
+    for (const termId of selectedTermsArray) {
       const termExists = await this.statementTermRepository.findById(termId);
 
       if (!termExists) {
@@ -80,6 +84,7 @@ export class CreateStatementExtractService {
     const createdStatementExtract =
       await this.statementExtractRepository.create({
         ...data,
+        selectedTerms: selectedTermsArray,
         automationId: automation.id,
       });
 
