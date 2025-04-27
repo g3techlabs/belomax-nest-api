@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -62,7 +63,7 @@ export class StatementTermController {
   @UseGuards(AuthGuard)
   @Get()
   async findMany(
-    @Body() data: FindManyStatementTermInput,
+    @Query() data: FindManyStatementTermInput,
   ): Promise<StatementTerm[]> {
     return await this.findManyStatementTermService.execute(data);
   }
