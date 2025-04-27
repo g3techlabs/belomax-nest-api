@@ -36,7 +36,11 @@ export class AutomationRepository {
         user: true,
         statementExtract: {
           include: {
-            selectedTerms: true,
+            selectedTerms: {
+              include: {
+                statementTerm: true,
+              },
+            },
           },
         },
         pensionerPaycheck: {
@@ -78,6 +82,9 @@ export class AutomationRepository {
             terms: true,
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
   }

@@ -65,6 +65,20 @@ export class CreateStatementExtractService {
       throw new NotImplementedException('Failed to create automation');
     }
 
+    const createdStatementExtract =
+      await this.statementExtractRepository.create({
+        ...data,
+        selectedTerms: selectedTermsArray,
+        automationId: automation.id,
+      });
+
+    this.wsAutomationsService.notifyNewAutomation(
+      {
+        ...createdStatementExtract.automation,
+      },
+      createdStatementExtract.automation?.userId || undefined,
+    );
+
     const fileData = await this.createDocumentService.execute({
       name: `${automation.id}-${new Date().toISOString()}-${file.originalname}`,
       file: file,
@@ -80,22 +94,6 @@ export class CreateStatementExtractService {
     };
 
     await this.belomaxQueue.add('new-statement-extract', queueData);
-
-    const createdStatementExtract =
-      await this.statementExtractRepository.create({
-        ...data,
-        selectedTerms: selectedTermsArray,
-        automationId: automation.id,
-      });
-
-    if (createdStatementExtract.automation?.userId) {
-      this.wsAutomationsService.notifyNewAutomation(
-        {
-          ...createdStatementExtract.automation,
-        },
-        createdStatementExtract.automation?.userId,
-      );
-    }
 
     return createdStatementExtract;
   }

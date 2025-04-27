@@ -32,7 +32,11 @@ export class StatementExtractRepository {
             user: true,
             statementExtract: {
               include: {
-                selectedTerms: true,
+                selectedTerms: {
+                  include: {
+                    statementTerm: true,
+                  },
+                },
               },
             },
             pensionerPaycheck: {
@@ -71,6 +75,9 @@ export class StatementExtractRepository {
             },
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
   }

@@ -26,7 +26,6 @@ export class UserRepository {
   }
 
   async create(data: CreateUserInput): Promise<User> {
-
     return await this.prisma.user.create({
       data,
     });
@@ -73,6 +72,9 @@ export class UserRepository {
       },
       take: take ?? 10,
       skip: page ? (page - 1) * (take ?? 10) : 0,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 }
