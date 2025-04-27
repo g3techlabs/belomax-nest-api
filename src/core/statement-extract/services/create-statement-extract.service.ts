@@ -30,7 +30,11 @@ export class CreateStatementExtractService {
   async execute(
     data: CreateStatementExtractServiceInput,
   ): Promise<StatementExtract> {
-    const { bank, selectedTerms, userId, file, token, description } = data;
+    const { bank, userId, file, token, description } = data;
+
+    const selectedTermsArray = Array.isArray(data.selectedTerms)
+      ? data.selectedTerms
+      : [data.selectedTerms];
 
     const userExists = await this.findUserService.execute(userId);
 
@@ -40,7 +44,7 @@ export class CreateStatementExtractService {
 
     const selectedTermsDescription: string[] = [];
 
-    for (const termId of selectedTerms) {
+    for (const termId of selectedTermsArray) {
       const termExists = await this.statementTermRepository.findById(termId);
 
       if (!termExists) {
@@ -61,6 +65,20 @@ export class CreateStatementExtractService {
       throw new NotImplementedException('Failed to create automation');
     }
 
+    const createdStatementExtract =
+      await this.statementExtractRepository.create({
+        ...data,
+        selectedTerms: selectedTermsArray,
+        automationId: automation.id,
+      });
+
+    this.wsAutomationsService.notifyNewAutomation(
+      {
+        ...createdStatementExtract.automation,
+      },
+      createdStatementExtract.automation?.userId || undefined,
+    );
+
     const fileData = await this.createDocumentService.execute({
       name: `${automation.id}-${new Date().toISOString()}-${file.originalname}`,
       file: file,
@@ -76,21 +94,6 @@ export class CreateStatementExtractService {
     };
 
     await this.belomaxQueue.add('new-statement-extract', queueData);
-
-    const createdStatementExtract =
-      await this.statementExtractRepository.create({
-        ...data,
-        automationId: automation.id,
-      });
-
-    if (createdStatementExtract.automation?.userId) {
-      this.wsAutomationsService.notifyNewAutomation(
-        {
-          ...createdStatementExtract.automation,
-        },
-        createdStatementExtract.automation?.userId,
-      );
-    }
 
     return createdStatementExtract;
   }

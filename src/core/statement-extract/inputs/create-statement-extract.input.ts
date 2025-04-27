@@ -1,12 +1,23 @@
 import { IsEnum, IsArray, IsString, IsOptional } from 'class-validator';
 import { StatementBank } from '@prisma/client';
+import { Transform } from 'class-transformer';
 
 export class CreateStatementExtractRequestInput {
   @IsEnum(StatementBank)
   bank: StatementBank;
 
   @IsArray()
-  selectedTerms: string[]; // Array of StatementTerm IDs
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return [value];
+      }
+    }
+    return value;
+  })
+  selectedTerms: string[];
 
   @IsString()
   @IsOptional()

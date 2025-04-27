@@ -36,6 +36,9 @@ export class DocumentRepository {
       },
       skip: page && limit ? (page - 1) * limit : undefined,
       take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
