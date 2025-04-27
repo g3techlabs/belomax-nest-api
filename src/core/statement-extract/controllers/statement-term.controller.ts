@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -19,6 +20,8 @@ import { FindUniqueStatementTermService } from '../services/find-unique-statemen
 import { FindUniqueStatementTermInput } from '../inputs/find-unique-statement-term.input';
 import { FindManyStatementTermByBankInput } from '../inputs/find-many-statement-term-by-bank.input';
 import { FindManyStatementTermByBankService } from '../services/find-many-statement-term-by-bank.service';
+import { FindManyStatementTermService } from '../services/find-many-statement-term.service';
+import { FindManyStatementTermInput } from '../inputs/find-many-statement-term.input';
 
 @Controller('api/statement-terms')
 export class StatementTermController {
@@ -27,6 +30,7 @@ export class StatementTermController {
     private readonly findExtractTermsService: FindExtractTermsService,
     private readonly findUniqueStatementTermService: FindUniqueStatementTermService,
     private readonly findManyStatementTermByBankService: FindManyStatementTermByBankService,
+    private readonly findManyStatementTermService: FindManyStatementTermService,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -53,6 +57,14 @@ export class StatementTermController {
     @Body() data: FindManyStatementTermByBankInput,
   ): Promise<StatementTerm[]> {
     return await this.findManyStatementTermByBankService.execute(data);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get()
+  async findMany(
+    @Body() data: FindManyStatementTermInput,
+  ): Promise<StatementTerm[]> {
+    return await this.findManyStatementTermService.execute(data);
   }
 
   @UseInterceptors(FileInterceptor('file'))
