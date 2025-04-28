@@ -22,7 +22,8 @@ export class HighlightPdfTermsService {
     // * pdf-lib modifies the pdf highlighting the terms, pdfjs-dist gets its content and searchs the terms
 
     try {
-      await this.loadDocuments(file.buffer);
+      // file.buffer = Buffer.from(file.buffer);
+      await this.loadDocuments(Buffer.from(file.buffer));
 
       const pages = this.getPages();
 
@@ -44,11 +45,11 @@ export class HighlightPdfTermsService {
     }
   }
 
-  private async loadDocuments(buffer: ArrayBufferLike) {
-    console.log('buffer', buffer);
+  private async loadDocuments(buffer: Buffer) {
+    const pdfData = new Uint8Array(buffer);
     
-    const pdfForHighlight = await PDFDocument.load(buffer);
-    const pdfFoSearch = await getDocument({ data: buffer }).promise;
+    const pdfForHighlight = await PDFDocument.load(pdfData);
+    const pdfFoSearch = await getDocument({ data: pdfData }).promise;
     this.pdfForHighlight = pdfForHighlight;
     this.pdfForSearch = pdfFoSearch;
   }
