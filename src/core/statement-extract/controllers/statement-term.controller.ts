@@ -4,7 +4,9 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
+  Put,
   Query,
   UploadedFile,
   UseGuards,
@@ -23,11 +25,14 @@ import { FindManyStatementTermByBankInput } from '../inputs/find-many-statement-
 import { FindManyStatementTermByBankService } from '../services/find-many-statement-term-by-bank.service';
 import { FindManyStatementTermService } from '../services/find-many-statement-term.service';
 import { FindManyStatementTermInput } from '../inputs/find-many-statement-term.input';
+import { UpdateStatementTermService } from '../services/update-statement-term.service';
+import { UpdateStatementTermInput } from '../inputs/update-statement-term.input';
 
 @Controller('api/statement-terms')
 export class StatementTermController {
   constructor(
     private readonly createStatementTermsService: CreateStatementTermsService,
+    private readonly updateStatementTermService: UpdateStatementTermService,
     private readonly findExtractTermsService: FindExtractTermsService,
     private readonly findUniqueStatementTermService: FindUniqueStatementTermService,
     private readonly findManyStatementTermByBankService: FindManyStatementTermByBankService,
@@ -41,6 +46,15 @@ export class StatementTermController {
     @Body() data: CreateStatementTermsInput,
   ): Promise<StatementTerm[]> {
     return await this.createStatementTermsService.execute(data);
+  }
+
+  @UseGuards(AuthGuard)
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() data: UpdateStatementTermInput,
+  ): Promise<StatementTerm> {
+    return await this.updateStatementTermService.execute(id, data);
   }
 
   @UseGuards(AuthGuard)

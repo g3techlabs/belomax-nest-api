@@ -76,11 +76,11 @@ export class CreateStatementExtractService {
       {
         ...createdStatementExtract.automation,
       },
-      createdStatementExtract.automation?.userId || undefined,
+      createdStatementExtract.automation?.userId || '',
     );
 
     const fileData = await this.createDocumentService.execute({
-      name: `${automation.id}-${new Date().toISOString()}-${file.originalname}`,
+      name: 'BASE',
       file: file,
       automationId: automation.id,
     });

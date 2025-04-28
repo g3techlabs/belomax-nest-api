@@ -21,6 +21,7 @@ import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 import { FindUniqueStatementTermService } from './services/find-unique-statement-term.service';
 import { FindManyStatementTermByBankService } from './services/find-many-statement-term-by-bank.service';
 import { FindManyStatementTermService } from './services/find-many-statement-term.service';
+import { UpdateStatementTermService } from './services/update-statement-term.service';
 
 @Module({
   imports: [
@@ -43,9 +44,10 @@ import { FindManyStatementTermService } from './services/find-many-statement-ter
     FindManyStatementExtractService,
     FindByIdStatementExtractService,
     UpdateStatementExtractService,
+
     CreateStatementTermsService,
     FindManyStatementTermService,
-
+    UpdateStatementTermService,
     StatementTermRepository,
     FindExtractTermsService,
     FindUniqueStatementTermService,
