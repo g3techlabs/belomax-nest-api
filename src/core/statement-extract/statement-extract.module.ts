@@ -21,6 +21,7 @@ import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 import { FindUniqueStatementTermService } from './services/find-unique-statement-term.service';
 import { FindManyStatementTermByBankService } from './services/find-many-statement-term-by-bank.service';
 import { FindManyStatementTermService } from './services/find-many-statement-term.service';
+import { HighlightPdfTermsService } from './services/highlight-pdf-terms.service';
 import { UpdateStatementTermService } from './services/update-statement-term.service';
 
 @Module({
@@ -31,6 +32,9 @@ import { UpdateStatementTermService } from './services/update-statement-term.ser
     DocumentModule,
     BullModule.registerQueue({
       name: 'belomax-python-queue',
+    }),
+    BullModule.registerQueue({
+      name: 'belomax-queue',
     }),
     AuthModule,
     AwsModule,
@@ -47,11 +51,13 @@ import { UpdateStatementTermService } from './services/update-statement-term.ser
 
     CreateStatementTermsService,
     FindManyStatementTermService,
+    HighlightPdfTermsService,
     UpdateStatementTermService,
     StatementTermRepository,
     FindExtractTermsService,
     FindUniqueStatementTermService,
     FindManyStatementTermByBankService,
   ],
+  exports: [HighlightPdfTermsService],
 })
 export class StatementExtractModule {}
