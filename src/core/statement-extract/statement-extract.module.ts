@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { DatabaseModule } from 'src/infrastructure/database/database.module';
 import { StatementExtractController } from './controllers/statement-extract.controller';
 import { StatementExtractRepository } from './repositories/statement-extract.repository';
@@ -31,7 +31,6 @@ import { CountStatementExtractExpectedDocumentsService } from './services/count-
     DatabaseModule,
     AutomationModule,
     UserModule,
-    DocumentModule,
     BullModule.registerQueue({
       name: 'belomax-python-queue',
     }),
@@ -42,6 +41,7 @@ import { CountStatementExtractExpectedDocumentsService } from './services/count-
     AwsModule,
     PythonApiModule,
     WebsocketModule,
+    forwardRef(() => DocumentModule),
   ],
   controllers: [StatementExtractController, StatementTermController],
   providers: [
@@ -62,6 +62,9 @@ import { CountStatementExtractExpectedDocumentsService } from './services/count-
     FindUniqueStatementTermService,
     FindManyStatementTermByBankService,
   ],
-  exports: [HighlightPdfTermsService],
+  exports: [
+    HighlightPdfTermsService,
+    CountStatementExtractExpectedDocumentsService,
+  ],
 })
 export class StatementExtractModule {}

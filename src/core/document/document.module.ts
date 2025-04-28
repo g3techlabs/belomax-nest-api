@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { DatabaseModule } from 'src/infrastructure/database/database.module';
 import { DocumentController } from './controllers/document.controller';
 import { DocumentRepository } from './repositories/document.repository';
@@ -17,10 +17,10 @@ import { StatementExtractModule } from '../statement-extract/statement-extract.m
   imports: [
     DatabaseModule,
     AutomationModule,
-    StatementExtractModule,
     AwsModule,
     AuthModule,
     WebsocketModule,
+    forwardRef(() => StatementExtractModule),
   ],
   controllers: [DocumentController],
   providers: [
