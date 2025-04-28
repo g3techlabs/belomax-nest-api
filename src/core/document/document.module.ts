@@ -11,11 +11,13 @@ import { AwsModule } from 'src/infrastructure/aws/aws.module';
 import { GetDocumentUrlService } from './services/get-document-url.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
+import { StatementExtractModule } from '../statement-extract/statement-extract.module';
 
 @Module({
   imports: [
     DatabaseModule,
     AutomationModule,
+    StatementExtractModule,
     AwsModule,
     AuthModule,
     WebsocketModule,

@@ -1,12 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AutomationRepository } from '../repositories/automation.repository';
-import { Automation } from '@prisma/client';
 
 @Injectable()
 export class FindByIdAutomationService {
   constructor(private readonly automationRepository: AutomationRepository) {}
 
-  async execute(id: string): Promise<Automation> {
+  async execute(id: string) {
     const automation = await this.automationRepository.findById(id);
 
     if (!automation) {

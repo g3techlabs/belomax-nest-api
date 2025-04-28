@@ -23,6 +23,8 @@ import { FindManyStatementTermByBankService } from './services/find-many-stateme
 import { FindManyStatementTermService } from './services/find-many-statement-term.service';
 import { HighlightPdfTermsService } from './services/highlight-pdf-terms.service';
 import { UpdateStatementTermService } from './services/update-statement-term.service';
+import { FindByAutomationIdStatementExtractService } from './services/find-by-automation-id-statement-extract.service';
+import { CountStatementExtractExpectedDocumentsService } from './services/count-statement-extract-expected-documents.service';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { UpdateStatementTermService } from './services/update-statement-term.ser
     FindManyStatementExtractService,
     FindByIdStatementExtractService,
     UpdateStatementExtractService,
+    FindByAutomationIdStatementExtractService,
+    CountStatementExtractExpectedDocumentsService,
 
     CreateStatementTermsService,
     FindManyStatementTermService,
