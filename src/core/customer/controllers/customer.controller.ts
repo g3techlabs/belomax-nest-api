@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CreateCustomerInput } from '../inputs/create-customer.input';
@@ -33,7 +34,7 @@ export class CustomerController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async findMany(
-    @Body() data: FindManyCustomerInput,
+    @Query() data: FindManyCustomerInput,
   ): Promise<FindManyCustomerDto> {
     return await this.findManyCustomerService.execute(data);
   }
@@ -49,6 +50,8 @@ export class CustomerController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() data: CreateCustomerInput): Promise<Customer> {
+    console.log('data', data);
+
     return await this.createCustomerService.execute(data);
   }
 

@@ -1,4 +1,10 @@
-import { IsDate, IsEmail, IsOptional, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsEmail,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateCustomerInput {
   @IsString()
@@ -31,6 +37,7 @@ export class CreateCustomerInput {
   @IsOptional()
   phone?: string;
 
+  @ValidateIf((o) => o.email !== undefined && o.email !== '')
   @IsString()
   @IsEmail()
   @IsOptional()
