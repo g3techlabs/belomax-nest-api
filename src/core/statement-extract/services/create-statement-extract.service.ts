@@ -26,7 +26,7 @@ export class CreateStatementExtractService {
     private readonly createDocumentService: CreateDocumentService,
     private readonly wsAutomationsService: WsAutomationsService,
     @InjectQueue('belomax-python-queue') private readonly pythonQueue: Queue,
-    @InjectQueue('belomax-queue') private readonly belomaxQueue: Queue
+    @InjectQueue('belomax-queue') private readonly belomaxQueue: Queue,
   ) {}
 
   async execute(
@@ -67,14 +67,6 @@ export class CreateStatementExtractService {
       throw new NotImplementedException('Failed to create automation');
     }
 
-    const highlightPdfTerms: HighlightPdfTermsInput = {
-      automationId: automation.id,
-      file,
-      terms: selectedTermsArray
-    }
-
-    await this.belomaxQueue.add('highlight-pdf-terms', highlightPdfTerms)
-
     const createdStatementExtract =
       await this.statementExtractRepository.create({
         ...data,
@@ -104,6 +96,14 @@ export class CreateStatementExtractService {
     };
 
     await this.pythonQueue.add('new-statement-extract', queueData);
+
+    const highlightPdfTerms: HighlightPdfTermsInput = {
+      automationId: automation.id,
+      file,
+      terms: selectedTermsArray,
+    };
+
+    await this.belomaxQueue.add('highlight-pdf-terms', highlightPdfTerms);
 
     return createdStatementExtract;
   }

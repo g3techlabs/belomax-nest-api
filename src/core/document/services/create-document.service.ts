@@ -24,6 +24,8 @@ export class CreateDocumentService {
   async execute(data: CreateDocumentServiceInput): Promise<Document> {
     const { automationId, file } = data;
 
+    console.log('data', data);
+
     if (!file) {
       throw new BadRequestException('File not found');
     }

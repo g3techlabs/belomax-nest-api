@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { TermCoordinates } from '../dtos/term-coordinates';
 import { CreateDocumentService } from '../../document/services/create-document.service';
 import { Injectable } from '@nestjs/common';
@@ -19,25 +21,32 @@ export class HighlightPdfTermsService {
   async execute({ automationId, file, terms }: HighlightPdfTermsInput) {
     // * pdf-lib modifies the pdf highlighting the terms, pdfjs-dist gets its content and searchs the terms
 
-    await this.loadDocuments(file.buffer);
+    try {
+      await this.loadDocuments(file.buffer);
 
-    const pages = this.getPages();
+      const pages = this.getPages();
 
-    const termsToHighlight = await this.findToHighlight(terms);
+      const termsToHighlight = await this.findToHighlight(terms);
 
-    this.applyHighlights(pages, termsToHighlight);
+      this.applyHighlights(pages, termsToHighlight);
 
-    const highlightedDocument = await this.pdfForHighlight.save();
-    const multerFile = this.convertToMulterFile(highlightedDocument);
+      const highlightedDocument = await this.pdfForHighlight.save();
+      const multerFile = this.convertToMulterFile(highlightedDocument);
 
-    return await this.createDocumentService.execute({
-      name: 'DESTACADO',
-      automationId,
-      file: multerFile,
-    });
+      return await this.createDocumentService.execute({
+        name: 'DESTACADO',
+        automationId,
+        file: multerFile,
+      });
+    } catch (error) {
+      console.error('Error highlighting PDF terms:', error);
+      throw new Error('Failed to highlight PDF terms');
+    }
   }
 
   private async loadDocuments(buffer: ArrayBufferLike) {
+    console.log('buffer', buffer);
+    
     const pdfForHighlight = await PDFDocument.load(buffer);
     const pdfFoSearch = await getDocument({ data: buffer }).promise;
     this.pdfForHighlight = pdfForHighlight;
