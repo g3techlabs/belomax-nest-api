@@ -10,12 +10,16 @@ import { FindByIdAutomationService } from 'src/core/automation/services/find-by-
 import { S3AddFileService } from 'src/infrastructure/aws/s3/services/upload-s3-file.service';
 import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
 import { S3GetFileService } from 'src/infrastructure/aws/s3/services/get-s3-file.service';
+import { CountStatementExtractExpectedDocumentsService } from 'src/core/statement-extract/services/count-statement-extract-expected-documents.service';
+import { ChangeStatusAutomationService } from 'src/core/automation/services/change-status-automation.service';
 
 @Injectable()
 export class CreateDocumentService {
   constructor(
     private readonly documentRepository: DocumentRepository,
     private readonly findByIdAutomationService: FindByIdAutomationService,
+    private readonly countStatementExtractExpectedDocumentsService: CountStatementExtractExpectedDocumentsService,
+    private readonly changeStatusAutomationService: ChangeStatusAutomationService,
     private readonly s3AddFileService: S3AddFileService,
     private readonly s3GetFileService: S3GetFileService,
     private readonly wsAutomationsService: WsAutomationsService,
@@ -41,7 +45,27 @@ export class CreateDocumentService {
       );
     }
 
-    const s3DocumentName = `${automation.id}-${new Date().toISOString()}-${file.originalname}`;
+    let expectedDocumentCount = 0;
+    let changeAutomationStatus = false;
+
+    if (automation.statementExtract) {
+      expectedDocumentCount =
+        await this.countStatementExtractExpectedDocumentsService.execute(
+          automation.id,
+        );
+
+      if (automation.documents.length >= expectedDocumentCount) {
+        throw new BadRequestException(
+          `Automation already has the maximum number of documents (${expectedDocumentCount})`,
+        );
+      }
+
+      if (automation.documents.length + 1 === expectedDocumentCount) {
+        changeAutomationStatus = true;
+      }
+    }
+
+    const s3DocumentName = `${data.name}-${automation.id}-${new Date().toISOString()}-${file.originalname}`;
 
     const fileUploaded = await this.s3AddFileService.execute({
       file: file.buffer,
@@ -71,6 +95,12 @@ export class CreateDocumentService {
       automationId,
       automation?.userId || undefined,
     );
+
+    if (changeAutomationStatus) {
+      await this.changeStatusAutomationService.execute(automationId, {
+        status: AutomationStatus.FINISHED,
+      });
+    }
 
     return createdDocument;
   }

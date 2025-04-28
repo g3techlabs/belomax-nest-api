@@ -89,7 +89,7 @@ export class AutomationRepository {
     });
   }
 
-  async findById(id: string): Promise<Automation | null> {
+  async findById(id: string) {
     return await this.prisma.automation.findUnique({
       where: { id },
       include: {

@@ -1,9 +1,14 @@
 import { User } from '@prisma/client';
 import { ChangePasswordInput } from '../inputs/change-password.input';
 import { UserRepository } from '../repositories/user.repository';
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { compare, hash } from 'bcryptjs';
 
+@Injectable()
 export class ChangePasswordService {
   constructor(private readonly userRepository: UserRepository) {}
 

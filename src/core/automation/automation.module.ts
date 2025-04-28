@@ -34,6 +34,7 @@ import { CancelAutomationService } from './services/cancel-automation.service';
     CreateAutomationService,
     UpdateAutomationService,
     FindByIdAutomationService,
+    ChangeStatusAutomationService,
   ],
 })
 export class AutomationModule {}

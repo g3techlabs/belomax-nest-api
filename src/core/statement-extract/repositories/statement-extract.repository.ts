@@ -131,4 +131,36 @@ export class StatementExtractRepository {
       },
     });
   }
+
+  async findStatementExtractByAutomationId(automationId: string) {
+    return await this.prisma.statementExtract.findFirst({
+      where: {
+        automationId,
+      },
+      include: {
+        selectedTerms: {
+          include: {
+            statementTerm: true,
+          },
+        },
+        automation: {
+          include: {
+            documents: true,
+            customer: true,
+            user: true,
+            statementExtract: {
+              include: {
+                selectedTerms: true,
+              },
+            },
+            pensionerPaycheck: {
+              include: {
+                terms: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }

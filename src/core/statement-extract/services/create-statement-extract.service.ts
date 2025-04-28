@@ -14,6 +14,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { StatementExtract } from '@prisma/client';
 import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
+import { HighlightPdfTermsInput } from '../inputs/highlight-pdf-terms.input';
 
 @Injectable()
 export class CreateStatementExtractService {
@@ -24,7 +25,8 @@ export class CreateStatementExtractService {
     private readonly createAutomationService: CreateAutomationService,
     private readonly createDocumentService: CreateDocumentService,
     private readonly wsAutomationsService: WsAutomationsService,
-    @InjectQueue('belomax-python-queue') private readonly belomaxQueue: Queue,
+    @InjectQueue('belomax-python-queue') private readonly pythonQueue: Queue,
+    @InjectQueue('belomax-queue') private readonly belomaxQueue: Queue,
   ) {}
 
   async execute(
@@ -76,11 +78,11 @@ export class CreateStatementExtractService {
       {
         ...createdStatementExtract.automation,
       },
-      createdStatementExtract.automation?.userId || undefined,
+      createdStatementExtract.automation?.userId || '',
     );
 
     const fileData = await this.createDocumentService.execute({
-      name: `${automation.id}-${new Date().toISOString()}-${file.originalname}`,
+      name: 'BASE',
       file: file,
       automationId: automation.id,
     });
@@ -93,7 +95,15 @@ export class CreateStatementExtractService {
       authToken: token,
     };
 
-    await this.belomaxQueue.add('new-statement-extract', queueData);
+    await this.pythonQueue.add('new-statement-extract', queueData);
+
+    const highlightPdfTerms: HighlightPdfTermsInput = {
+      automationId: automation.id,
+      file,
+      terms: selectedTermsArray,
+    };
+
+    await this.belomaxQueue.add('highlight-pdf-terms', highlightPdfTerms);
 
     return createdStatementExtract;
   }

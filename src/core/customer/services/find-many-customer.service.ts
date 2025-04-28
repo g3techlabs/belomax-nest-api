@@ -7,13 +7,9 @@ import { FindManyCustomerDto } from '../dto/find-many-customer.dto';
 export class FindManyCustomerService {
   constructor(private readonly customerRepository: CustomerRepository) {}
 
-  async execute({ cpf, name, limit, page }: FindManyCustomerInput): Promise<FindManyCustomerDto> {
-    const [customers, countCustomers] = await this.customerRepository.findMany({
-      cpf,
-      name,
-      limit,
-      page,
-    });
+  async execute(data: FindManyCustomerInput): Promise<FindManyCustomerDto> {
+    const [customers, countCustomers] =
+      await this.customerRepository.findMany(data);
 
     return {
       customers,

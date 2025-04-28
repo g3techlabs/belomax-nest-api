@@ -5,6 +5,7 @@ import { StatementTerm } from '@prisma/client';
 import { FindUniqueStatementTermInput } from '../inputs/find-unique-statement-term.input';
 import { FindManyStatementTermByBankInput } from '../inputs/find-many-statement-term-by-bank.input';
 import { FindManyStatementTermInput } from '../inputs/find-many-statement-term.input';
+import { UpdateStatementTermInput } from '../inputs/update-statement-term.input';
 
 @Injectable()
 export class StatementTermRepository {
@@ -59,6 +60,16 @@ export class StatementTermRepository {
     }
 
     return createdTerms;
+  }
+
+  async update(id: string, data: UpdateStatementTermInput) {
+    return await this.prisma.statementTerm.update({
+      where: { id },
+      data: {
+        description: data.description,
+        bank: data.bank,
+      },
+    });
   }
 
   async findManyByBank(
