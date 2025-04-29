@@ -69,8 +69,10 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Get('/by-email/:email')
-  async findByEmail(@Param('email') email: string): Promise<UserWithoutPassword | null> {
-    return await this.findUserByEmailService.execute(email)
+  async findByEmail(
+    @Param('email') email: string,
+  ): Promise<UserWithoutPassword | null> {
+    return await this.findUserByEmailService.execute(email);
   }
 
   @UseGuards(AuthGuard, AdminGuard)

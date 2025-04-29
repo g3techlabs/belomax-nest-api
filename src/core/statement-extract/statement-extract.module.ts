@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { DatabaseModule } from 'src/infrastructure/database/database.module';
 import { StatementExtractController } from './controllers/statement-extract.controller';
 import { StatementExtractRepository } from './repositories/statement-extract.repository';
@@ -18,20 +18,30 @@ import { AwsModule } from 'src/infrastructure/aws/aws.module';
 import { PythonApiModule } from 'src/infrastructure/api/python-api/python-api.module';
 import { FindExtractTermsService } from './services/extract-terms.service';
 import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
+import { FindUniqueStatementTermService } from './services/find-unique-statement-term.service';
+import { FindManyStatementTermByBankService } from './services/find-many-statement-term-by-bank.service';
+import { FindManyStatementTermService } from './services/find-many-statement-term.service';
+import { HighlightPdfTermService } from './services/highlight-pdf-term.service';
+import { UpdateStatementTermService } from './services/update-statement-term.service';
+import { FindByAutomationIdStatementExtractService } from './services/find-by-automation-id-statement-extract.service';
+import { CountStatementExtractExpectedDocumentsService } from './services/count-statement-extract-expected-documents.service';
 
 @Module({
   imports: [
     DatabaseModule,
     AutomationModule,
     UserModule,
-    DocumentModule,
     BullModule.registerQueue({
       name: 'belomax-python-queue',
+    }),
+    BullModule.registerQueue({
+      name: 'belomax-queue',
     }),
     AuthModule,
     AwsModule,
     PythonApiModule,
     WebsocketModule,
+    forwardRef(() => DocumentModule),
   ],
   controllers: [StatementExtractController, StatementTermController],
   providers: [
@@ -40,10 +50,21 @@ import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
     FindManyStatementExtractService,
     FindByIdStatementExtractService,
     UpdateStatementExtractService,
-    CreateStatementTermsService,
+    FindByAutomationIdStatementExtractService,
+    CountStatementExtractExpectedDocumentsService,
 
+    CreateStatementTermsService,
+    FindManyStatementTermService,
+    HighlightPdfTermService,
+    UpdateStatementTermService,
     StatementTermRepository,
     FindExtractTermsService,
+    FindUniqueStatementTermService,
+    FindManyStatementTermByBankService,
+  ],
+  exports: [
+    HighlightPdfTermService,
+    CountStatementExtractExpectedDocumentsService,
   ],
 })
 export class StatementExtractModule {}

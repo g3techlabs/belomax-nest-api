@@ -1,3 +1,4 @@
+import { HighlightPdfTermsConsumer } from './consumers/highlight-pdf-terms.consumer';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
@@ -9,6 +10,7 @@ export class QueueService extends WorkerHost {
   constructor(
     private readonly sendWelcomeEmailConsumer: SendWelcomeEmailConsumer,
     private readonly sendTokenEmailConsumer: SendTokenEmailConsumer,
+    private readonly highlightPdfTermsConsumer: HighlightPdfTermsConsumer,
   ) {
     super();
   }
@@ -27,6 +29,8 @@ export class QueueService extends WorkerHost {
       case 'send-token-email':
         await this.sendTokenEmailConsumer.execute(job);
         break;
+      case 'highlight-pdf-terms':
+        await this.highlightPdfTermsConsumer.execute(job);
     }
 
     return {};

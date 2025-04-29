@@ -21,11 +21,11 @@ export class S3AddFileService {
           Body: file,
           ContentType: mimeType,
         }),
-      ).then(res => console.log(res))
+      )
 
       return true
     } catch (error) {
-      console.log('Error uploading file to S3:', error);
+      console.error('Error uploading file to S3:', error);
       throw new Error('Failed to upload file to S3');
     }
   }

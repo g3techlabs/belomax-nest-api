@@ -14,6 +14,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { StatementExtract } from '@prisma/client';
 import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
+import { HighlightPdfTermInput } from '../inputs/highlight-pdf-term.input';
 
 @Injectable()
 export class CreateStatementExtractService {
@@ -24,13 +25,18 @@ export class CreateStatementExtractService {
     private readonly createAutomationService: CreateAutomationService,
     private readonly createDocumentService: CreateDocumentService,
     private readonly wsAutomationsService: WsAutomationsService,
-    @InjectQueue('belomax-python-queue') private readonly belomaxQueue: Queue,
+    @InjectQueue('belomax-python-queue') private readonly pythonQueue: Queue,
+    @InjectQueue('belomax-queue') private readonly belomaxQueue: Queue,
   ) {}
 
   async execute(
     data: CreateStatementExtractServiceInput,
   ): Promise<StatementExtract> {
-    const { bank, selectedTerms, userId, file, token, description } = data;
+    const { bank, userId, file, token, description } = data;
+
+    const selectedTermsArray = Array.isArray(data.selectedTerms)
+      ? data.selectedTerms
+      : [data.selectedTerms];
 
     const userExists = await this.findUserService.execute(userId);
 
@@ -40,13 +46,13 @@ export class CreateStatementExtractService {
 
     const selectedTermsDescription: string[] = [];
 
-    for (const termId of selectedTerms) {
+    for (const termId of selectedTermsArray) {
       const termExists = await this.statementTermRepository.findById(termId);
 
       if (!termExists) {
         throw new BadRequestException(`Term with ID ${termId} not found`);
-      }
-
+      } 
+      
       selectedTermsDescription.push(termExists.description);
     }
 
@@ -61,8 +67,22 @@ export class CreateStatementExtractService {
       throw new NotImplementedException('Failed to create automation');
     }
 
+    const createdStatementExtract =
+      await this.statementExtractRepository.create({
+        ...data,
+        selectedTerms: selectedTermsArray,
+        automationId: automation.id,
+      });
+
+    this.wsAutomationsService.notifyNewAutomation(
+      {
+        ...createdStatementExtract.automation,
+      },
+      createdStatementExtract.automation?.userId || '',
+    );
+
     const fileData = await this.createDocumentService.execute({
-      name: `${automation.id}-${new Date().toISOString()}-${file.originalname}`,
+      name: 'BASE',
       file: file,
       automationId: automation.id,
     });
@@ -75,22 +95,19 @@ export class CreateStatementExtractService {
       authToken: token,
     };
 
-    await this.belomaxQueue.add('new-statement-extract', queueData);
+    await this.pythonQueue.add('new-statement-extract', queueData);
 
-    const createdStatementExtract =
-      await this.statementExtractRepository.create({
-        ...data,
+    
+    selectedTermsDescription.forEach(async (termDescription) => {
+      const highlightPdfTerms: HighlightPdfTermInput = {
         automationId: automation.id,
-      });
+        file,
+        term: termDescription,
+      };
 
-    if (createdStatementExtract.automation?.userId) {
-      this.wsAutomationsService.notifyNewAutomation(
-        {
-          ...createdStatementExtract.automation,
-        },
-        createdStatementExtract.automation?.userId,
-      );
-    }
+      await this.belomaxQueue.add('highlight-pdf-terms', highlightPdfTerms);
+    })
+
 
     return createdStatementExtract;
   }

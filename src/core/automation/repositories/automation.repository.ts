@@ -36,7 +36,11 @@ export class AutomationRepository {
         user: true,
         statementExtract: {
           include: {
-            selectedTerms: true,
+            selectedTerms: {
+              include: {
+                statementTerm: true,
+              },
+            },
           },
         },
         pensionerPaycheck: {
@@ -79,10 +83,13 @@ export class AutomationRepository {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
-  async findById(id: string): Promise<Automation | null> {
+  async findById(id: string) {
     return await this.prisma.automation.findUnique({
       where: { id },
       include: {

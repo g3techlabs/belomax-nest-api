@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { DatabaseModule } from 'src/infrastructure/database/database.module';
 import { DocumentController } from './controllers/document.controller';
 import { DocumentRepository } from './repositories/document.repository';
@@ -11,6 +11,7 @@ import { AwsModule } from 'src/infrastructure/aws/aws.module';
 import { GetDocumentUrlService } from './services/get-document-url.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
+import { StatementExtractModule } from '../statement-extract/statement-extract.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
     AwsModule,
     AuthModule,
     WebsocketModule,
+    forwardRef(() => StatementExtractModule),
   ],
   controllers: [DocumentController],
   providers: [

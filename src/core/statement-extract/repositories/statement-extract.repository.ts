@@ -20,6 +20,44 @@ export class StatementExtractRepository {
         },
       },
       include: {
+        selectedTerms: {
+          include: {
+            statementTerm: true,
+          },
+        },
+        automation: {
+          include: {
+            documents: true,
+            customer: true,
+            user: true,
+            statementExtract: {
+              include: {
+                selectedTerms: {
+                  include: {
+                    statementTerm: true,
+                  },
+                },
+              },
+            },
+            pensionerPaycheck: {
+              include: {
+                terms: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async findMany(): Promise<StatementExtract[]> {
+    return await this.prisma.statementExtract.findMany({
+      include: {
+        selectedTerms: {
+          include: {
+            statementTerm: true,
+          },
+        },
         automation: {
           include: {
             documents: true,
@@ -38,30 +76,8 @@ export class StatementExtractRepository {
           },
         },
       },
-    });
-  }
-
-  async findMany(): Promise<StatementExtract[]> {
-    return await this.prisma.statementExtract.findMany({
-      include: {
-        automation: {
-          include: {
-            documents: true,
-            customer: true,
-            user: true,
-            statementExtract: {
-              include: {
-                selectedTerms: true,
-              },
-            },
-            pensionerPaycheck: {
-              include: {
-                terms: true,
-              },
-            },
-          },
-        },
-        selectedTerms: true,
+      orderBy: {
+        createdAt: 'desc',
       },
     });
   }
@@ -87,7 +103,11 @@ export class StatementExtractRepository {
             },
           },
         },
-        selectedTerms: true,
+        selectedTerms: {
+          include: {
+            statementTerm: true,
+          },
+        },
       },
     });
   }
@@ -108,6 +128,38 @@ export class StatementExtractRepository {
               })),
             }
           : undefined,
+      },
+    });
+  }
+
+  async findStatementExtractByAutomationId(automationId: string) {
+    return await this.prisma.statementExtract.findFirst({
+      where: {
+        automationId,
+      },
+      include: {
+        selectedTerms: {
+          include: {
+            statementTerm: true,
+          },
+        },
+        automation: {
+          include: {
+            documents: true,
+            customer: true,
+            user: true,
+            statementExtract: {
+              include: {
+                selectedTerms: true,
+              },
+            },
+            pensionerPaycheck: {
+              include: {
+                terms: true,
+              },
+            },
+          },
+        },
       },
     });
   }
