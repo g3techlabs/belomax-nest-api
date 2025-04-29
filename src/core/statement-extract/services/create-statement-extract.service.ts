@@ -14,7 +14,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { StatementExtract } from '@prisma/client';
 import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
-import { HighlightPdfTermsInput } from '../inputs/highlight-pdf-terms.input';
+import { HighlightPdfTermInput } from '../inputs/highlight-pdf-term.input';
 
 @Injectable()
 export class CreateStatementExtractService {
@@ -51,8 +51,8 @@ export class CreateStatementExtractService {
 
       if (!termExists) {
         throw new BadRequestException(`Term with ID ${termId} not found`);
-      }
-
+      } 
+      
       selectedTermsDescription.push(termExists.description);
     }
 
@@ -97,13 +97,17 @@ export class CreateStatementExtractService {
 
     await this.pythonQueue.add('new-statement-extract', queueData);
 
-    const highlightPdfTerms: HighlightPdfTermsInput = {
-      automationId: automation.id,
-      file,
-      terms: selectedTermsArray,
-    };
+    
+    selectedTermsDescription.forEach(async (termDescription) => {
+      const highlightPdfTerms: HighlightPdfTermInput = {
+        automationId: automation.id,
+        file,
+        term: termDescription,
+      };
 
-    await this.belomaxQueue.add('highlight-pdf-terms', highlightPdfTerms);
+      await this.belomaxQueue.add('highlight-pdf-terms', highlightPdfTerms);
+    })
+
 
     return createdStatementExtract;
   }

@@ -21,7 +21,7 @@ import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 import { FindUniqueStatementTermService } from './services/find-unique-statement-term.service';
 import { FindManyStatementTermByBankService } from './services/find-many-statement-term-by-bank.service';
 import { FindManyStatementTermService } from './services/find-many-statement-term.service';
-import { HighlightPdfTermsService } from './services/highlight-pdf-terms.service';
+import { HighlightPdfTermService } from './services/highlight-pdf-term.service';
 import { UpdateStatementTermService } from './services/update-statement-term.service';
 import { FindByAutomationIdStatementExtractService } from './services/find-by-automation-id-statement-extract.service';
 import { CountStatementExtractExpectedDocumentsService } from './services/count-statement-extract-expected-documents.service';
@@ -55,7 +55,7 @@ import { CountStatementExtractExpectedDocumentsService } from './services/count-
 
     CreateStatementTermsService,
     FindManyStatementTermService,
-    HighlightPdfTermsService,
+    HighlightPdfTermService,
     UpdateStatementTermService,
     StatementTermRepository,
     FindExtractTermsService,
@@ -63,7 +63,7 @@ import { CountStatementExtractExpectedDocumentsService } from './services/count-
     FindManyStatementTermByBankService,
   ],
   exports: [
-    HighlightPdfTermsService,
+    HighlightPdfTermService,
     CountStatementExtractExpectedDocumentsService,
   ],
 })

@@ -5,12 +5,12 @@ import { CreateDocumentService } from '../../document/services/create-document.s
 import { Injectable } from '@nestjs/common';
 import { Color, PDFDocument, PDFPage, rgb } from 'pdf-lib';
 import { getDocument, PDFDocumentProxy } from 'pdfjs-dist/legacy/build/pdf.mjs';
-import { HighlightPdfTermsInput } from '../inputs/highlight-pdf-terms.input';
+import { HighlightPdfTermInput } from '../inputs/highlight-pdf-term.input';
 import { TextItem } from 'pdfjs-dist/types/src/display/api';
 import { Readable } from 'node:stream';
 
 @Injectable()
-export class HighlightPdfTermsService {
+export class HighlightPdfTermService {
   private pdfForSearch: PDFDocumentProxy;
   private pdfForHighlight: PDFDocument;
   private highlightColor: Color = rgb(1, 1, 0);
@@ -18,16 +18,15 @@ export class HighlightPdfTermsService {
 
   constructor(private readonly createDocumentService: CreateDocumentService) {}
 
-  async execute({ automationId, file, terms }: HighlightPdfTermsInput) {
+  async execute({ automationId, file, term }: HighlightPdfTermInput) {
     // * pdf-lib modifies the pdf highlighting the terms, pdfjs-dist gets its content and searchs the terms
 
     try {
-      // file.buffer = Buffer.from(file.buffer);
       await this.loadDocuments(Buffer.from(file.buffer));
 
       const pages = this.getPages();
 
-      const termsToHighlight = await this.findToHighlight(terms);
+      const termsToHighlight = await this.findToHighlight(term);
 
       this.applyHighlights(pages, termsToHighlight);
 
@@ -35,7 +34,7 @@ export class HighlightPdfTermsService {
       const multerFile = this.convertToMulterFile(highlightedDocument);
 
       return await this.createDocumentService.execute({
-        name: 'DESTACADO',
+        name: `DESTACADO-${term}`,
         automationId,
         file: multerFile,
       });
@@ -47,7 +46,7 @@ export class HighlightPdfTermsService {
 
   private async loadDocuments(buffer: Buffer) {
     const pdfData = new Uint8Array(buffer);
-    
+
     const pdfForHighlight = await PDFDocument.load(pdfData);
     const pdfFoSearch = await getDocument({ data: pdfData }).promise;
     this.pdfForHighlight = pdfForHighlight;
@@ -58,7 +57,7 @@ export class HighlightPdfTermsService {
     return this.pdfForHighlight.getPages();
   }
 
-  private async findToHighlight(terms: string[]) {
+  private async findToHighlight(term: string) {
     const termsToHighlight: {
       pageIndex: number;
       coordinates: TermCoordinates;
@@ -71,12 +70,10 @@ export class HighlightPdfTermsService {
       const textItems = pageTextContent.items as TextItem[];
 
       textItems.forEach((textItem) => {
-        terms.forEach((term) => {
-          if (textItem.str.toLowerCase().includes(term.toLowerCase())) {
-            const coordinates = this.getTermCoordinates(textItem);
-            termsToHighlight.push({ pageIndex: i, coordinates });
-          }
-        });
+        if (textItem.str.toLowerCase().includes(term.toLowerCase())) {
+          const coordinates = this.getTermCoordinates(textItem);
+          termsToHighlight.push({ pageIndex: i, coordinates });
+        }
       });
     }
 
