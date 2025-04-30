@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:22.13.1
 
 WORKDIR /usr/src/app
 
@@ -11,4 +11,5 @@ RUN yarn prisma generate
 
 EXPOSE 3000
 
-CMD ["yarn", "start:dev"]
+CMD ["yarn", "prisma", "generate"]
+# CMD ["yarn", "dev"]
