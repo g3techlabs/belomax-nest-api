@@ -7,7 +7,7 @@ RUN yarn install
 
 COPY . .
 
-RUN yarn prisma generate
+RUN yarn migrate
 
 EXPOSE 3000
 
