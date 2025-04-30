@@ -7,8 +7,6 @@ RUN yarn install
 
 COPY . .
 
-RUN yarn migrate
-
 EXPOSE 3000
 
 CMD ["yarn", "prisma", "generate"]
