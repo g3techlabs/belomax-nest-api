@@ -10,7 +10,12 @@ import { StatementExtractModule } from 'src/core/statement-extract/statement-ext
 @Module({
   imports: [MailModule, StatementExtractModule],
   controllers: [],
-  providers: [SendWelcomeEmailConsumer, QueueService, SendTokenEmailConsumer, HighlightPdfTermsConsumer],
+  providers: [
+    SendWelcomeEmailConsumer,
+    QueueService,
+    SendTokenEmailConsumer,
+    HighlightPdfTermsConsumer,
+  ],
   exports: [SendWelcomeEmailConsumer],
 })
 export class QueueModule {}
