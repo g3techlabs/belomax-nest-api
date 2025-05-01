@@ -12,6 +12,7 @@ import { GetDocumentUrlService } from './services/get-document-url.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 import { StatementExtractModule } from '../statement-extract/statement-extract.module';
+import { ProvideFilledPetitionService } from './services/provide-filled-petition.service';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { StatementExtractModule } from '../statement-extract/statement-extract.m
     FindByIdDocumentService,
     UpdateDocumentService,
     GetDocumentUrlService,
+    ProvideFilledPetitionService
   ],
-  exports: [CreateDocumentService, GetDocumentUrlService],
+  exports: [CreateDocumentService, GetDocumentUrlService, ProvideFilledPetitionService],
 })
 export class DocumentModule {}

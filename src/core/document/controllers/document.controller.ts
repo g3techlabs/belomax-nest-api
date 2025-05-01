@@ -1,3 +1,4 @@
+import { ProvideFilledPetitionService } from './../services/provide-filled-petition.service';
 // @eslint-disable
 import {
   Body,
@@ -24,6 +25,7 @@ import { CreateDocumentRequestInput } from '../inputs/create-document.input';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateDocumentService } from '../services/create-document.service';
 import { GetDocumentUrlService } from '../services/get-document-url.service';
+import { ProvideFilledPetitionInput } from '../inputs/provide-filled-petition.input';
 
 @Controller('api/documents')
 export class DocumentController {
@@ -33,6 +35,7 @@ export class DocumentController {
     private readonly findManyDocumentService: FindManyDocumentService,
     private readonly findByIdDocumentService: FindByIdDocumentService,
     private readonly getDocumentUrlService: GetDocumentUrlService,
+    private readonly provideFilledPetitionService: ProvideFilledPetitionService
   ) {}
 
   @UseGuards(AuthGuard)
@@ -75,5 +78,10 @@ export class DocumentController {
   @HttpCode(HttpStatus.OK)
   async getDocumentUrl(@Param('id') id: string) {
     return await this.getDocumentUrlService.execute(id);
+  }
+
+  @Post('/petition')
+  async fillPetition(@Body() data: ProvideFilledPetitionInput) {
+    return await this.provideFilledPetitionService.execute(data)
   }
 }
