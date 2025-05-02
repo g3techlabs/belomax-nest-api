@@ -7,7 +7,9 @@ export class CreateCustomerService {
   constructor(private readonly customerRepository: CustomerRepository) {}
 
   async execute(data: CreateCustomerInput) {
-    const customerExists = await this.customerRepository.findByCpf(data.cpf);
+    const customerExists = await this.customerRepository.findByCpfCnpj(
+      data.cpf_cnpj,
+    );
 
     if (customerExists) {
       throw new ConflictException('Customer already exists');

@@ -7,7 +7,7 @@ import { Color, PDFDocument, PDFPage, rgb } from 'pdf-lib';
 import { getDocument, PDFDocumentProxy } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { HighlightPdfTermInput } from '../inputs/highlight-pdf-term.input';
 import { TextItem } from 'pdfjs-dist/types/src/display/api';
-import { Readable } from 'node:stream';
+import { MulterFileFactory } from 'src/utils/multer-file-factory';
 
 @Injectable()
 export class HighlightPdfTermService {
@@ -108,44 +108,7 @@ export class HighlightPdfTermService {
   }
 
   private convertToMulterFile(file: Uint8Array): Express.Multer.File {
-    const buffer = Buffer.from(file);
-    return {
-      fieldname: 'file',
-      originalname: 'arquivo-destacado.pdf',
-      mimetype: 'application/pdf',
-      size: file.byteLength,
-      buffer,
-      encoding: '7bit',
-      destination: '',
-      filename: '',
-      path: '',
-      stream: Readable.from(file),
-    };
+    const multerFile = MulterFileFactory.fromBufferOrUint8Array(file)
+    return multerFile
   }
 }
-
-// for (let j = 0; j < items.length; j++) {
-//   const item: any = items[j];
-
-//   if (
-//     typeof item.str === 'string' &&
-//     item.str.toLowerCase().includes(terms.toLowerCase())
-//   ) {
-//     const transform = item.transform;
-//     const x = transform[4];
-//     const y = transform[5];
-//     const width = item.width;
-//     const height = item.height;
-
-//     const pdfLibPage = pages[i];
-
-//     pdfLibPage.drawRectangle({
-//       x,
-//       y,
-//       width,
-//       height,
-//       color: rgb(1, 1, 0),
-//       opacity: 0.5,
-//     });
-//   }
-// }

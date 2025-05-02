@@ -21,7 +21,7 @@ import { FindManyCustomerDto } from '../dto/find-many-customer.dto';
 import { Customer } from '@prisma/client';
 import { UpdateCustomerInput } from '../inputs/update-customer.input';
 
-@Controller('api/customers')
+@Controller('customers')
 export class CustomerController {
   constructor(
     private readonly findManyCustomerService: FindManyCustomerService,

@@ -9,7 +9,7 @@ import { FindByIdCustomerService } from './services/find-by-id-customer.service'
 import { DatabaseModule } from 'src/infrastructure/database/database.module';
 import { CustomerController } from './controllers/customer.controller';
 import { CustomerRepository } from './repositories/customer.repository';
-import { FindByCpfCustomerService } from './services/find-by-cpf-customer.service';
+import { FindByCpfCnpjCustomerService } from './services/find-by-cpf-cnpj-customer.service';
 import { UpdateCustomerService } from './services/update-customer.service';
 import { AuthModule } from 'src/auth/auth.module';
 
@@ -25,11 +25,11 @@ import { AuthModule } from 'src/auth/auth.module';
     UpdateCustomerService,
     FindManyCustomerService,
     FindByIdCustomerService,
-    FindByCpfCustomerService,
+    FindByCpfCnpjCustomerService,
   ],
   exports: [
     FindByIdCustomerService,
-    FindByCpfCustomerService,
+    FindByCpfCnpjCustomerService,
     CreateCustomerService,
   ],
 })

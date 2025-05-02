@@ -24,7 +24,7 @@ import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { CurrentUser } from 'src/auth/current-user';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('api/statement-extracts')
+@Controller('statement-extracts')
 export class StatementExtractController {
   constructor(
     private readonly createStatementExtractService: CreateStatementExtractService,

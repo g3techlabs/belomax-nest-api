@@ -16,6 +16,8 @@ async function bootstrap() {
 
   app.useWebSocketAdapter(new IoAdapter(app));
 
+  app.setGlobalPrefix('api');
+
   await app.listen(PORT, () => {
     const logger = new Logger(NestApplication.name);
     logger.log(`BELOMAX API HTTP server is running on port ${PORT}`);

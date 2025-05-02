@@ -6,11 +6,19 @@ import { MailModule } from '../mail/mail.module';
 import { SendTokenEmailConsumer } from './consumers/send-token-email.consumer';
 import { HighlightPdfTermsConsumer } from './consumers/highlight-pdf-terms.consumer';
 import { StatementExtractModule } from 'src/core/statement-extract/statement-extract.module';
+import { ProvideFilledPetitionConsumer } from './consumers/provide-filled-petition.consumer';
+import { DocumentModule } from 'src/core/document/document.module';
 
 @Module({
-  imports: [MailModule, StatementExtractModule],
+  imports: [MailModule, StatementExtractModule, DocumentModule],
   controllers: [],
-  providers: [SendWelcomeEmailConsumer, QueueService, SendTokenEmailConsumer, HighlightPdfTermsConsumer],
+  providers: [
+    SendWelcomeEmailConsumer,
+    QueueService,
+    SendTokenEmailConsumer,
+    HighlightPdfTermsConsumer,
+    ProvideFilledPetitionConsumer,
+  ],
   exports: [SendWelcomeEmailConsumer],
 })
 export class QueueModule {}
