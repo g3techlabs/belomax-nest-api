@@ -102,9 +102,9 @@ export class ProvideFilledPetitionService {
         chargedValue * 2,
         numero.estilo.monetario,
       ),
-      askedValuePlusChargedValue: parseValueToBrl(chargedValue + this.ASKED_VALUE),
+      askedValuePlusChargedValue: parseValueToBrl((chargedValue * 2) + this.ASKED_VALUE),
       askedValuePlusChargedValueInFull: numero.porExtenso(
-        chargedValue + this.ASKED_VALUE,
+        (chargedValue * 2) + this.ASKED_VALUE,
         numero.estilo.monetario,
       ),
     });

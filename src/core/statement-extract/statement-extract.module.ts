@@ -26,6 +26,8 @@ import { UpdateStatementTermService } from './services/update-statement-term.ser
 import { FindByAutomationIdStatementExtractService } from './services/find-by-automation-id-statement-extract.service';
 import { CountStatementExtractExpectedDocumentsService } from './services/count-statement-extract-expected-documents.service';
 import { CustomerModule } from '../customer/customer.module';
+import { DeleteStatementTermService } from './services/delete-statement-term.service';
+import { ToggleStatementTermService } from './services/toggle-statement-term.service';
 
 @Module({
   imports: [
@@ -63,6 +65,8 @@ import { CustomerModule } from '../customer/customer.module';
     FindExtractTermsService,
     FindUniqueStatementTermService,
     FindManyStatementTermByBankService,
+    DeleteStatementTermService,
+    ToggleStatementTermService,
   ],
   exports: [
     HighlightPdfTermService,
