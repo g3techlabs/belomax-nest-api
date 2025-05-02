@@ -49,14 +49,14 @@ export class DocumentController {
     return await this.createDocumentService.execute({ ...data, file });
   }
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK)
   async findMany(@Body() data: FindManyDocumentInput): Promise<Document[]> {
     return await this.findManyDocumentService.execute(data);
   }
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findById(@Param('id') id: string): Promise<Document> {

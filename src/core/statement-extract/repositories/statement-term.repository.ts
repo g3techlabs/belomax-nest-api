@@ -11,9 +11,12 @@ import { UpdateStatementTermInput } from '../inputs/update-statement-term.input'
 export class StatementTermRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findById(id: string): Promise<StatementTerm | null> {
+  async findById(id: string) {
     return await this.prisma.statementTerm.findUnique({
       where: { id },
+      include: {
+        StatementTermsToExtract: true,
+      },
     });
   }
 
@@ -108,6 +111,12 @@ export class StatementTermRepository {
     return await this.prisma.statementTerm.update({
       where: { id },
       data: { active: false },
+    });
+  }
+
+  async delete(id: string): Promise<StatementTerm> {
+    return await this.prisma.statementTerm.delete({
+      where: { id },
     });
   }
 }
