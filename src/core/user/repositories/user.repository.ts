@@ -77,4 +77,11 @@ export class UserRepository {
       },
     });
   }
+
+  async updateActiveStatus(id: string, active: boolean) {
+    return await this.prisma.user.update({
+      where: { id },
+      data: { active }
+    })
+  }
 }

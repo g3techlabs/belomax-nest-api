@@ -83,7 +83,7 @@ export class ProvideFilledPetitionService {
       maritalStatus: author.maritalStatus ?? 'não informado',
       occupation: author.occupation ?? 'não informado',
       rg: author.rg ?? 'não informado',
-      cpf: author.cpf ?? 'não informado',
+      cpf: author.cpfCnpj ?? 'não informado',
       address: author.address ?? 'não informado',
       bankName: bank.name ?? 'não informado',
       bankCnpj: bank.cnpj ?? 'não informado',
