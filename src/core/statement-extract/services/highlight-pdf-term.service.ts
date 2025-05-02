@@ -108,7 +108,7 @@ export class HighlightPdfTermService {
   }
 
   private convertToMulterFile(file: Uint8Array): Express.Multer.File {
-    const multerFile = MulterFileFactory.fromBufferOrUint8Array(file)
+    const multerFile = MulterFileFactory.fromBufferOrUint8Array(file, 'arquivo.pdf', 'application/pdf');
     return multerFile
   }
 }

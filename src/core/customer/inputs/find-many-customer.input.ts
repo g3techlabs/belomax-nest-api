@@ -7,7 +7,7 @@ export class FindManyCustomerInput {
 
   @IsString()
   @IsOptional()
-  cpf_cnpj?: string;
+  cpfCnpj?: string;
 
   @IsNumber()
   @IsOptional()
