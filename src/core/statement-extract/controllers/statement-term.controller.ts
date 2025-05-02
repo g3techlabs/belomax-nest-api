@@ -28,7 +28,7 @@ import { FindManyStatementTermInput } from '../inputs/find-many-statement-term.i
 import { UpdateStatementTermService } from '../services/update-statement-term.service';
 import { UpdateStatementTermInput } from '../inputs/update-statement-term.input';
 
-@Controller('api/statement-terms')
+@Controller('statement-terms')
 export class StatementTermController {
   constructor(
     private readonly createStatementTermsService: CreateStatementTermsService,

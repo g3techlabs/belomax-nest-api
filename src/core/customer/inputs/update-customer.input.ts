@@ -7,7 +7,7 @@ export class UpdateCustomerInput {
 
   @IsString()
   @IsOptional()
-  cpf?: string;
+  cpf_cnpj?: string;
 
   @IsString()
   @IsOptional()

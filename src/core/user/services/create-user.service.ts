@@ -25,7 +25,7 @@ export class CreateUserService {
     const user = await this.userRepository.create({
       name,
       email,
-      role
+      role,
     });
 
     const payload = { email: user.email };

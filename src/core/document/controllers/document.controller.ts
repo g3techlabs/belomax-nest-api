@@ -27,7 +27,7 @@ import { CreateDocumentService } from '../services/create-document.service';
 import { GetDocumentUrlService } from '../services/get-document-url.service';
 import { ProvideFilledPetitionInput } from '../inputs/provide-filled-petition.input';
 
-@Controller('api/documents')
+@Controller('documents')
 export class DocumentController {
   constructor(
     private readonly createDocumentService: CreateDocumentService,
@@ -35,7 +35,7 @@ export class DocumentController {
     private readonly findManyDocumentService: FindManyDocumentService,
     private readonly findByIdDocumentService: FindByIdDocumentService,
     private readonly getDocumentUrlService: GetDocumentUrlService,
-    private readonly provideFilledPetitionService: ProvideFilledPetitionService
+    private readonly provideFilledPetitionService: ProvideFilledPetitionService,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -82,6 +82,6 @@ export class DocumentController {
 
   @Post('/petition')
   async fillPetition(@Body() data: ProvideFilledPetitionInput) {
-    return await this.provideFilledPetitionService.execute(data)
+    return await this.provideFilledPetitionService.execute(data);
   }
 }

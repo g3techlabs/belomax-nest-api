@@ -25,7 +25,7 @@ import { CancelAutomationRequestInput } from '../inputs/cancel-automation.input'
 import { CurrentUser } from 'src/auth/current-user';
 import { CancelAutomationService } from '../services/cancel-automation.service';
 
-@Controller('api/automations')
+@Controller('automations')
 export class AutomationController {
   constructor(
     private readonly createAutomationService: CreateAutomationService,

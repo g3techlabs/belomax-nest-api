@@ -2,11 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CustomerRepository } from '../repositories/customer.repository';
 
 @Injectable()
-export class FindByCpfCustomerService {
+export class FindByCpfCnpjCustomerService {
   constructor(private readonly customerRepository: CustomerRepository) {}
 
-  async execute(cpf: string) {
-    const customer = await this.customerRepository.findByCpf(cpf);
+  async execute(cpfCnpj: string) {
+    const customer = await this.customerRepository.findByCpfCnpj(cpfCnpj);
 
     if (!customer) {
       throw new NotFoundException('Customer not found');

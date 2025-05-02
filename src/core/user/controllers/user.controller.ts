@@ -36,7 +36,7 @@ import { SetPasswordService } from '../services/set-password.service';
 import { UserWithoutPassword } from '../entities/user-without-password';
 import { FindUserByEmailService } from '../services/find-user-by-email.service';
 
-@Controller('api/users')
+@Controller('users')
 export class UserController {
   constructor(
     private readonly findUserService: FindUserService,

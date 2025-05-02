@@ -33,8 +33,12 @@ import { ProvideFilledPetitionService } from './services/provide-filled-petition
     FindByIdDocumentService,
     UpdateDocumentService,
     GetDocumentUrlService,
-    ProvideFilledPetitionService
+    ProvideFilledPetitionService,
   ],
-  exports: [CreateDocumentService, GetDocumentUrlService, ProvideFilledPetitionService],
+  exports: [
+    CreateDocumentService,
+    GetDocumentUrlService,
+    ProvideFilledPetitionService,
+  ],
 })
 export class DocumentModule {}
