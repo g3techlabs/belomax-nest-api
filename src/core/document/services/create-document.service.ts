@@ -39,7 +39,10 @@ export class CreateDocumentService {
       throw new NotFoundException('Automation not found');
     }
 
-    if (automation.status !== AutomationStatus.PENDING) {
+    if (
+      automation.status === AutomationStatus.FINISHED ||
+      automation.status === AutomationStatus.CANCELLED
+    ) {
       throw new BadRequestException(
         'Automation is not in a valid state to add a document',
       );

@@ -120,41 +120,57 @@ export class CreateStatementExtractService {
       console.error('Error creating document:', error);
       await this.changeStatusAutomationService.execute(automation.id, {
         status: AutomationStatus.FAILED,
-        error: 'Documento base não adicionado',
+        error: 'Documento base não adicionado:' + error.message,
       });
     }
 
-    for (const termDescription of selectedTermsDescription) {
-      const highlightPdfTerms: HighlightPdfTermInput = {
-        automationId: automation.id,
-        file,
-        term: termDescription,
-      };
+    try {
+      for (const termDescription of selectedTermsDescription) {
+        const highlightPdfTerms: HighlightPdfTermInput = {
+          automationId: automation.id,
+          file,
+          term: termDescription,
+        };
 
-      await this.belomaxQueue.add('highlight-pdf-terms', highlightPdfTerms);
+        await this.belomaxQueue.add('highlight-pdf-terms', highlightPdfTerms);
+      }
+    } catch (error) {
+      console.error('Error highlighting PDF terms:', error);
+      await this.changeStatusAutomationService.execute(automation.id, {
+        status: AutomationStatus.FAILED,
+        error: 'Erro ao destacar termos no PDF: ' + error.message,
+      });
     }
 
-    for (const termDescription of selectedTermsDescription) {
-      const termsValue = await this.extractValuePythonApiService.send({
-        file,
-        bank,
-        term: termDescription,
-      });
+    try {
+      for (const termDescription of selectedTermsDescription) {
+        const termsValue = await this.extractValuePythonApiService.send({
+          file,
+          bank,
+          term: termDescription,
+        });
 
-      await this.provideFilledPetitionService.execute({
-        term: termDescription,
-        bank: data.bank,
-        chargedValue: termsValue,
-        author: {
-          address: automation.customer?.address || 'nao informado',
-          citizenship: automation.customer?.citizenship || 'nao informado',
-          cpfCnpj: automation.customer?.cpfCnpj || 'nao informado',
-          maritalStatus: automation.customer?.maritalStatus || 'nao informado',
-          name: automation.customer?.name || 'nao informado',
-          occupation: automation.customer?.occupation || 'nao informado',
-          rg: automation.customer?.rg || 'nao informado',
-        },
-        automationId: automation.id,
+        await this.provideFilledPetitionService.execute({
+          term: termDescription,
+          bank: data.bank,
+          chargedValue: termsValue,
+          author: {
+            address: automation.customer?.address || 'nao informado',
+            citizenship: automation.customer?.citizenship || 'nao informado',
+            cpfCnpj: automation.customer?.cpfCnpj || 'nao informado',
+            maritalStatus: automation.customer?.maritalStatus || 'nao informado',
+            name: automation.customer?.name || 'nao informado',
+            occupation: automation.customer?.occupation || 'nao informado',
+            rg: automation.customer?.rg || 'nao informado',
+          },
+          automationId: automation.id,
+        });
+      }
+    } catch (error) {
+      console.error('Error providing filled petition:', error);
+      await this.changeStatusAutomationService.execute(automation.id, {
+        status: AutomationStatus.FAILED,
+        error: 'Erro ao fornecer petição preenchida: ' + error.message,
       });
     }
 
