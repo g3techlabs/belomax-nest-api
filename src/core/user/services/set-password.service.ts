@@ -14,7 +14,8 @@ export class SetPasswordService {
 
   async execute({ password, setPasswordToken }: SetPasswordInput) {
     try {
-      const payload: CreateUserInput = await this.jwtService.verifyAsync(setPasswordToken);
+      const payload: CreateUserInput =
+        await this.jwtService.verifyAsync(setPasswordToken);
 
       const user = await this.userRepository.findByEmail(payload.email);
 
@@ -23,7 +24,6 @@ export class SetPasswordService {
       const hashedPassword = await hash(password, 12);
 
       await this.userRepository.changePassword(user.id, hashedPassword);
-
     } catch {
       throw new UnauthorizedException('Invalid password token');
     }

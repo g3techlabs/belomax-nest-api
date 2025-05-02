@@ -12,7 +12,13 @@ import { DocumentModule } from 'src/core/document/document.module';
 @Module({
   imports: [MailModule, StatementExtractModule, DocumentModule],
   controllers: [],
-  providers: [SendWelcomeEmailConsumer, QueueService, SendTokenEmailConsumer, HighlightPdfTermsConsumer, ProvideFilledPetitionConsumer],
+  providers: [
+    SendWelcomeEmailConsumer,
+    QueueService,
+    SendTokenEmailConsumer,
+    HighlightPdfTermsConsumer,
+    ProvideFilledPetitionConsumer,
+  ],
   exports: [SendWelcomeEmailConsumer],
 })
 export class QueueModule {}

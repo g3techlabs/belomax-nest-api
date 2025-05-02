@@ -22,9 +22,13 @@ export class CountStatementExtractExpectedDocumentsService {
     const baseDocumentsCount = 1;
     const filterDocumentsCount = termsCount;
     const highlightDocumentsCount = termsCount;
+    const petitionDocumentsCount = termsCount;
 
     const count =
-      baseDocumentsCount + filterDocumentsCount + highlightDocumentsCount;
+      baseDocumentsCount +
+      filterDocumentsCount +
+      highlightDocumentsCount +
+      petitionDocumentsCount;
 
     return count;
   }

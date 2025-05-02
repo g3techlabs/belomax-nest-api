@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { IsEnum, IsArray, IsString, IsOptional } from 'class-validator';
 import { StatementBank } from '@prisma/client';
 import { Transform } from 'class-transformer';
@@ -22,6 +23,9 @@ export class CreateStatementExtractRequestInput {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @IsString()
+  customerId: string;
 }
 
 export class CreateStatementExtractServiceInput {
@@ -31,6 +35,7 @@ export class CreateStatementExtractServiceInput {
   userId: string;
   file: Express.Multer.File;
   token: string;
+  customerId: string;
 }
 
 export class CreateStatementExtractDataInput {
@@ -38,4 +43,5 @@ export class CreateStatementExtractDataInput {
   userId: string;
   bank: StatementBank;
   selectedTerms: string[];
+  customerId: string;
 }

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import {
   BadRequestException,
   Injectable,
@@ -12,9 +14,13 @@ import { CreateAutomationService } from '../../automation/services/create-automa
 import { CreateDocumentService } from '../../document/services/create-document.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { StatementExtract } from '@prisma/client';
+import { AutomationStatus, StatementExtract } from '@prisma/client';
 import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
 import { HighlightPdfTermInput } from '../inputs/highlight-pdf-term.input';
+import { ChangeStatusAutomationService } from 'src/core/automation/services/change-status-automation.service';
+import { ProvideFilledPetitionService } from 'src/core/document/services/provide-filled-petition.service';
+import { ExtractValuePythonApiService } from 'src/infrastructure/api/python-api/services/extract-value-python-api.service';
+import { FindByIdCustomerService } from 'src/core/customer/services/find-by-id-customer.service';
 
 @Injectable()
 export class CreateStatementExtractService {
@@ -25,6 +31,10 @@ export class CreateStatementExtractService {
     private readonly createAutomationService: CreateAutomationService,
     private readonly createDocumentService: CreateDocumentService,
     private readonly wsAutomationsService: WsAutomationsService,
+    private readonly changeStatusAutomationService: ChangeStatusAutomationService,
+    private readonly provideFilledPetitionService: ProvideFilledPetitionService,
+    private readonly extractValuePythonApiService: ExtractValuePythonApiService,
+    private readonly findByIdCustomerService: FindByIdCustomerService,
     @InjectQueue('belomax-python-queue') private readonly pythonQueue: Queue,
     @InjectQueue('belomax-queue') private readonly belomaxQueue: Queue,
   ) {}
@@ -32,7 +42,7 @@ export class CreateStatementExtractService {
   async execute(
     data: CreateStatementExtractServiceInput,
   ): Promise<StatementExtract> {
-    const { bank, userId, file, token, description } = data;
+    const { bank, userId, file, token, description, customerId } = data;
 
     const selectedTermsArray = Array.isArray(data.selectedTerms)
       ? data.selectedTerms
@@ -44,6 +54,13 @@ export class CreateStatementExtractService {
       throw new BadRequestException('User not found');
     }
 
+    const customerExists =
+      await this.findByIdCustomerService.execute(customerId);
+
+    if (!customerExists) {
+      throw new BadRequestException('Customer not found');
+    }
+
     const selectedTermsDescription: string[] = [];
 
     for (const termId of selectedTermsArray) {
@@ -51,8 +68,8 @@ export class CreateStatementExtractService {
 
       if (!termExists) {
         throw new BadRequestException(`Term with ID ${termId} not found`);
-      } 
-      
+      }
+
       selectedTermsDescription.push(termExists.description);
     }
 
@@ -61,6 +78,7 @@ export class CreateStatementExtractService {
         ? `${description}: Extração de termos - banco ${bank}`
         : `Extração de termos - banco ${bank}`,
       userId,
+      customerId,
     });
 
     if (!automation) {
@@ -81,24 +99,31 @@ export class CreateStatementExtractService {
       createdStatementExtract.automation?.userId || '',
     );
 
-    const fileData = await this.createDocumentService.execute({
-      name: 'BASE',
-      file: file,
-      automationId: automation.id,
-    });
+    try {
+      const fileData = await this.createDocumentService.execute({
+        name: 'BASE',
+        file: file,
+        automationId: automation.id,
+      });
 
-    const queueData = {
-      fileAwsName: fileData.name,
-      automationId: automation.id,
-      bank,
-      terms: selectedTermsDescription,
-      authToken: token,
-    };
+      const queueData = {
+        fileAwsName: fileData.name,
+        automationId: automation.id,
+        bank,
+        terms: selectedTermsDescription,
+        authToken: token,
+      };
 
-    await this.pythonQueue.add('new-statement-extract', queueData);
+      await this.pythonQueue.add('new-statement-extract', queueData);
+    } catch (error) {
+      console.error('Error creating document:', error);
+      await this.changeStatusAutomationService.execute(automation.id, {
+        status: AutomationStatus.FAILED,
+        error: 'Documento base não adicionado',
+      });
+    }
 
-    
-    selectedTermsDescription.forEach(async (termDescription) => {
+    for (const termDescription of selectedTermsDescription) {
       const highlightPdfTerms: HighlightPdfTermInput = {
         automationId: automation.id,
         file,
@@ -106,8 +131,31 @@ export class CreateStatementExtractService {
       };
 
       await this.belomaxQueue.add('highlight-pdf-terms', highlightPdfTerms);
-    })
+    }
 
+    for (const termDescription of selectedTermsDescription) {
+      const termsValue = await this.extractValuePythonApiService.send({
+        file,
+        bank,
+        term: termDescription,
+      });
+
+      await this.provideFilledPetitionService.execute({
+        term: termDescription,
+        bank: data.bank,
+        chargedValue: termsValue,
+        author: {
+          address: automation.customer?.address || 'nao informado',
+          citizenship: automation.customer?.citizenship || 'nao informado',
+          cpf_cnpj: automation.customer?.cpf_cnpj || 'nao informado',
+          maritalStatus: automation.customer?.maritalStatus || 'nao informado',
+          name: automation.customer?.name || 'nao informado',
+          occupation: automation.customer?.occupation || 'nao informado',
+          rg: automation.customer?.rg || 'nao informado',
+        },
+        automationId: automation.id,
+      });
+    }
 
     return createdStatementExtract;
   }

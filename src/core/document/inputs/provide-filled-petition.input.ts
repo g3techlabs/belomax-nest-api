@@ -1,18 +1,26 @@
-import { Type } from "class-transformer";
-import { IsNotEmpty, IsNumber, IsString, ValidateNested } from "class-validator";
-import { Author } from "../dto/author.dto";
-import { Bank } from "../dto/bank.dto";
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { Customer, StatementBank } from '@prisma/client';
+import { Bank } from '../dto/bank.dto';
+import { Type } from 'class-transformer';
 
 export class ProvideFilledPetitionInput {
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => Author)
-  author: Author;
+  author: Omit<
+    Customer,
+    'id' | 'createdAt' | 'updatedAt' | 'birthDate' | 'email' | 'phone'
+  >;
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => Bank)
-  bank: Bank;
+  @IsEnum(StatementBank)
+  bank: StatementBank;
 
   @IsString()
   @IsNotEmpty()
@@ -21,4 +29,29 @@ export class ProvideFilledPetitionInput {
   @IsNotEmpty()
   @IsNumber()
   chargedValue: number;
+
+  @IsString()
+  automationId: string;
+}
+
+export class ProvideFilledPetitionPopulateInfoInput {
+  @IsNotEmpty()
+  @ValidateNested()
+  author: Omit<
+    Customer,
+    'id' | 'createdAt' | 'updatedAt' | 'birthDate' | 'email' | 'phone'
+  >;
+
+  @IsString()
+  @IsNotEmpty()
+  term: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  chargedValue: number;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => Bank)
+  bank: Bank;
 }

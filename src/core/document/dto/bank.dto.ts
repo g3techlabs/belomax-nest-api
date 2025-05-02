@@ -1,6 +1,4 @@
-import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { Address } from './address.dto';
 
 export class Bank {
   @IsNotEmpty()
@@ -13,6 +11,5 @@ export class Bank {
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => Address)
-  address: Address;
+  address: string;
 }

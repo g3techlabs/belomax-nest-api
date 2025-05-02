@@ -17,7 +17,11 @@ export class ResetPasswordService {
     private readonly resetTokenRepository: ResetTokenRepository,
   ) {}
 
-  async resetPassword({ email, password, tokenToReset }: ResetPasswordInput): Promise<{ message: string }> {
+  async resetPassword({
+    email,
+    password,
+    tokenToReset,
+  }: ResetPasswordInput): Promise<{ message: string }> {
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) throw new NotFoundException('User not found');
@@ -26,7 +30,9 @@ export class ResetPasswordService {
     try {
       await this.jwtService.verifyAsync(tokenToReset);
     } catch {
-      throw new UnauthorizedException('You do not have enough credentials to perform this action',);
+      throw new UnauthorizedException(
+        'You do not have enough credentials to perform this action',
+      );
     }
 
     const hashedPass = await hash(password, 12);

@@ -11,7 +11,7 @@ export class CreateCustomerInput {
   name: string;
 
   @IsString()
-  cpf: string;
+  cpf_cnpj: string;
 
   @IsString()
   @IsOptional()
