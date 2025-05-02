@@ -8,7 +8,7 @@ export class CreateCustomerService {
 
   async execute(data: CreateCustomerInput) {
     const customerExists = await this.customerRepository.findByCpfCnpj(
-      data.cpf_cnpj,
+      data.cpfCnpj,
     );
 
     if (customerExists) {

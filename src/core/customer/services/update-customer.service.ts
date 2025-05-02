@@ -14,12 +14,12 @@ export class UpdateCustomerService {
     }
 
     if (
-      data.cpf_cnpj &&
-      data.cpf_cnpj.trim() !== '' &&
-      data.cpf_cnpj !== customerExists.cpf_cnpj
+      data.cpfCnpj &&
+      data.cpfCnpj.trim() !== '' &&
+      data.cpfCnpj !== customerExists.cpfCnpj
     ) {
       const customerByCpfCnpj = await this.customerRepository.findByCpfCnpj(
-        data.cpf_cnpj,
+        data.cpfCnpj,
       );
 
       if (customerByCpfCnpj) {

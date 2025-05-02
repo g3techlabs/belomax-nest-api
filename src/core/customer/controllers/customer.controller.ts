@@ -50,8 +50,6 @@ export class CustomerController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() data: CreateCustomerInput): Promise<Customer> {
-    console.log('data', data);
-
     return await this.createCustomerService.execute(data);
   }
 

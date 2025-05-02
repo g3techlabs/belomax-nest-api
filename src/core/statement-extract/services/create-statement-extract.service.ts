@@ -112,6 +112,7 @@ export class CreateStatementExtractService {
         bank,
         terms: selectedTermsDescription,
         authToken: token,
+        customerName: customerExists.name,
       };
 
       await this.pythonQueue.add('new-statement-extract', queueData);
@@ -147,7 +148,7 @@ export class CreateStatementExtractService {
         author: {
           address: automation.customer?.address || 'nao informado',
           citizenship: automation.customer?.citizenship || 'nao informado',
-          cpf_cnpj: automation.customer?.cpf_cnpj || 'nao informado',
+          cpfCnpj: automation.customer?.cpfCnpj || 'nao informado',
           maritalStatus: automation.customer?.maritalStatus || 'nao informado',
           name: automation.customer?.name || 'nao informado',
           occupation: automation.customer?.occupation || 'nao informado',
