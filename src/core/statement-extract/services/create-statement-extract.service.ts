@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import {
   BadRequestException,
   Injectable,
@@ -18,6 +20,7 @@ import { HighlightPdfTermInput } from '../inputs/highlight-pdf-term.input';
 import { ChangeStatusAutomationService } from 'src/core/automation/services/change-status-automation.service';
 import { ProvideFilledPetitionService } from 'src/core/document/services/provide-filled-petition.service';
 import { ExtractValuePythonApiService } from 'src/infrastructure/api/python-api/services/extract-value-python-api.service';
+import { FindByIdCustomerService } from 'src/core/customer/services/find-by-id-customer.service';
 
 @Injectable()
 export class CreateStatementExtractService {
@@ -31,6 +34,7 @@ export class CreateStatementExtractService {
     private readonly changeStatusAutomationService: ChangeStatusAutomationService,
     private readonly provideFilledPetitionService: ProvideFilledPetitionService,
     private readonly extractValuePythonApiService: ExtractValuePythonApiService,
+    private readonly findByIdCustomerService: FindByIdCustomerService,
     @InjectQueue('belomax-python-queue') private readonly pythonQueue: Queue,
     @InjectQueue('belomax-queue') private readonly belomaxQueue: Queue,
   ) {}
@@ -38,7 +42,7 @@ export class CreateStatementExtractService {
   async execute(
     data: CreateStatementExtractServiceInput,
   ): Promise<StatementExtract> {
-    const { bank, userId, file, token, description } = data;
+    const { bank, userId, file, token, description, customerId } = data;
 
     const selectedTermsArray = Array.isArray(data.selectedTerms)
       ? data.selectedTerms
@@ -48,6 +52,13 @@ export class CreateStatementExtractService {
 
     if (!userExists) {
       throw new BadRequestException('User not found');
+    }
+
+    const customerExists =
+      await this.findByIdCustomerService.execute(customerId);
+
+    if (!customerExists) {
+      throw new BadRequestException('Customer not found');
     }
 
     const selectedTermsDescription: string[] = [];
@@ -67,6 +78,7 @@ export class CreateStatementExtractService {
         ? `${description}: Extração de termos - banco ${bank}`
         : `Extração de termos - banco ${bank}`,
       userId,
+      customerId,
     });
 
     if (!automation) {
@@ -133,13 +145,13 @@ export class CreateStatementExtractService {
         bank: data.bank,
         chargedValue: termsValue,
         author: {
-          address: 'Rua dos bobos, 0',
-          citizenship: 'Brasileiro',
-          cpf_cnpj: '12345678909',
-          maritalStatus: 'Solteiro',
-          name: 'João da Silva',
-          occupation: 'Desempregado',
-          rg: '123456789',
+          address: automation.customer?.address || 'nao informado',
+          citizenship: automation.customer?.citizenship || 'nao informado',
+          cpf_cnpj: automation.customer?.cpf_cnpj || 'nao informado',
+          maritalStatus: automation.customer?.maritalStatus || 'nao informado',
+          name: automation.customer?.name || 'nao informado',
+          occupation: automation.customer?.occupation || 'nao informado',
+          rg: automation.customer?.rg || 'nao informado',
         },
         automationId: automation.id,
       });

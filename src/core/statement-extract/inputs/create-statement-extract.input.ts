@@ -24,8 +24,8 @@ export class CreateStatementExtractRequestInput {
   @IsOptional()
   description?: string;
 
-  // @IsString()
-  // customerId: string;
+  @IsString()
+  customerId: string;
 }
 
 export class CreateStatementExtractServiceInput {
@@ -35,7 +35,7 @@ export class CreateStatementExtractServiceInput {
   userId: string;
   file: Express.Multer.File;
   token: string;
-  // customerId: string;
+  customerId: string;
 }
 
 export class CreateStatementExtractDataInput {
@@ -43,5 +43,5 @@ export class CreateStatementExtractDataInput {
   userId: string;
   bank: StatementBank;
   selectedTerms: string[];
-  // customerId: string;
+  customerId: string;
 }
