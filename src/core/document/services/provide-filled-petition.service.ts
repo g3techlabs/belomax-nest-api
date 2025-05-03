@@ -8,7 +8,6 @@ import * as path from 'path';
 import * as PizZip from 'pizzip';
 import * as DocxTemplater from 'docxtemplater';
 import * as numero from 'numero-por-extenso';
-import { formatAddress } from '../dto/address.dto';
 import { MulterFileFactory } from 'src/utils/multer-file-factory';
 import { StatementBank } from '@prisma/client';
 import { Bank } from '../dto/bank.dto';

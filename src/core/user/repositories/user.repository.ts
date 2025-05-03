@@ -55,6 +55,7 @@ export class UserRepository {
     name,
     email,
     role,
+    active,
     page,
     take,
   }: FindManyUserInput): Promise<User[]> {
@@ -69,6 +70,7 @@ export class UserRepository {
             ? { contains: email, mode: 'insensitive' }
             : undefined,
         role: role ? { equals: role } : undefined,
+        active: active ?? undefined
       },
       take: take ?? 10,
       skip: page ? (page - 1) * (take ?? 10) : 0,
@@ -76,5 +78,12 @@ export class UserRepository {
         createdAt: 'desc',
       },
     });
+  }
+
+  async updateActiveStatus(id: string, active: boolean) {
+    return await this.prisma.user.update({
+      where: { id },
+      data: { active }
+    })
   }
 }
