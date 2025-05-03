@@ -13,16 +13,22 @@ export class UpdateCustomerService {
       throw new NotFoundException('Customer not found');
     }
 
-    if (data.cpf && data.cpf.trim() !== '' && data.cpf !== customerExists.cpf) {
-      const customerByCpf = await this.customerRepository.findByCpf(data.cpf);
+    if (
+      data.cpfCnpj &&
+      data.cpfCnpj.trim() !== '' &&
+      data.cpfCnpj !== customerExists.cpfCnpj
+    ) {
+      const customerByCpfCnpj = await this.customerRepository.findByCpfCnpj(
+        data.cpfCnpj,
+      );
 
-      if (customerByCpf) {
+      if (customerByCpfCnpj) {
         throw new NotFoundException('Customer already exists');
       }
     }
 
     if (data.rg && data.rg.trim() !== '' && data.rg !== customerExists.rg) {
-      const customerByRg = await this.customerRepository.findByCpf(data.rg);
+      const customerByRg = await this.customerRepository.findByRg(data.rg);
 
       if (customerByRg) {
         throw new NotFoundException('Customer already exists');

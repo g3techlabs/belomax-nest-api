@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   IsDate,
   IsEmail,
@@ -11,7 +12,7 @@ export class CreateCustomerInput {
   name: string;
 
   @IsString()
-  cpf: string;
+  cpfCnpj: string;
 
   @IsString()
   @IsOptional()

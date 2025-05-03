@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -27,8 +28,10 @@ import { FindManyStatementTermService } from '../services/find-many-statement-te
 import { FindManyStatementTermInput } from '../inputs/find-many-statement-term.input';
 import { UpdateStatementTermService } from '../services/update-statement-term.service';
 import { UpdateStatementTermInput } from '../inputs/update-statement-term.input';
+import { DeleteStatementTermService } from '../services/delete-statement-term.service';
+import { ToggleStatementTermService } from '../services/toggle-statement-term.service';
 
-@Controller('api/statement-terms')
+@Controller('statement-terms')
 export class StatementTermController {
   constructor(
     private readonly createStatementTermsService: CreateStatementTermsService,
@@ -37,6 +40,8 @@ export class StatementTermController {
     private readonly findUniqueStatementTermService: FindUniqueStatementTermService,
     private readonly findManyStatementTermByBankService: FindManyStatementTermByBankService,
     private readonly findManyStatementTermService: FindManyStatementTermService,
+    private readonly deleteStatementTermService: DeleteStatementTermService,
+    private readonly toggleStatementTermService: ToggleStatementTermService,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -90,5 +95,18 @@ export class StatementTermController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     return await this.findExtractTermsService.execute({ ...data, file });
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete(':id')
+  async deleteTerm(@Param('id') id: string): Promise<void> {
+    return await this.deleteStatementTermService.execute(id);
+  }
+
+  @UseGuards(AuthGuard)
+  @Put(':id/status')
+  @HttpCode(HttpStatus.OK)
+  async toggleStatus(@Param('id') id: string) {
+    return await this.toggleStatementTermService.execute(id);
   }
 }

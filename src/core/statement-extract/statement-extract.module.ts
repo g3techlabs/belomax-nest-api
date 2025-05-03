@@ -25,6 +25,9 @@ import { HighlightPdfTermService } from './services/highlight-pdf-term.service';
 import { UpdateStatementTermService } from './services/update-statement-term.service';
 import { FindByAutomationIdStatementExtractService } from './services/find-by-automation-id-statement-extract.service';
 import { CountStatementExtractExpectedDocumentsService } from './services/count-statement-extract-expected-documents.service';
+import { CustomerModule } from '../customer/customer.module';
+import { DeleteStatementTermService } from './services/delete-statement-term.service';
+import { ToggleStatementTermService } from './services/toggle-statement-term.service';
 
 @Module({
   imports: [
@@ -41,6 +44,7 @@ import { CountStatementExtractExpectedDocumentsService } from './services/count-
     AwsModule,
     PythonApiModule,
     WebsocketModule,
+    CustomerModule,
     forwardRef(() => DocumentModule),
   ],
   controllers: [StatementExtractController, StatementTermController],
@@ -61,6 +65,8 @@ import { CountStatementExtractExpectedDocumentsService } from './services/count-
     FindExtractTermsService,
     FindUniqueStatementTermService,
     FindManyStatementTermByBankService,
+    DeleteStatementTermService,
+    ToggleStatementTermService,
   ],
   exports: [
     HighlightPdfTermService,

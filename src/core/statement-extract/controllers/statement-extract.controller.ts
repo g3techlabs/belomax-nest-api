@@ -20,11 +20,10 @@ import { FindByIdStatementExtractService } from '../services/find-by-id-statemen
 import { UpdateStatementExtractService } from '../services/update-statement-extract.service';
 import { StatementExtract, User } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { CurrentUser } from 'src/auth/current-user';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('api/statement-extracts')
+@Controller('statement-extracts')
 export class StatementExtractController {
   constructor(
     private readonly createStatementExtractService: CreateStatementExtractService,
@@ -33,7 +32,7 @@ export class StatementExtractController {
     private readonly updateStatementExtractService: UpdateStatementExtractService,
   ) {}
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -51,21 +50,21 @@ export class StatementExtractController {
     });
   }
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK)
   async findMany(): Promise<StatementExtract[]> {
     return await this.findManyStatementExtractService.execute();
   }
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findById(@Param('id') id: string): Promise<StatementExtract> {
     return await this.findByIdStatementExtractService.execute(id);
   }
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   async update(

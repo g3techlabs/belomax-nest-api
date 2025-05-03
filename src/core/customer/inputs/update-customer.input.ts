@@ -1,4 +1,11 @@
-import { IsDate, IsEmail, IsOptional, IsString } from 'class-validator';
+/* eslint-disable */
+import {
+  IsDate,
+  IsEmail,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 
 export class UpdateCustomerInput {
   @IsString()
@@ -7,7 +14,7 @@ export class UpdateCustomerInput {
 
   @IsString()
   @IsOptional()
-  cpf?: string;
+  cpfCnpj?: string;
 
   @IsString()
   @IsOptional()
@@ -33,6 +40,7 @@ export class UpdateCustomerInput {
   @IsOptional()
   phone?: string;
 
+  @ValidateIf((o) => o.email !== undefined && o.email !== '')
   @IsString()
   @IsEmail()
   @IsOptional()

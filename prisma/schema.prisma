@@ -72,7 +72,7 @@ model ResetToken {
 model Customer {
   id            String    @id @default(uuid())
   name          String
-  cpf           String    @unique @db.VarChar(11)
+  cpfCnpj       String    @unique
   rg            String?   @unique
   address       String?
   citizenship   String?

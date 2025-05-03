@@ -8,11 +8,13 @@ import { UpdateCustomerInput } from '../inputs/update-customer.input';
 export class CustomerRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findMany({ cpf, name, limit, page }: FindManyCustomerInput) {
+  async findMany({ cpfCnpj, name, limit, page }: FindManyCustomerInput) {
     const customers = this.prisma.customer.findMany({
       where: {
         name: name ? { contains: name, mode: 'insensitive' } : undefined,
-        cpf: cpf ? { contains: cpf, mode: 'insensitive' } : undefined,
+        cpfCnpj: cpfCnpj
+          ? { contains: cpfCnpj, mode: 'insensitive' }
+          : undefined,
       },
       take: limit,
       skip: page && limit ? (page - 1) * limit : undefined,
@@ -21,7 +23,9 @@ export class CustomerRepository {
     const countCustomers = this.prisma.customer.count({
       where: {
         name: name ? { contains: name, mode: 'insensitive' } : undefined,
-        cpf: cpf ? { contains: cpf, mode: 'insensitive' } : undefined,
+        cpfCnpj: cpfCnpj
+          ? { contains: cpfCnpj, mode: 'insensitive' }
+          : undefined,
       },
     });
 
@@ -36,10 +40,10 @@ export class CustomerRepository {
     });
   }
 
-  async findByCpf(cpf: string) {
+  async findByCpfCnpj(cpfCnpj: string) {
     return await this.prisma.customer.findFirst({
       where: {
-        cpf,
+        cpfCnpj,
       },
     });
   }

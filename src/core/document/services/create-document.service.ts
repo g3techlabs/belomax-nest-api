@@ -39,30 +39,13 @@ export class CreateDocumentService {
       throw new NotFoundException('Automation not found');
     }
 
-    if (automation.status !== AutomationStatus.PENDING) {
+    if (
+      automation.status === AutomationStatus.FINISHED ||
+      automation.status === AutomationStatus.CANCELLED
+    ) {
       throw new BadRequestException(
         'Automation is not in a valid state to add a document',
       );
-    }
-
-    let expectedDocumentCount = 0;
-    let changeAutomationStatus = false;
-
-    if (automation.statementExtract) {
-      expectedDocumentCount =
-        await this.countStatementExtractExpectedDocumentsService.execute(
-          automation.id,
-        );
-
-      if (automation.documents.length >= expectedDocumentCount) {
-        throw new BadRequestException(
-          `Automation already has the maximum number of documents (${expectedDocumentCount})`,
-        );
-      }
-
-      if (automation.documents.length + 1 === expectedDocumentCount) {
-        changeAutomationStatus = true;
-      }
     }
 
     const s3DocumentName = `${data.name.replaceAll(' ', '_')}-${automation.id}-${new Date().toISOString()}-${file.originalname}`;
@@ -95,6 +78,32 @@ export class CreateDocumentService {
       automationId,
       automation?.userId || undefined,
     );
+
+    let expectedDocumentCount = 0;
+    let changeAutomationStatus = false;
+
+    if (automation.statementExtract) {
+      expectedDocumentCount =
+        await this.countStatementExtractExpectedDocumentsService.execute(
+          createdDocument.automationId,
+        );
+
+      // console.log(
+      //   file.originalname,
+      //   expectedDocumentCount,
+      //   automation.documents.length,
+      // );
+
+      if (automation.documents.length >= expectedDocumentCount) {
+        throw new BadRequestException(
+          `Automation already has the maximum number of documents (${expectedDocumentCount})`,
+        );
+      }
+
+      if (automation.documents.length === expectedDocumentCount) {
+        changeAutomationStatus = true;
+      }
+    }
 
     if (changeAutomationStatus) {
       await this.changeStatusAutomationService.execute(automationId, {
