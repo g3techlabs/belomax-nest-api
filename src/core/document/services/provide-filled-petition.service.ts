@@ -12,6 +12,7 @@ import { MulterFileFactory } from 'src/utils/multer-file-factory';
 import { StatementBank } from '@prisma/client';
 import { Bank } from '../dto/bank.dto';
 import { parseValueToBrl } from 'src/utils/parse-value-to-brl';
+import { format } from 'date-fns';
 
 @Injectable()
 export class ProvideFilledPetitionService {
@@ -106,6 +107,7 @@ export class ProvideFilledPetitionService {
         (chargedValue * 2) + this.ASKED_VALUE,
         numero.estilo.monetario,
       ),
+      todayDate: format(new Date(Date.now()), 'dd de MMMM de yyyy'),
     });
   }
 
