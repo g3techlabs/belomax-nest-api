@@ -1,14 +1,12 @@
+/* eslint-disable */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
 import { CreateCustomerInput } from '../inputs/create-customer.input';
 import { FindManyCustomerInput } from '../inputs/find-many-customer.input';
 import { UpdateCustomerInput } from '../inputs/update-customer.input';
-import { AddressRepository } from './address.repository';
-import { Address } from '@prisma/client';
-import { CreateAddressInput } from '../inputs/create-address.input';
+import { AddressRepository } from '../../address/repositories/address.repository';
+import { CreateAddressInput } from '../../address/inputs/create-address.input';
 import { UpdateAddressInput } from '../inputs/update-address.input';
-import { add } from 'date-fns';
-
 @Injectable()
 export class CustomerRepository {
   constructor(
@@ -45,6 +43,9 @@ export class CustomerRepository {
       where: {
         id,
       },
+      include: {
+        address: true,
+      }
     });
   }
 
@@ -53,6 +54,9 @@ export class CustomerRepository {
       where: {
         cpfCnpj,
       },
+      include: {
+        address: true,
+      }
     });
   }
 
@@ -61,6 +65,9 @@ export class CustomerRepository {
       where: {
         rg,
       },
+      include: {
+        address: true,
+      }
     });
   }
 

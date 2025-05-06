@@ -1,17 +1,19 @@
+/* eslint-disable */
+
 import { Injectable } from '@nestjs/common';
-import { Address, PrismaClient } from '@prisma/client';
 import { CreateAddressInput } from '../inputs/create-address.input';
-import { UpdateAddressInput } from '../inputs/update-address.input';
+import { UpdateAddressInput } from '../../customer/inputs/update-address.input';
+import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
 
 @Injectable()
 export class AddressRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateAddressInput): Promise<Address> {
+  async create(data: CreateAddressInput) {
     return await this.prisma.address.create({ data });
   }
 
-  async findById(id: string): Promise<Address | null> {
+  async findById(id: string) {
     return await this.prisma.address.findUnique({ where: { id } });
   }
 

@@ -88,8 +88,8 @@ export class CreateDocumentService {
           createdDocument.automationId,
         );
 
-      const currentDocumentCount =
-        await this.documentRepository.countByAutomationId(automationId);
+      // eslint-disable-next-line
+      const currentDocumentCount = await this.documentRepository.countByAutomationId(automationId);
 
       if (currentDocumentCount > expectedDocumentCount) {
         throw new BadRequestException(

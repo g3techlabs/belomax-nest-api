@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateIf,
 } from 'class-validator';
-import { CreateAddressInput } from './create-address.input';
+import { CreateAddressInput } from '../../address/inputs/create-address.input';
 import { Transform, Type } from 'class-transformer';
 
 export class CreateCustomerInput {

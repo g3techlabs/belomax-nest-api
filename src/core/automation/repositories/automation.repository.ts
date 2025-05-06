@@ -32,7 +32,11 @@ export class AutomationRepository {
       },
       include: {
         documents: true,
-        customer: true,
+        customer: {
+          include: {
+            address: true,
+          },
+        },
         user: true,
         statementExtract: {
           include: {
@@ -66,7 +70,11 @@ export class AutomationRepository {
       skip: page && limit ? (page - 1) * limit : undefined,
       include: {
         documents: true,
-        customer: true,
+        customer: {
+          include: {
+            address: true,
+          },
+        },
         user: true,
         statementExtract: {
           include: {
@@ -94,7 +102,11 @@ export class AutomationRepository {
       where: { id },
       include: {
         documents: true,
-        customer: true,
+        customer: {
+          include: {
+            address: true,
+          },
+        },
         user: true,
         statementExtract: {
           include: {
@@ -130,7 +142,11 @@ export class AutomationRepository {
       data: { status },
       include: {
         documents: true,
-        customer: true,
+        customer: {
+          include: {
+            address: true,
+          },
+        },
         user: true,
         statementExtract: {
           include: {

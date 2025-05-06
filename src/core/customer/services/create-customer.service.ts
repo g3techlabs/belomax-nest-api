@@ -18,21 +18,21 @@ export class CreateCustomerService {
     cpfCnpj: string,
     rg: string | undefined,
   ) {
-    await this.checkIfCostumerExistsByCpfCnpj(cpfCnpj);
+    await this.checkIfCustomerExistsByCpfCnpj(cpfCnpj);
     await this.checkForDuplicateRg(rg);
   }
-  
-  private async checkIfCostumerExistsByCpfCnpj(cpfCnpj: string) {
-    const costumerExists = await this.customerRepository.findByCpfCnpj(cpfCnpj);
 
-    if (costumerExists) throw new ConflictException('Costumer already exists');
+  private async checkIfCustomerExistsByCpfCnpj(cpfCnpj: string) {
+    const customerExists = await this.customerRepository.findByCpfCnpj(cpfCnpj);
+
+    if (customerExists) throw new ConflictException('Customer already exists');
   }
 
   private async checkForDuplicateRg(rg: string | undefined) {
     const isRgValid = this.checkIfRgIsValid(rg);
 
     if (isRgValid) {
-      await this.checkIfCostumerExistsByRg(rg ?? '');
+      await this.checkIfCustomerExistsByRg(rg ?? '');
     }
   }
 
@@ -40,9 +40,9 @@ export class CreateCustomerService {
     return rg ? true : false;
   }
 
-  private async checkIfCostumerExistsByRg(rg: string) {
-    const costumerExists = await this.customerRepository.findByRg(rg);
+  private async checkIfCustomerExistsByRg(rg: string) {
+    const customerExists = await this.customerRepository.findByRg(rg);
 
-    if (costumerExists) throw new ConflictException('Costumer already exists');
+    if (customerExists) throw new ConflictException('Customer already exists');
   }
 }

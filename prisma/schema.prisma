@@ -104,6 +104,8 @@ model Address {
   additional   String?
 
   Customer Customer[]
+
+  @@map("address")
 }
 
 model Automation {

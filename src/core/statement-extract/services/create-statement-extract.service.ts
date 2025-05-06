@@ -51,14 +51,18 @@ export class CreateStatementExtractService {
     const userExists = await this.findUserService.execute(userId);
 
     if (!userExists) {
-      throw new BadRequestException('User not found');
+      throw new BadRequestException('Usuário não encontrado');
     }
 
     const customerExists =
       await this.findByIdCustomerService.execute(customerId);
 
     if (!customerExists) {
-      throw new BadRequestException('Customer not found');
+      throw new BadRequestException('Cliente não encontrado');
+    }
+
+    if (!customerExists.address) {
+      throw new BadRequestException('Endereço do cliente não encontrado');
     }
 
     const selectedTermsDescription: string[] = [];
@@ -67,7 +71,7 @@ export class CreateStatementExtractService {
       const termExists = await this.statementTermRepository.findById(termId);
 
       if (!termExists) {
-        throw new BadRequestException(`Term with ID ${termId} not found`);
+        throw new BadRequestException(`Termo com ID ${termId} não encontrado`);
       }
 
       selectedTermsDescription.push(termExists.description);
@@ -82,7 +86,7 @@ export class CreateStatementExtractService {
     });
 
     if (!automation) {
-      throw new NotImplementedException('Failed to create automation');
+      throw new NotImplementedException('Falha ao criar automação');
     }
 
     const createdStatementExtract =
@@ -120,7 +124,7 @@ export class CreateStatementExtractService {
       console.error('Error creating document:', error);
       await this.changeStatusAutomationService.execute(automation.id, {
         status: AutomationStatus.FAILED,
-        error: 'Documento base não adicionado:' + error.message,
+        error: 'Documento base não adicionado: ' + error.message,
       });
     }
 
@@ -155,7 +159,6 @@ export class CreateStatementExtractService {
           bank: data.bank,
           chargedValue: termsValue,
           author: {
-            address: automation.customer?.address || 'nao informado',
             citizenship: automation.customer?.citizenship || 'nao informado',
             cpfCnpj: automation.customer?.cpfCnpj || 'nao informado',
             maritalStatus: automation.customer?.maritalStatus || 'nao informado',
@@ -163,6 +166,7 @@ export class CreateStatementExtractService {
             occupation: automation.customer?.occupation || 'nao informado',
             rg: automation.customer?.rg || 'nao informado',
           },
+          address: customerExists.address,
           automationId: automation.id,
         });
       }

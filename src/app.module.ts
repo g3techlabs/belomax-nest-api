@@ -1,3 +1,4 @@
+import { AddressModule } from './core/address/address.module';
 import { WebsocketModule } from './infrastructure/websocket/websocket.module';
 /* eslint-disable */
 import { AutomationModule } from './core/automation/automation.module';
@@ -20,6 +21,7 @@ import { PythonApiModule } from './infrastructure/api/python-api/python-api.modu
 
 @Module({
   imports: [
+    AddressModule,
     WebsocketModule,
     AutomationModule,
     PensionerPaycheckModule,
