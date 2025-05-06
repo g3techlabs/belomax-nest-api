@@ -52,4 +52,10 @@ export class DocumentRepository {
       data,
     });
   }
+
+  async countByAutomationId(automationId: string): Promise<number> {
+    return this.prisma.document.count({
+      where: { automationId },
+    });
+  }
 }

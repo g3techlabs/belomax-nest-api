@@ -12,9 +12,10 @@ import { CustomerRepository } from './repositories/customer.repository';
 import { FindByCpfCnpjCustomerService } from './services/find-by-cpf-cnpj-customer.service';
 import { UpdateCustomerService } from './services/update-customer.service';
 import { AuthModule } from 'src/auth/auth.module';
+import { AddressModule } from '../address/address.module';
 
 @Module({
-  imports: [DatabaseModule, AuthModule],
+  imports: [DatabaseModule, AuthModule, AddressModule],
   controllers: [CustomerController],
   providers: [
     //Repositories

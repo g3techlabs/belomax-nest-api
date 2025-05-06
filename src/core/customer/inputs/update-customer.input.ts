@@ -1,52 +1,14 @@
 /* eslint-disable */
-import {
-  IsDate,
-  IsEmail,
-  IsOptional,
-  IsString,
-  ValidateIf,
-} from 'class-validator';
+import { OmitType, PartialType } from '@nestjs/swagger';
+import { CreateCustomerInput } from './create-customer.input';
+import { UpdateAddressInput } from './update-address.input';
+import { IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class UpdateCustomerInput {
-  @IsString()
+export class UpdateCustomerInput extends PartialType(
+  OmitType(CreateCustomerInput, ['address']),
+) {
   @IsOptional()
-  name?: string;
-
-  @IsString()
-  @IsOptional()
-  cpfCnpj?: string;
-
-  @IsString()
-  @IsOptional()
-  rg?: string;
-
-  @IsString()
-  @IsOptional()
-  address?: string;
-
-  @IsString()
-  @IsOptional()
-  citizenship?: string;
-
-  @IsString()
-  @IsOptional()
-  maritalStatus?: string;
-
-  @IsDate()
-  @IsOptional()
-  birthDate?: Date;
-
-  @IsString()
-  @IsOptional()
-  phone?: string;
-
-  @ValidateIf((o) => o.email !== undefined && o.email !== '')
-  @IsString()
-  @IsEmail()
-  @IsOptional()
-  email?: string;
-
-  @IsString()
-  @IsOptional()
-  occupation?: string;
+  @Type(() => UpdateAddressInput)
+  address?: UpdateAddressInput;
 }
