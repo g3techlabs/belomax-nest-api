@@ -9,7 +9,7 @@ import { AutomationStatus, Document } from '@prisma/client';
 import { FindByIdAutomationService } from 'src/core/automation/services/find-by-id-automation.service';
 import { S3AddFileService } from 'src/infrastructure/aws/s3/services/upload-s3-file.service';
 import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
-import { S3GetFileService } from 'src/infrastructure/aws/s3/services/get-s3-file.service';
+import { S3GetFileService } from 'src/infrastructure/aws/s3/services/get-file.service';
 import { CountStatementExtractExpectedDocumentsService } from 'src/core/statement-extract/services/count-statement-extract-expected-documents.service';
 import { ChangeStatusAutomationService } from 'src/core/automation/services/change-status-automation.service';
 
