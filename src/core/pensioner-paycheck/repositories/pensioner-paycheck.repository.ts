@@ -7,20 +7,20 @@ export class PensionerPaycheckRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreatePensionerPaycheckInput) {
-    // const {
-    // registration,
-    // bond,
-    // cpf,
-    // pensionerNumber,
-    // month,
-    // year,
-    // consignableMargin,
-    // totalBenefits,
-    // netToReceive,
-    // userId,
-    // customerName,
-    // terms,
-    // }: CreatePensionerPaycheckInput = data;
+    const {
+      registration,
+      bond,
+      cpf,
+      pensionerNumber,
+      month,
+      year,
+      consignableMargin,
+      totalBenefits,
+      netToReceive,
+      userId,
+      customerName,
+      terms,
+    }: CreatePensionerPaycheckInput = data;
 
     try {
       const createAutomation = await this.prisma.automation.create({
