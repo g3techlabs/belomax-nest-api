@@ -28,9 +28,9 @@ export class CreateAddressInput {
 
   @IsOptional()
   @IsString()
-  additional: string;
+  additional?: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsNumberString()
   zipcode: string;
 }

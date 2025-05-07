@@ -2,8 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 import { CreateAddressInput } from '../inputs/create-address.input';
-import { UpdateAddressInput } from '../../customer/inputs/update-address.input';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
+import { UpdateAddressInput } from '../inputs/update-address.input';
 
 @Injectable()
 export class AddressRepository {
