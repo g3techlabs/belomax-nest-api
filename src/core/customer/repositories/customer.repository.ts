@@ -6,7 +6,7 @@ import { FindManyCustomerInput } from '../inputs/find-many-customer.input';
 import { UpdateCustomerInput } from '../inputs/update-customer.input';
 import { AddressRepository } from '../../address/repositories/address.repository';
 import { CreateAddressInput } from '../../address/inputs/create-address.input';
-import { UpdateAddressInput } from '../inputs/update-address.input';
+import { UpdateAddressInput } from 'src/core/address/inputs/update-address.input';
 @Injectable()
 export class CustomerRepository {
   constructor(
@@ -22,6 +22,7 @@ export class CustomerRepository {
           ? { contains: cpfCnpj, mode: 'insensitive' }
           : undefined,
       },
+      include: { address: true },
       take: limit,
       skip: page && limit ? (page - 1) * limit : undefined,
     });
@@ -76,20 +77,16 @@ export class CustomerRepository {
     return await this.createCustomerWithAddress(addressId, data);
   }
 
-  async update(id: string, data: UpdateCustomerInput) {
-    await this.updateAddressIfNotNull(data.address);
-    return await this.updateCustomerWithoutAddress(id, data);
-  }
-
+  
   private async createAddressIfNotNull(
     address: CreateAddressInput | undefined,
   ): Promise<string | undefined> {
     if (!address) return undefined;
-
+    
     const { id } = await this.addressRepository.create(address);
     return id;
   }
-
+  
   private async createCustomerWithAddress(
     addressId: string | undefined,
     customerInput: CreateCustomerInput,
@@ -104,12 +101,17 @@ export class CustomerRepository {
     });
   }
 
-  private async updateAddressIfNotNull(
+  async update(id: string, data: UpdateCustomerInput, addressId: string) {
+    await this.updateAddressIfNotNull(addressId, data.address);
+    return await this.updateCustomerWithoutAddress(id, data);
+  }
+
+  private async updateAddressIfNotNull(addressId: string,
     address: UpdateAddressInput | undefined,
   ) {
     if (!address) return undefined;
 
-    return await this.addressRepository.update(address.id, address);
+    return await this.addressRepository.update(addressId, address);
   }
 
   private async updateCustomerWithoutAddress(

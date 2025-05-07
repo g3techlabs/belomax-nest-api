@@ -16,7 +16,7 @@ export class UpdateCustomerService {
 
     await this.checkDuplicatedValues(data.cpfCnpj, data.rg);
 
-    return this.customerRepository.update(id, data);
+    return this.customerRepository.update(id, data, this.customer.addressId ?? '');
   }
 
   private async checkIfCustomerExists(id: string): Promise<Customer> {
