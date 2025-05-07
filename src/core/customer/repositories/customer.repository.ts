@@ -77,11 +77,6 @@ export class CustomerRepository {
     return await this.createCustomerWithAddress(addressId, data);
   }
 
-  async update(id: string, data: UpdateCustomerInput) {
-    await this.updateAddressIfNotNull(data.address, id);
-    return await this.updateCustomerWithoutAddress(id, data);
-  }
-
   private async createAddressIfNotNull(
     address: CreateAddressInput | undefined,
   ): Promise<string | undefined> {
@@ -105,12 +100,12 @@ export class CustomerRepository {
     });
   }
 
-  async update(id: string, data: UpdateCustomerInput, addressId: string) {
-    await this.updateAddressIfNotNull(addressId, data.address);
+  async update(id: string, data: UpdateCustomerInput) {
+    await this.updateAddressIfNotNull(data.address, id);
     return await this.updateCustomerWithoutAddress(id, data);
   }
 
-  private async updateAddressIfNotNull(addressId: string,
+  private async updateAddressIfNotNull(
     address: UpdateAddressInput | undefined,
     customerId: string
   ) {
