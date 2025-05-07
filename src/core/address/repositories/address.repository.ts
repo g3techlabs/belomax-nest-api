@@ -18,6 +18,18 @@ export class AddressRepository {
   }
 
   async update(id: string, data: UpdateAddressInput) {
-    return await this.prisma.address.update({ where: { id }, data });
+    return await this.prisma.address.update({ 
+      where: { 
+        id
+      },
+      data: {
+        ...data,
+        Customer: {
+          connect: {
+            id: data.customerId,
+          }
+        }
+      }
+    });
   }
 }
