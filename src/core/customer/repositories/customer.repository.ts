@@ -1,12 +1,18 @@
+/* eslint-disable */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
 import { CreateCustomerInput } from '../inputs/create-customer.input';
 import { FindManyCustomerInput } from '../inputs/find-many-customer.input';
 import { UpdateCustomerInput } from '../inputs/update-customer.input';
-
+import { AddressRepository } from '../../address/repositories/address.repository';
+import { CreateAddressInput } from '../../address/inputs/create-address.input';
+import { UpdateAddressInput } from 'src/core/address/inputs/update-address.input';
 @Injectable()
 export class CustomerRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly addressRepository: AddressRepository,
+  ) {}
 
   async findMany({ cpfCnpj, name, limit, page }: FindManyCustomerInput) {
     const customers = this.prisma.customer.findMany({
@@ -16,6 +22,7 @@ export class CustomerRepository {
           ? { contains: cpfCnpj, mode: 'insensitive' }
           : undefined,
       },
+      include: { address: true },
       take: limit,
       skip: page && limit ? (page - 1) * limit : undefined,
     });
@@ -37,6 +44,9 @@ export class CustomerRepository {
       where: {
         id,
       },
+      include: {
+        address: true,
+      }
     });
   }
 
@@ -45,6 +55,9 @@ export class CustomerRepository {
       where: {
         cpfCnpj,
       },
+      include: {
+        address: true,
+      }
     });
   }
 
@@ -53,21 +66,77 @@ export class CustomerRepository {
       where: {
         rg,
       },
+      include: {
+        address: true,
+      }
     });
   }
 
   async create(data: CreateCustomerInput) {
+    const addressId = await this.createAddressIfNotNull(data.address);
+    return await this.createCustomerWithAddress(addressId, data);
+  }
+
+  private async createAddressIfNotNull(
+    address: CreateAddressInput | undefined,
+  ): Promise<string | undefined> {
+    if (!address) return undefined;
+    
+    const { id } = await this.addressRepository.create(address);
+    return id;
+  }
+  
+  private async createCustomerWithAddress(
+    addressId: string | undefined,
+    customerInput: CreateCustomerInput,
+  ) {
+    const { address: _, ...dataWithoutAddress } = customerInput;
+    const formattedData = {
+      ...dataWithoutAddress,
+      addressId,
+    };
     return await this.prisma.customer.create({
-      data,
+      data: formattedData,
     });
   }
 
   async update(id: string, data: UpdateCustomerInput) {
+    await this.updateAddressIfNotNull(data.address, id);
+    return await this.updateCustomerWithoutAddress(id, data);
+  }
+
+  private async updateAddressIfNotNull(
+    address: UpdateAddressInput | undefined,
+    customerId: string
+  ) {
+    if (!address) return undefined;
+
+    if (!address?.id) {
+      const { id } = await this.addressRepository.create({
+        city: address?.city || "",
+        state: address?.state || "",
+        street: address?.street || "",
+        number: address?.number || "",
+        neighborhood: address?.neighborhood || "",
+        zipcode: address?.zipcode || "",
+        additional: address?.additional || "",
+      });
+      address.id = id;
+    }
+
+    return await this.addressRepository.update(address.id, { ...address, customerId });
+  }
+
+  private async updateCustomerWithoutAddress(
+    id: string,
+    customerInput: UpdateCustomerInput,
+  ) {
+    const { address: _, ...dataWithoutAddress } = customerInput;
     return await this.prisma.customer.update({
       where: {
         id,
       },
-      data,
+      data: dataWithoutAddress,
     });
   }
 }

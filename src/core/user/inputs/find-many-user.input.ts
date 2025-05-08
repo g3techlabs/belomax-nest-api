@@ -1,5 +1,6 @@
 import { Role } from '@prisma/client';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class FindManyUserInput {
   @IsString()
@@ -18,6 +19,11 @@ export class FindManyUserInput {
   @IsNumber()
   @IsOptional()
   page?: number;
+
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  @IsOptional()
+  active?: boolean
 
   @IsNumber()
   @IsOptional()

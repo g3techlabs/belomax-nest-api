@@ -48,7 +48,7 @@ export class CreateDocumentService {
       );
     }
 
-    const s3DocumentName = `${data.name.replaceAll(' ', '_')}-${automation.id}-${new Date().toISOString()}-${file.originalname}`;
+    const s3DocumentName = `${data.name.replaceAll(' ', '_')}-${new Date().toISOString()}.${file.originalname.split('.').pop()}`;
 
     const fileUploaded = await this.s3AddFileService.execute({
       file: file.buffer,
@@ -88,19 +88,16 @@ export class CreateDocumentService {
           createdDocument.automationId,
         );
 
-      // console.log(
-      //   file.originalname,
-      //   expectedDocumentCount,
-      //   automation.documents.length,
-      // );
+      // eslint-disable-next-line
+      const currentDocumentCount = await this.documentRepository.countByAutomationId(automationId);
 
-      if (automation.documents.length >= expectedDocumentCount) {
+      if (currentDocumentCount > expectedDocumentCount) {
         throw new BadRequestException(
-          `Automation already has the maximum number of documents (${expectedDocumentCount})`,
+          `A automação já possui o número de documentos esperados: (${expectedDocumentCount}) documentos`,
         );
       }
 
-      if (automation.documents.length === expectedDocumentCount) {
+      if (currentDocumentCount === expectedDocumentCount) {
         changeAutomationStatus = true;
       }
     }

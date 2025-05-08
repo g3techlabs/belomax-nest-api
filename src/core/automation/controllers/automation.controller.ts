@@ -24,6 +24,7 @@ import { ChangeStatusAutomationService } from '../services/change-status-automat
 import { CancelAutomationRequestInput } from '../inputs/cancel-automation.input';
 import { CurrentUser } from 'src/auth/current-user';
 import { CancelAutomationService } from '../services/cancel-automation.service';
+import { DashboardService } from '../services/dashboard.service';
 
 @Controller('automations')
 export class AutomationController {
@@ -34,7 +35,15 @@ export class AutomationController {
     private readonly updateAutomationService: UpdateAutomationService,
     private readonly changeStatusAutomationService: ChangeStatusAutomationService,
     private readonly cancelAutomationService: CancelAutomationService,
+    private readonly dashboardService: DashboardService,
   ) {}
+
+  @UseGuards(AuthGuard)
+  @Get('dashboard')
+  @HttpCode(HttpStatus.OK)
+  async getDashboardStats() {
+    return await this.dashboardService.getDashboardStats();
+  }
 
   @UseGuards(AuthGuard)
   @Post()

@@ -7,33 +7,52 @@ export class PensionerPaycheckRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreatePensionerPaycheckInput) {
-    // const {
-    // registration,
-    // bond,
-    // cpf,
-    // pensionerNumber,
-    // month,
-    // year,
-    // consignableMargin,
-    // totalBenefits,
-    // netToReceive,
-    // userId,
-    // customerName,
-    // terms,
-    // }: CreatePensionerPaycheckInput = data;
+    const {
+      registration,
+      bond,
+      cpf,
+      pensionerNumber,
+      month,
+      year,
+      consignableMargin,
+      totalBenefits,
+      netToReceive,
+      automationId,
+      terms,
+    } = data;
 
     try {
-      const createAutomation = await this.prisma.automation.create({
+      const createdPaycheck = await this.prisma.pensionerPaycheck.create({
         data: {
-          description: 'Contracheque de Pensionistas',
+          registration,
+          bond,
+          cpf,
+          pensionerNumber,
+          month,
+          year,
+          consignableMargin,
+          totalBenefits,
+          netToReceive,
+          automationId,
+          terms: {
+            create: terms.map((term) => ({
+              code: term.code,
+              discrimination: term.discrimination,
+              value: term.value,
+              type: term.type,
+              month: term.month,
+              year: term.year,
+            })),
+          },
+        },
+        include: {
+          terms: true,
         },
       });
 
-      return createAutomation;
+      return createdPaycheck;
     } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error creating automation:', error.message);
-      }
+      console.error('❌ Erro ao criar contracheque:', error);
       throw error;
     }
   }
