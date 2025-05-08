@@ -129,7 +129,7 @@ export class ProvideFilledPetitionService {
         chargedValue * 2 + this.ASKED_VALUE,
         numero.estilo.monetario,
       ),
-      todayDate: format(new Date(Date.now()), "dd MMMM yyyy", { locale: ptBR }),
+      todayDate: format(new Date(Date.now()), "dd of MMMM yyyy", { locale: ptBR }).replace("of", "de"),
     });
   }
 
