@@ -25,7 +25,8 @@ export class CreateCustomerService {
   private async checkIfCustomerExistsByCpfCnpj(cpfCnpj: string) {
     const customerExists = await this.customerRepository.findByCpfCnpj(cpfCnpj);
 
-    if (customerExists) throw new ConflictException('Customer already exists');
+    if (customerExists)
+      throw new ConflictException('Um cliente com esse CPF/CNPJ já existe');
   }
 
   private async checkForDuplicateRg(rg: string | undefined) {
@@ -43,6 +44,7 @@ export class CreateCustomerService {
   private async checkIfCustomerExistsByRg(rg: string) {
     const customerExists = await this.customerRepository.findByRg(rg);
 
-    if (customerExists) throw new ConflictException('Customer already exists');
+    if (customerExists)
+      throw new ConflictException('Um cliente com esse RG já existe');
   }
 }

@@ -16,13 +16,13 @@ export class UpdateCustomerService {
 
     await this.checkDuplicatedValues(data.cpfCnpj, data.rg);
 
-    return this.customerRepository.update(id, data, this.customer.addressId ?? '');
+    return this.customerRepository.update(id, data);
   }
 
   private async checkIfCustomerExists(id: string): Promise<Customer> {
     const customer = await this.customerRepository.findById(id);
 
-    if (!customer) throw new NotFoundException('Customer not found');
+    if (!customer) throw new NotFoundException('O cliente não foi encontrado');
     return customer;
   }
 
@@ -45,8 +45,9 @@ export class UpdateCustomerService {
   }
 
   private async checkIfCpfCnpjIsTaken(cpfCnpj: string) {
-    const costumer = await this.customerRepository.findByCpfCnpj(cpfCnpj);
-    if (costumer) throw new ConflictException('Customer already exists');
+    const customer = await this.customerRepository.findByCpfCnpj(cpfCnpj);
+    if (customer)
+      throw new ConflictException('Um cliente com esse CPF/CNPJ já existe');
   }
 
   private checkIfRgIsValid(rg: string | undefined): boolean {
@@ -55,8 +56,9 @@ export class UpdateCustomerService {
   }
 
   private async checkIfRgIsTaken(rg: string) {
-    const costumer = await this.customerRepository.findByRg(rg);
+    const customer = await this.customerRepository.findByRg(rg);
 
-    if (costumer) throw new ConflictException('Customer already exists');
+    if (customer)
+      throw new ConflictException('Um cliente com esse RG já existe');
   }
 }

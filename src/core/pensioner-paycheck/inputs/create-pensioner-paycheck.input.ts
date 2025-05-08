@@ -1,21 +1,8 @@
-import {
-  IsArray,
-  IsInstance,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsArray, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { CreatePensionerPaycheckTermInput } from './create-pensioner-paycheck-term.input';
 
 export class CreatePensionerPaycheckInput {
-  @IsString()
-  @IsOptional()
-  userId?: string;
-
-  @IsString()
-  @IsOptional()
-  customerName?: string;
-
   @IsString()
   registration: string;
 
@@ -23,7 +10,6 @@ export class CreatePensionerPaycheckInput {
   bond: string;
 
   @IsString()
-  @Length(11, 11)
   cpf: string;
 
   @IsString()
@@ -44,7 +30,11 @@ export class CreatePensionerPaycheckInput {
   @IsNumber()
   netToReceive: number;
 
+  @IsString()
+  automationId: string;
+
   @IsArray()
-  @IsInstance(Array<CreatePensionerPaycheckInput>)
-  terms: CreatePensionerPaycheckInput[];
+  @ValidateNested({ each: true })
+  @Type(() => CreatePensionerPaycheckTermInput)
+  terms: CreatePensionerPaycheckTermInput[];
 }
