@@ -48,7 +48,7 @@ export class CreateDocumentService {
       );
     }
 
-    const s3DocumentName = `${data.name.replaceAll(' ', '_')}-${automation.id}-${new Date().toISOString()}-${file.originalname}`;
+    const s3DocumentName = `${data.name.replaceAll(' ', '_')}-${new Date().toISOString()}.${file.originalname.split('.').pop()}`;
 
     const fileUploaded = await this.s3AddFileService.execute({
       file: file.buffer,

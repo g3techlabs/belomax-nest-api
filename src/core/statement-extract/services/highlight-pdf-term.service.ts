@@ -18,7 +18,7 @@ export class HighlightPdfTermService {
 
   constructor(private readonly createDocumentService: CreateDocumentService) {}
 
-  async execute({ automationId, file, term }: HighlightPdfTermInput) {
+  async execute({ automationId, file, term, customerName, bank }: HighlightPdfTermInput) {
     // * pdf-lib modifies the pdf highlighting the terms, pdfjs-dist gets its content and searchs the terms
 
     try {
@@ -34,7 +34,7 @@ export class HighlightPdfTermService {
       const multerFile = this.convertToMulterFile(highlightedDocument);
 
       return await this.createDocumentService.execute({
-        name: `DESTACADO-${term}`,
+        name: `DESTACADO-${term}-${bank}-${customerName}`,
         automationId,
         file: multerFile,
       });

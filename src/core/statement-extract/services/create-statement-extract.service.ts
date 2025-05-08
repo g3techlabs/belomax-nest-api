@@ -105,7 +105,7 @@ export class CreateStatementExtractService {
 
     try {
       const fileData = await this.createDocumentService.execute({
-        name: 'BASE',
+        name: `INICIAL-${bank}-${customerExists.name}`,
         file: file,
         automationId: automation.id,
       });
@@ -134,13 +134,15 @@ export class CreateStatementExtractService {
           automationId: automation.id,
           file,
           term: termDescription,
+          customerName: customerExists.name,
+          bank,
         };
 
-        await this.belomaxQueue.add('highlight-pdf-terms', highlightPdfTerms);
+        this.belomaxQueue.add('highlight-pdf-terms', highlightPdfTerms);
       }
     } catch (error) {
       console.error('Error highlighting PDF terms:', error);
-      await this.changeStatusAutomationService.execute(automation.id, {
+      this.changeStatusAutomationService.execute(automation.id, {
         status: AutomationStatus.FAILED,
         error: 'Erro ao destacar termos no PDF: ' + error.message,
       });
@@ -154,7 +156,7 @@ export class CreateStatementExtractService {
           term: termDescription,
         });
 
-        await this.provideFilledPetitionService.execute({
+        this.provideFilledPetitionService.execute({
           term: termDescription,
           bank: data.bank,
           chargedValue: termsValue,
@@ -172,7 +174,7 @@ export class CreateStatementExtractService {
       }
     } catch (error) {
       console.error('Error providing filled petition:', error);
-      await this.changeStatusAutomationService.execute(automation.id, {
+      this.changeStatusAutomationService.execute(automation.id, {
         status: AutomationStatus.FAILED,
         error: 'Erro ao fornecer petição preenchida: ' + error.message,
       });

@@ -16,6 +16,7 @@ import { StatementBank } from '@prisma/client';
 import { Bank } from '../dto/bank.dto';
 import { parseValueToBrl } from 'src/utils/parse-value-to-brl';
 import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale'
 
 @Injectable()
 export class ProvideFilledPetitionService {
@@ -56,7 +57,7 @@ export class ProvideFilledPetitionService {
       const multerFile = MulterFileFactory.fromBufferOrUint8Array(buffer);
 
       await this.createDocumentService.execute({
-        name: `PETICAO-${term}`,
+        name: `PETICAO-${term}-${author.name}-${bank}`,
         automationId: automationId,
         file: multerFile,
       });
@@ -128,7 +129,7 @@ export class ProvideFilledPetitionService {
         chargedValue * 2 + this.ASKED_VALUE,
         numero.estilo.monetario,
       ),
-      todayDate: format(new Date(Date.now()), 'dd de MMMM de yyyy'),
+      todayDate: format(new Date(Date.now()), 'dd MMMM yyyy', { locale: ptBR }),
     });
   }
 
