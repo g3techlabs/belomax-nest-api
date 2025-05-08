@@ -4,6 +4,7 @@ import { CreateAutomationInput } from '../inputs/create-automation.input';
 import { UpdateAutomationInput } from '../inputs/update-automation.input';
 import { FindManyAutomationInput } from '../inputs/find-many-automation.input';
 import { Automation, AutomationStatus } from '@prisma/client';
+import { startOfMonth, startOfWeek } from 'date-fns';
 
 @Injectable()
 export class AutomationRepository {
@@ -32,7 +33,11 @@ export class AutomationRepository {
       },
       include: {
         documents: true,
-        customer: true,
+        customer: {
+          include: {
+            address: true,
+          },
+        },
         user: true,
         statementExtract: {
           include: {
@@ -66,7 +71,11 @@ export class AutomationRepository {
       skip: page && limit ? (page - 1) * limit : undefined,
       include: {
         documents: true,
-        customer: true,
+        customer: {
+          include: {
+            address: true,
+          },
+        },
         user: true,
         statementExtract: {
           include: {
@@ -94,7 +103,11 @@ export class AutomationRepository {
       where: { id },
       include: {
         documents: true,
-        customer: true,
+        customer: {
+          include: {
+            address: true,
+          },
+        },
         user: true,
         statementExtract: {
           include: {
@@ -130,7 +143,11 @@ export class AutomationRepository {
       data: { status },
       include: {
         documents: true,
-        customer: true,
+        customer: {
+          include: {
+            address: true,
+          },
+        },
         user: true,
         statementExtract: {
           include: {
@@ -148,5 +165,59 @@ export class AutomationRepository {
         },
       },
     });
+  }
+
+  async getAutomationStats() {
+    const totalAutomations = await this.prisma.automation.count();
+    const automationsThisMonth = await this.prisma.automation.count({
+      where: { createdAt: { gte: startOfMonth(new Date()) } },
+    });
+    const automationsThisWeek = await this.prisma.automation.count({
+      where: { createdAt: { gte: startOfWeek(new Date()) } },
+    });
+
+    return { totalAutomations, automationsThisMonth, automationsThisWeek };
+  }
+
+  async getStatementExtractStats() {
+    const totalStatementExtracts = await this.prisma.statementExtract.count();
+    const statementExtractsThisMonth = await this.prisma.statementExtract.count(
+      {
+        where: { createdAt: { gte: startOfMonth(new Date()) } },
+      },
+    );
+    const statementExtractsThisWeek = await this.prisma.statementExtract.count({
+      where: { createdAt: { gte: startOfWeek(new Date()) } },
+    });
+
+    return {
+      totalStatementExtracts,
+      statementExtractsThisMonth,
+      statementExtractsThisWeek,
+    };
+  }
+
+  async getDocumentStats() {
+    const totalDocuments = await this.prisma.document.count();
+    const documentsThisMonth = await this.prisma.document.count({
+      where: { createdAt: { gte: startOfMonth(new Date()) } },
+    });
+    const documentsThisWeek = await this.prisma.document.count({
+      where: { createdAt: { gte: startOfWeek(new Date()) } },
+    });
+
+    return { totalDocuments, documentsThisMonth, documentsThisWeek };
+  }
+
+  async getCustomerStats() {
+    const totalCustomers = await this.prisma.customer.count();
+    const customersThisMonth = await this.prisma.customer.count({
+      where: { createdAt: { gte: startOfMonth(new Date()) } },
+    });
+    const customersThisWeek = await this.prisma.customer.count({
+      where: { createdAt: { gte: startOfWeek(new Date()) } },
+    });
+
+    return { totalCustomers, customersThisMonth, customersThisWeek };
   }
 }

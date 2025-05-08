@@ -5,7 +5,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Customer, StatementBank } from '@prisma/client';
+import { Address, Customer, StatementBank } from '@prisma/client';
 import { Bank } from '../dto/bank.dto';
 import { Type } from 'class-transformer';
 
@@ -14,8 +14,18 @@ export class ProvideFilledPetitionInput {
   @ValidateNested()
   author: Omit<
     Customer,
-    'id' | 'createdAt' | 'updatedAt' | 'birthDate' | 'email' | 'phone'
+    | 'id'
+    | 'createdAt'
+    | 'updatedAt'
+    | 'birthDate'
+    | 'email'
+    | 'phone'
+    | 'address'
+    | 'addressId'
   >;
+
+  @IsNotEmpty()
+  address: Address;
 
   @IsNotEmpty()
   @ValidateNested()
@@ -39,8 +49,18 @@ export class ProvideFilledPetitionPopulateInfoInput {
   @ValidateNested()
   author: Omit<
     Customer,
-    'id' | 'createdAt' | 'updatedAt' | 'birthDate' | 'email' | 'phone'
+    | 'id'
+    | 'createdAt'
+    | 'updatedAt'
+    | 'birthDate'
+    | 'email'
+    | 'phone'
+    | 'address'
+    | 'addressId'
   >;
+
+  @IsNotEmpty()
+  address: string;
 
   @IsString()
   @IsNotEmpty()

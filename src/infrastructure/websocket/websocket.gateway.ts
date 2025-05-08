@@ -52,7 +52,7 @@ export class WebsocketGateway
       this.clients.set(client.id, userId);
       // console.log(`✅ Usuário ${userId} conectado (socket: ${client.id})`);
     } catch (err: any) {
-      console.log('❌ Token inválido', err?.message);
+      console.error('❌ Token inválido', err?.message);
       client.disconnect();
     }
   }

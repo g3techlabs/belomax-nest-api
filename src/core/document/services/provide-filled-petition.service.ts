@@ -2,17 +2,21 @@
 
 import { CreateDocumentService } from './create-document.service';
 import { Injectable } from '@nestjs/common';
-import { ProvideFilledPetitionInput, ProvideFilledPetitionPopulateInfoInput } from '../inputs/provide-filled-petition.input';
+import {
+  ProvideFilledPetitionInput,
+  ProvideFilledPetitionPopulateInfoInput,
+} from '../inputs/provide-filled-petition.input';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as PizZip from 'pizzip';
 import * as DocxTemplater from 'docxtemplater';
 import * as numero from 'numero-por-extenso';
-import { formatAddress } from '../dto/address.dto';
 import { MulterFileFactory } from 'src/utils/multer-file-factory';
 import { StatementBank } from '@prisma/client';
 import { Bank } from '../dto/bank.dto';
 import { parseValueToBrl } from 'src/utils/parse-value-to-brl';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale'
 
 @Injectable()
 export class ProvideFilledPetitionService {
@@ -26,19 +30,34 @@ export class ProvideFilledPetitionService {
     bank,
     term,
     chargedValue,
-    automationId
+    address,
+    automationId,
   }: ProvideFilledPetitionInput) {
     try {
       this.getDocxFile();
 
-      this.populateFile({ author, bank: this.getBankInfo(bank), term, chargedValue });
+      this.populateFile({
+        author,
+        address: this.parseAddressToBrazilianFormat({
+          street: address.street,
+          number: address.number,
+          neighborhood: address.neighborhood,
+          city: address.city,
+          state: address.state,
+          zipcode: address.zipcode,
+          additional: address.additional || undefined,
+        }),
+        bank: this.getBankInfo(bank),
+        term,
+        chargedValue,
+      });
 
       const buffer = this.getBufferFromDocx(this.docxFile);
 
       const multerFile = MulterFileFactory.fromBufferOrUint8Array(buffer);
 
       await this.createDocumentService.execute({
-        name: `PETICAO-${term}`,
+        name: `PETICAO-${term}-${author.name}-${bank}`,
         automationId: automationId,
         file: multerFile,
       });
@@ -77,6 +96,7 @@ export class ProvideFilledPetitionService {
     bank,
     term,
     chargedValue,
+    address,
   }: ProvideFilledPetitionPopulateInfoInput) {
     this.docxFile.render({
       name: author.name ?? 'não informado',
@@ -85,7 +105,7 @@ export class ProvideFilledPetitionService {
       occupation: author.occupation ?? 'não informado',
       rg: author.rg ?? 'não informado',
       cpf: author.cpfCnpj ?? 'não informado',
-      address: author.address ?? 'não informado',
+      address: address ?? 'não informado',
       bankName: bank.name ?? 'não informado',
       bankCnpj: bank.cnpj ?? 'não informado',
       bankAddress: bank.address ?? 'não informado',
@@ -102,11 +122,14 @@ export class ProvideFilledPetitionService {
         chargedValue * 2,
         numero.estilo.monetario,
       ),
-      askedValuePlusChargedValue: parseValueToBrl((chargedValue * 2) + this.ASKED_VALUE),
+      askedValuePlusChargedValue: parseValueToBrl(
+        chargedValue * 2 + this.ASKED_VALUE,
+      ),
       askedValuePlusChargedValueInFull: numero.porExtenso(
-        (chargedValue * 2) + this.ASKED_VALUE,
+        chargedValue * 2 + this.ASKED_VALUE,
         numero.estilo.monetario,
       ),
+      todayDate: format(new Date(Date.now()), "dd of MMMM yyyy", { locale: ptBR }).replace("of", "de"),
     });
   }
 
@@ -124,20 +147,23 @@ export class ProvideFilledPetitionService {
       BRADESCO: {
         name: 'Banco Bradesco S.A',
         cnpj: '60.746.948/0001-12',
-        address: "Núcleo Administrativo Cidade de Deus, S/N, Vila Yara, Osasco/SP, CEP 06029-900"
+        address:
+          'Núcleo Administrativo Cidade de Deus, S/N, Vila Yara, Osasco/SP, CEP 06029-900',
       },
       BB: {
         name: 'Banco do Brasil S.A',
         cnpj: '00.000.000/0001-91',
-        address: "Setor Bancário Sul, Quadra 1, Bloco G, Bairro Asa Sul Brasília/DF, CEP 70074-900"
+        address:
+          'Setor Bancário Sul, Quadra 1, Bloco G, Bairro Asa Sul Brasília/DF, CEP 70074-900',
       },
       CAIXA: {
         name: 'Caixa Econômica Federal',
         cnpj: '00.360.305/0001-04',
-        address: "Setor Bancário Sul, Quadra 4, Bloco A, Bairro Asa Sul Brasília/DF, CEP 70074-900"
-      }
-    }
-    
+        address:
+          'Setor Bancário Sul, Quadra 4, Bloco A, Bairro Asa Sul Brasília/DF, CEP 70074-900',
+      },
+    };
+
     switch (bank) {
       case StatementBank.BRADESCO:
         return bankInfo.BRADESCO;
@@ -148,5 +174,28 @@ export class ProvideFilledPetitionService {
       default:
         throw new Error('Bank not supported');
     }
+  }
+
+  private parseAddressToBrazilianFormat(address: {
+    street: string;
+    number: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    zipcode: string;
+    additional?: string;
+  }): string {
+    const { street, number, neighborhood, city, state, zipcode, additional } =
+      address;
+
+    // Format the address string
+    let formattedAddress = `${street}, ${number}, ${neighborhood}, CEP ${zipcode} ${city}/${state}`;
+
+    // Append additional information if available
+    if (additional) {
+      formattedAddress += `, ${additional}`;
+    }
+
+    return formattedAddress;
   }
 }

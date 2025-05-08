@@ -22,6 +22,10 @@ export class AuthenticateUserService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    if (!findUserByEmail.active) {
+      throw new UnauthorizedException('User is inactive');
+    }
+
     const passwordIsValid = await compare(
       password,
       findUserByEmail.password ?? '',

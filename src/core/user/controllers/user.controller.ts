@@ -1,3 +1,4 @@
+import { UpdateActiveStatusService } from './../services/update-active-status.service';
 import {
   Body,
   Controller,
@@ -5,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -35,6 +37,7 @@ import { SetPasswordInput } from '../inputs/set-password.input';
 import { SetPasswordService } from '../services/set-password.service';
 import { UserWithoutPassword } from '../entities/user-without-password';
 import { FindUserByEmailService } from '../services/find-user-by-email.service';
+import { UpdateActiveStatusRequestInput } from '../inputs/update-active-status.input';
 
 @Controller('users')
 export class UserController {
@@ -50,6 +53,7 @@ export class UserController {
     private readonly verifyTokenService: VerifyTokenService,
     private readonly resetPaswordService: ResetPasswordService,
     private readonly setPasswordService: SetPasswordService,
+    private readonly updateActiveStatusService: UpdateActiveStatusService
   ) {}
 
   @Post('authenticate')
@@ -100,6 +104,13 @@ export class UserController {
     @Body() data: ChangePasswordInput,
   ): Promise<User> {
     return await this.changePasswordService.execute(id, data);
+  }
+
+  @UseGuards(AuthGuard, AdminGuard)
+  @Patch(':id/change-active-status')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async changeActiveStatus(@Param('id') id: string, @Body() { active }: UpdateActiveStatusRequestInput) {
+    return await this.updateActiveStatusService.execute({ id, active });
   }
 
   @UseGuards(AuthGuard, AdminGuard)
