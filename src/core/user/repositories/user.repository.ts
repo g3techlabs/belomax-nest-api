@@ -70,7 +70,7 @@ export class UserRepository {
             ? { contains: email, mode: 'insensitive' }
             : undefined,
         role: role ? { equals: role } : undefined,
-        active: active ?? undefined
+        active: active ?? undefined,
       },
       take: take ?? 10,
       skip: page ? (page - 1) * (take ?? 10) : 0,
@@ -83,7 +83,7 @@ export class UserRepository {
   async updateActiveStatus(id: string, active: boolean) {
     return await this.prisma.user.update({
       where: { id },
-      data: { active }
-    })
+      data: { active },
+    });
   }
 }
