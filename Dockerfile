@@ -10,7 +10,7 @@ COPY . .
 COPY .env .env
 
 RUN npx prisma generate
-RUN npx prisma migrate
+RUN npx prisma migrate deploy
 # Não roda build porque queremos rodar `yarn dev`
 
 # Etapa 2: Desenvolvimento
