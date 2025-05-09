@@ -12,6 +12,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: '*',
+    exposedHeaders: ['Content-Disposition']
   });
 
   app.useWebSocketAdapter(new IoAdapter(app));

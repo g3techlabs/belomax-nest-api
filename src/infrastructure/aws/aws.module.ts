@@ -8,6 +8,6 @@ import { GetAllBucketFilesService } from './s3/services/get-all-bucket-files.ser
   imports: [],
   controllers: [],
   providers: [S3Provider, S3AddFileService, S3GetFileService, GetAllBucketFilesService],
-  exports: [S3AddFileService, S3GetFileService],
+  exports: [S3AddFileService, S3GetFileService, GetAllBucketFilesService],
 })
 export class AwsModule {}

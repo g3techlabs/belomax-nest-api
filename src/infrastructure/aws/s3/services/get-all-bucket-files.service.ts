@@ -9,17 +9,23 @@ import {
 
 @Injectable()
 export class GetAllBucketFilesService {
-  private bucket = this.getBucketName();
+  private bucket: string;
 
   constructor(
     private readonly s3: S3Provider,
     private readonly configService: ConfigService,
   ) {}
 
-  async execute() {
-    const objects = await this.listFiles();
-    const files = await this.getAllObjects(objects);
-    return files;
+  async execute(keys?: string[]) {
+    try {
+      this.bucket = this.getBucketName();
+      const objects = await this.listFiles(keys);
+      const files = await this.getAllObjects(objects);
+      return files;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error);
+    }
   }
 
   private getBucketName(): string {
@@ -30,10 +36,17 @@ export class GetAllBucketFilesService {
     return bucket;
   }
 
-  private async listFiles() {
+  private async listFiles(filterKeys?: string[]) {
     const command = this.buildListObjectsCommand();
     const objects = await this.listObjects(command);
-    return objects;
+
+    return filterKeys && filterKeys.length !== 0
+      ? this.filterObjects(filterKeys, objects)
+      : objects;
+  }
+
+  private filterObjects(keys: string[], objects: _Object[]) {
+    return objects.filter((object) => keys.includes(object.Key ?? ''));
   }
 
   private async listObjects(command: ListObjectsV2Command): Promise<_Object[]> {
@@ -47,7 +60,7 @@ export class GetAllBucketFilesService {
 
   private async getAllObjects(
     objects: _Object[],
-  ): Promise<Uint8Array<ArrayBufferLike>[]> {
+  ): Promise<{ buffer: Buffer; name: string }[]> {
     const files = objects.map(async (object) => {
       const command = this.buildGetObjectCommand(object.Key ?? '');
       const response = await this.s3.getClient().send(command);
@@ -55,13 +68,22 @@ export class GetAllBucketFilesService {
       if (!response.Body) {
         throw new Error(`${object.Key} had a undefined body`);
       }
-
-      return response.Body?.transformToByteArray();
+      const buffer = this.convertUint8ArrayToBuffer(
+        await response.Body?.transformToByteArray(),
+      );
+      return {
+        buffer,
+        name: object.Key ?? '',
+      };
     });
     return Promise.all(files);
   }
 
   private buildGetObjectCommand(key: string): GetObjectCommand {
     return new GetObjectCommand({ Bucket: this.bucket, Key: key });
+  }
+
+  private convertUint8ArrayToBuffer(file: Uint8Array<ArrayBufferLike>): Buffer {
+    return Buffer.from(file);
   }
 }

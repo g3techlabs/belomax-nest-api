@@ -1,3 +1,4 @@
+import { GetAllAutomationFilesService } from './../services/get-all-automation-files.service';
 import { ProvideFilledPetitionService } from './../services/provide-filled-petition.service';
 // @eslint-disable
 import {
@@ -9,6 +10,7 @@ import {
   Param,
   Post,
   Put,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -26,6 +28,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateDocumentService } from '../services/create-document.service';
 import { GetDocumentUrlService } from '../services/get-document-url.service';
 import { ProvideFilledPetitionInput } from '../inputs/provide-filled-petition.input';
+import { GetAllAutomationFilesInput } from '../inputs/get-all-automation-files.input';
+import { Response } from 'express';
 
 @Controller('documents')
 export class DocumentController {
@@ -36,6 +40,7 @@ export class DocumentController {
     private readonly findByIdDocumentService: FindByIdDocumentService,
     private readonly getDocumentUrlService: GetDocumentUrlService,
     private readonly provideFilledPetitionService: ProvideFilledPetitionService,
+    private readonly getAllAutomationFilesService: GetAllAutomationFilesService
   ) {}
 
   @UseGuards(AuthGuard)
@@ -83,5 +88,17 @@ export class DocumentController {
   @Post('/petition')
   async fillPetition(@Body() data: ProvideFilledPetitionInput) {
     return await this.provideFilledPetitionService.execute(data);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/download-everything')
+  async downloadAllAutomationFiles(@Body() data: GetAllAutomationFilesInput, @Res() response: Response) {
+    const { file, name, finalized } = await this.getAllAutomationFilesService.execute(data)
+
+    response.setHeader('Content-Type', 'application/zip')
+    response.setHeader('Content-Disposition', `attachment; filename=${name}`)
+
+    file.pipe(response)
+    await finalized
   }
 }
