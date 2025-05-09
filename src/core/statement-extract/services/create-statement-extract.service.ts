@@ -105,7 +105,7 @@ export class CreateStatementExtractService {
 
     try {
       const fileData = await this.createDocumentService.execute({
-        name: `INICIAL-${bank}-${customerExists.name}`,
+        name: `ORIGINAL-${bank}-${customerExists.name}`,
         file: file,
         automationId: automation.id,
       });
