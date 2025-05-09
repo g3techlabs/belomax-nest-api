@@ -26,7 +26,7 @@ export class AddressRepository {
       },
       data: {
         ...dataWithoutCustomerId,
-        customer: {
+        Customer: {
           connect: {
             id: data.customerId,
           }
