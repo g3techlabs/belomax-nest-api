@@ -58,4 +58,8 @@ export class DocumentRepository {
       where: { automationId },
     });
   }
+
+  async findDocumentsByAutomationId(automationId: string): Promise<Document[]> {
+    return this.prisma.document.findMany({ where: { automationId } });
+  }
 }

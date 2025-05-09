@@ -13,6 +13,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 import { StatementExtractModule } from '../statement-extract/statement-extract.module';
 import { ProvideFilledPetitionService } from './services/provide-filled-petition.service';
+import { GetAllAutomationFilesService } from './services/get-all-automation-files.service';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ProvideFilledPetitionService } from './services/provide-filled-petition
     UpdateDocumentService,
     GetDocumentUrlService,
     ProvideFilledPetitionService,
+    GetAllAutomationFilesService
   ],
   exports: [
     CreateDocumentService,
