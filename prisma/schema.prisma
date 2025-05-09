@@ -103,7 +103,7 @@ model Address {
   zipcode      String
   additional   String?
 
-  Customer Customer[]
+  customer Customer[]
 
   @@map("address")
 }

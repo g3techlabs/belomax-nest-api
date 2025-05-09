@@ -6,7 +6,7 @@ services:
     container_name: belomax-nest-api
     working_dir: /usr/src/app
     volumes:
-      - ./:/usr/src/app
+      - ./belomax-nest-api:/usr/src/app
       - /usr/src/app/node_modules
     ports:
       - "3000:3000"
@@ -16,6 +16,23 @@ services:
       - db
       - redis
     command: yarn run start
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: belomax-web
+    working_dir: /usr/src/web
+    volumes:
+      - ./belomax-web:/usr/src/web
+      - /usr/src/web/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - app
+    command: yarn run dev
 
   db:
     image: postgres:13

@@ -15,6 +15,7 @@ import { ChangeStatusAutomationService } from './services/change-status-automati
 import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 import { UserModule } from '../user/user.module';
 import { CancelAutomationService } from './services/cancel-automation.service';
+import { DashboardService } from './services/dashboard.service';
 
 @Module({
   imports: [DatabaseModule, AuthModule, WebsocketModule, UserModule],
@@ -29,6 +30,7 @@ import { CancelAutomationService } from './services/cancel-automation.service';
     UpdateAutomationService,
     ChangeStatusAutomationService,
     CancelAutomationService,
+    DashboardService,
   ],
   exports: [
     CreateAutomationService,

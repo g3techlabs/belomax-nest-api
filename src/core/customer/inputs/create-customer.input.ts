@@ -38,9 +38,9 @@ export class CreateCustomerInput {
   @IsOptional()
   maritalStatus?: string;
 
-  @IsDate()
+  @IsString()
   @IsOptional()
-  birthDate?: Date;
+  birthDate?: string;
 
   @IsString()
   @IsOptional()

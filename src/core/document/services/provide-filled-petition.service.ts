@@ -12,17 +12,22 @@ import * as PizZip from 'pizzip';
 import * as DocxTemplater from 'docxtemplater';
 import * as numero from 'numero-por-extenso';
 import { MulterFileFactory } from 'src/utils/multer-file-factory';
-import { StatementBank } from '@prisma/client';
+import { AutomationStatus, StatementBank } from '@prisma/client';
 import { Bank } from '../dto/bank.dto';
 import { parseValueToBrl } from 'src/utils/parse-value-to-brl';
 import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale'
+import { ChangeStatusAutomationService } from 'src/core/automation/services/change-status-automation.service';
 
 @Injectable()
 export class ProvideFilledPetitionService {
   private docxFile: DocxTemplater;
   private ASKED_VALUE = 20000;
 
-  constructor(private readonly createDocumentService: CreateDocumentService) {}
+  constructor(
+    private readonly createDocumentService: CreateDocumentService,
+    private readonly changeStatusAutomationService: ChangeStatusAutomationService,
+  ) {}
 
   async execute({
     author,
@@ -56,12 +61,18 @@ export class ProvideFilledPetitionService {
       const multerFile = MulterFileFactory.fromBufferOrUint8Array(buffer);
 
       await this.createDocumentService.execute({
-        name: `PETICAO-${term}`,
+        name: `PETICAO-${term}-${author.name}-${bank}`,
         automationId: automationId,
         file: multerFile,
       });
     } catch (err) {
       console.log(err);
+
+      await this.changeStatusAutomationService.execute(automationId, {
+        status: AutomationStatus.FAILED,
+         
+        error: err.message || 'Erro inesperado ao criar petição.',
+      });
     }
   }
 
@@ -128,7 +139,7 @@ export class ProvideFilledPetitionService {
         chargedValue * 2 + this.ASKED_VALUE,
         numero.estilo.monetario,
       ),
-      todayDate: format(new Date(Date.now()), 'dd de MMMM de yyyy'),
+      todayDate: format(new Date(Date.now()), "dd 'de' MMMM 'de' yyyy", { locale: ptBR }),
     });
   }
 
