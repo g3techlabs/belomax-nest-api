@@ -28,7 +28,7 @@ export class S3GetFileService {
       const response = await this.s3.getClient().send(command);
 
       return {
-        body: response.Body,
+        object: response,
         url,
       };
     } catch (error) {
