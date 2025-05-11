@@ -13,13 +13,13 @@ export class TriggerUniquePensionerPaycheckAutomationInput {
   @IsNotEmpty()
   registration: string;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  bond: string;
+  bond: number;
 
   @IsNumber()
   @IsNotEmpty()
-  pensionerNumber: string;
+  pensionerNumber: number;
 
   @IsNumber()
   @IsNotEmpty()

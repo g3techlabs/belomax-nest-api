@@ -56,14 +56,18 @@ export class TriggerPensionerPaycheckAutomationService {
     this.wsAutomationsService.notifyNewAutomation(automation, userId);
 
     const queuePayload = {
-      cpf: data.cpf,
-      matricula: data.registration,
-      vinculo: data.bond,
-      numpens: data.pensionerNumber,
-      mes: this.convertMonth(data.month),
-      ano: String(data.year),
       automationId: automation.id,
       authToken: token,
+      data: [
+        {
+          registration: data.registration,
+          bond: data.bond,
+          cpf: data.cpf,
+          pensionerNumber: data.pensionerNumber,
+          month: this.convertMonth(data.month),
+          year: String(data.year),
+        },
+      ],
     };
 
     try {

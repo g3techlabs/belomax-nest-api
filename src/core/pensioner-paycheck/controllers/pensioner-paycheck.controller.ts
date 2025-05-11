@@ -12,11 +12,14 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { CurrentUser } from 'src/auth/current-user';
 import { TriggerPensionerPaycheckAutomationService } from '../services/trigger-pensioner-paycheck-automation.service';
 import { TriggerUniquePensionerPaycheckAutomationInput } from '../inputs/trigger-pensioner-paycheck-automation.input';
+import { CreatePensionerPaycheckService } from '../services/create-pensioner-paycheck.service';
+import { CreatePensionerPaycheckInput } from '../inputs/create-pensioner-paycheck.input';
 
 @Controller('pensioner-paychecks')
 export class PensionerPaycheckController {
   constructor(
     private readonly triggerPensionerPaycheckAutomationService: TriggerPensionerPaycheckAutomationService,
+    private readonly createPensionerPaycheckService: CreatePensionerPaycheckService,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -34,5 +37,14 @@ export class PensionerPaycheckController {
         ...data,
       },
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() data: CreatePensionerPaycheckInput) {
+    return await this.createPensionerPaycheckService.execute({
+      ...data,
+    });
   }
 }

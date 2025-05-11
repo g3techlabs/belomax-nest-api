@@ -8,6 +8,7 @@ import { AutomationModule } from '../automation/automation.module';
 import { CustomerModule } from '../customer/customer.module';
 import { UserModule } from '../user/user.module';
 import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
+import { PensionerPaycheckController } from './controllers/pensioner-paycheck.controller';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
     UserModule,
     WebsocketModule,
   ],
-  controllers: [],
+  controllers: [PensionerPaycheckController],
   providers: [
     PensionerPaycheckRepository,
     TriggerPensionerPaycheckAutomationService,
