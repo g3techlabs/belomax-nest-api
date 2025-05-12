@@ -6,6 +6,8 @@ import {
   HttpStatus,
   Post,
   UseGuards,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -14,12 +16,15 @@ import { TriggerPensionerPaycheckAutomationService } from '../services/trigger-p
 import { TriggerUniquePensionerPaycheckAutomationInput } from '../inputs/trigger-pensioner-paycheck-automation.input';
 import { CreatePensionerPaycheckService } from '../services/create-pensioner-paycheck.service';
 import { CreatePensionerPaycheckInput } from '../inputs/create-pensioner-paycheck.input';
+import { FindManyPensionerPaycheckInput } from '../inputs/find-many-pensioner-paycheck.input';
+import { FindManyPensionerPaycheckService } from '../services/find-many-pensioner-paycheck.service';
 
 @Controller('pensioner-paychecks')
 export class PensionerPaycheckController {
   constructor(
     private readonly triggerPensionerPaycheckAutomationService: TriggerPensionerPaycheckAutomationService,
     private readonly createPensionerPaycheckService: CreatePensionerPaycheckService,
+    private readonly findManyPensionerPaycheckService: FindManyPensionerPaycheckService,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -46,5 +51,12 @@ export class PensionerPaycheckController {
     return await this.createPensionerPaycheckService.execute({
       ...data,
     });
+  }
+
+  @UseGuards(AuthGuard)
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async findMany(@Query() data: FindManyPensionerPaycheckInput) {
+    return await this.findManyPensionerPaycheckService.execute(data);
   }
 }

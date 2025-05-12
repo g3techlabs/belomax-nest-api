@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
 import { CreatePensionerPaycheckInput } from '../inputs/create-pensioner-paycheck.input';
+import { FindManyPensionerPaycheckInput } from '../inputs/find-many-pensioner-paycheck.input';
 
 @Injectable()
 export class PensionerPaycheckRepository {
@@ -55,5 +56,33 @@ export class PensionerPaycheckRepository {
       console.error('❌ Erro ao criar contracheque:', error);
       throw error;
     }
+  }
+
+  async findMany(data: FindManyPensionerPaycheckInput) {
+    const { customerId, name, startDate, endDate } = data;
+
+    return await this.prisma.pensionerPaycheck.findMany({
+      where: {
+        ...(customerId && { automation: { customerId } }),
+        ...(name && {
+          automation: {
+            customer: { name: { contains: name, mode: 'insensitive' } },
+          },
+        }),
+        ...(startDate &&
+          endDate && { createdAt: { gte: startDate, lte: endDate } }),
+      },
+      include: {
+        automation: {
+          include: {
+            customer: true,
+          },
+        },
+        terms: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 }
