@@ -15,11 +15,11 @@ export class CreatePensionerPaycheckInput {
   @IsString()
   pensionerNumber: string;
 
-  @IsString()
-  month: string;
+  @IsNumber()
+  month: number;
 
-  @IsString()
-  year: string;
+  @IsNumber()
+  year: number;
 
   @IsNumber()
   consignableMargin: number;
