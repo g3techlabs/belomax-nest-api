@@ -58,6 +58,20 @@ export class PensionerPaycheckRepository {
     }
   }
 
+  async findById(id: string) {
+    return await this.prisma.pensionerPaycheck.findUnique({
+      where: { id },
+      include: {
+        automation: {
+          include: {
+            customer: true,
+          },
+        },
+        terms: true,
+      },
+    });
+  }
+
   async findMany(data: FindManyPensionerPaycheckInput) {
     const { customerId, name, startDate, endDate } = data;
 

@@ -10,6 +10,7 @@ import { UserModule } from '../user/user.module';
 import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 import { PensionerPaycheckController } from './controllers/pensioner-paycheck.controller';
 import { FindManyPensionerPaycheckService } from './services/find-many-pensioner-paycheck.service';
+import { FindByIdPensionerPaycheckService } from './services/find-by-id-pensioner-paycheck.service';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { FindManyPensionerPaycheckService } from './services/find-many-pensioner
     TriggerPensionerPaycheckAutomationService,
     CreatePensionerPaycheckService,
     FindManyPensionerPaycheckService,
+    FindByIdPensionerPaycheckService,
   ],
 })
 export class PensionerPaycheckModule {}
