@@ -6,17 +6,28 @@ import {
   HttpStatus,
   Post,
   UseGuards,
+  Get,
+  Query,
+  Param,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { CurrentUser } from 'src/auth/current-user';
 import { TriggerPensionerPaycheckAutomationService } from '../services/trigger-pensioner-paycheck-automation.service';
 import { TriggerUniquePensionerPaycheckAutomationInput } from '../inputs/trigger-pensioner-paycheck-automation.input';
+import { CreatePensionerPaycheckService } from '../services/create-pensioner-paycheck.service';
+import { CreatePensionerPaycheckInput } from '../inputs/create-pensioner-paycheck.input';
+import { FindManyPensionerPaycheckInput } from '../inputs/find-many-pensioner-paycheck.input';
+import { FindManyPensionerPaycheckService } from '../services/find-many-pensioner-paycheck.service';
+import { FindByIdPensionerPaycheckService } from '../services/find-by-id-pensioner-paycheck.service';
 
 @Controller('pensioner-paychecks')
 export class PensionerPaycheckController {
   constructor(
     private readonly triggerPensionerPaycheckAutomationService: TriggerPensionerPaycheckAutomationService,
+    private readonly createPensionerPaycheckService: CreatePensionerPaycheckService,
+    private readonly findManyPensionerPaycheckService: FindManyPensionerPaycheckService,
+    private readonly findByIdPensionerPaycheckService: FindByIdPensionerPaycheckService,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -34,5 +45,28 @@ export class PensionerPaycheckController {
         ...data,
       },
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() data: CreatePensionerPaycheckInput) {
+    return await this.createPensionerPaycheckService.execute({
+      ...data,
+    });
+  }
+
+  @UseGuards(AuthGuard)
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async findMany(@Query() data: FindManyPensionerPaycheckInput) {
+    return await this.findManyPensionerPaycheckService.execute(data);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async findById(@Param('id') id: string) {
+    return await this.findByIdPensionerPaycheckService.execute(id);
   }
 }

@@ -66,7 +66,7 @@ export class ProvideFilledPetitionService {
         file: multerFile,
       });
     } catch (err) {
-      console.log(err);
+      console.error(err);
 
       await this.changeStatusAutomationService.execute(automationId, {
         status: AutomationStatus.FAILED,

@@ -150,8 +150,8 @@ model PensionerPaycheck {
   bond            String
   cpf             String @db.VarChar(11)
   pensionerNumber String
-  month           String
-  year            String
+  month           Int
+  year            Int
 
   consignableMargin Float
   totalBenefits     Float
@@ -171,8 +171,8 @@ model PensionerPaycheck {
 model PensionerPaycheckTerm {
   id String @id @default(uuid())
 
-  month String
-  year  String
+  month Int
+  year  Int
 
   type           PensionerPaycheckTermType
   code           Int
