@@ -11,6 +11,8 @@ import { WebsocketModule } from 'src/infrastructure/websocket/websocket.module';
 import { PensionerPaycheckController } from './controllers/pensioner-paycheck.controller';
 import { FindManyPensionerPaycheckService } from './services/find-many-pensioner-paycheck.service';
 import { FindByIdPensionerPaycheckService } from './services/find-by-id-pensioner-paycheck.service';
+import { GeneratePensionerEarningsReportService } from './services/generate-pensioner-earnings-report.service';
+import { DocumentModule } from '../document/document.module';
 
 @Module({
   imports: [
@@ -18,10 +20,14 @@ import { FindByIdPensionerPaycheckService } from './services/find-by-id-pensione
     BullModule.registerQueue({
       name: 'belomax-python-queue',
     }),
+    BullModule.registerQueue({
+      name: 'belomax-queue',
+    }),
     AutomationModule,
     CustomerModule,
     UserModule,
     WebsocketModule,
+    DocumentModule
   ],
   controllers: [PensionerPaycheckController],
   providers: [
@@ -30,6 +36,8 @@ import { FindByIdPensionerPaycheckService } from './services/find-by-id-pensione
     CreatePensionerPaycheckService,
     FindManyPensionerPaycheckService,
     FindByIdPensionerPaycheckService,
+    GeneratePensionerEarningsReportService
   ],
+  exports: [GeneratePensionerEarningsReportService]
 })
 export class PensionerPaycheckModule {}
