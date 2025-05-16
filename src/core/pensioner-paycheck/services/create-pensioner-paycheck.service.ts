@@ -26,12 +26,12 @@ export class CreatePensionerPaycheckService {
 
   async execute(data: CreatePensionerPaycheckInput) {
     const {
-      registration,
-      bond,
-      cpf,
-      pensionerNumber,
-      month,
-      year,
+      // registration,
+      // bond,
+      // cpf,
+      // pensionerNumber,
+      // month,
+      // year,
       // consignableMargin,
       // totalBenefits,
       // netToReceive,
@@ -56,21 +56,6 @@ export class CreatePensionerPaycheckService {
     try {
       const created = await this.pensionerPaycheckRepository.create(data);
 
-      // await this.changeStatusAutomationService.execute(automationId, {
-      //   status: AutomationStatus.FINISHED,
-      // });
-
-      await this.sendJobToPensionerEarnignsReportQueue({
-        registration,
-        bond,
-        cpf,
-        pensionerNumber,
-        month,
-        year,
-        automationId,
-        customerName: automation.customer?.name ?? '',
-      });
-
       this.wsAutomationsService.notifyPensionerPaycheckCreation(
         {
           pensionerPaycheck: created,
@@ -78,6 +63,28 @@ export class CreatePensionerPaycheckService {
         },
         automationId,
       );
+
+      // await this.sendJobToPensionerEarnignsReportQueue({
+      //   registration,
+      //   bond,
+      //   cpf,
+      //   pensionerNumber,
+      //   month,
+      //   year,
+      //   automationId,
+      //   customerName: automation.customer?.name ?? '',
+      // });
+
+      // mocked time to create a document
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(true);
+        }, 3000);
+      });
+
+      await this.changeStatusAutomationService.execute(automationId, {
+        status: AutomationStatus.FINISHED,
+      });
 
       return created;
     } catch (error) {
