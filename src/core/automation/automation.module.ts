@@ -37,6 +37,7 @@ import { DashboardService } from './services/dashboard.service';
     UpdateAutomationService,
     FindByIdAutomationService,
     ChangeStatusAutomationService,
+    AutomationRepository
   ],
 })
 export class AutomationModule {}

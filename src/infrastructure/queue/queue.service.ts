@@ -1,3 +1,4 @@
+import { GeneratePensionerEarningsReportConsumer } from './consumers/generate-pensioner-earnings-report.consumer';
 import { HighlightPdfTermsConsumer } from './consumers/highlight-pdf-terms.consumer';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
@@ -11,6 +12,7 @@ export class QueueService extends WorkerHost {
     private readonly sendWelcomeEmailConsumer: SendWelcomeEmailConsumer,
     private readonly sendTokenEmailConsumer: SendTokenEmailConsumer,
     private readonly highlightPdfTermsConsumer: HighlightPdfTermsConsumer,
+    private readonly generatePensionerEarningsReportConsumer: GeneratePensionerEarningsReportConsumer,
   ) {
     super();
   }
@@ -31,6 +33,8 @@ export class QueueService extends WorkerHost {
         break;
       case 'highlight-pdf-terms':
         await this.highlightPdfTermsConsumer.execute(job);
+      case 'generate-pensioner-earnings-report':
+        await this.generatePensionerEarningsReportConsumer.execute(job);
     }
 
     return {};
