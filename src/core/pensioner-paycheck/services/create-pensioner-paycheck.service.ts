@@ -12,6 +12,7 @@ import { AutomationStatus } from '@prisma/client';
 import { AutomationRepository } from 'src/core/automation/repositories/automation.repository';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
 
 @Injectable()
 export class CreatePensionerPaycheckService {
@@ -20,16 +21,17 @@ export class CreatePensionerPaycheckService {
     private readonly pensionerPaycheckRepository: PensionerPaycheckRepository,
     private readonly changeStatusAutomationService: ChangeStatusAutomationService,
     @InjectQueue('belomax-queue') private pensionerEarningsReportQueue: Queue,
+    private readonly wsAutomationsService: WsAutomationsService,
   ) {}
 
   async execute(data: CreatePensionerPaycheckInput) {
     const {
-      registration,
-      bond,
-      cpf,
-      pensionerNumber,
-      month,
-      year,
+      // registration,
+      // bond,
+      // cpf,
+      // pensionerNumber,
+      // month,
+      // year,
       // consignableMargin,
       // totalBenefits,
       // netToReceive,
@@ -54,19 +56,34 @@ export class CreatePensionerPaycheckService {
     try {
       const created = await this.pensionerPaycheckRepository.create(data);
 
-      // await this.changeStatusAutomationService.execute(automationId, {
-      //   status: AutomationStatus.FINISHED,
+      this.wsAutomationsService.notifyPensionerPaycheckCreation(
+        {
+          pensionerPaycheck: created,
+          pensionerPaycheckId: created.id,
+        },
+        automationId,
+      );
+
+      // await this.sendJobToPensionerEarnignsReportQueue({
+      //   registration,
+      //   bond,
+      //   cpf,
+      //   pensionerNumber,
+      //   month,
+      //   year,
+      //   automationId,
+      //   customerName: automation.customer?.name ?? '',
       // });
 
-      await this.sendJobToPensionerEarnignsReportQueue({
-        registration,
-        bond,
-        cpf,
-        pensionerNumber,
-        month,
-        year,
-        automationId,
-        customerName: automation.customer?.name ?? '',
+      // mocked time to create a document
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(true);
+        }, 3000);
+      });
+
+      await this.changeStatusAutomationService.execute(automationId, {
+        status: AutomationStatus.FINISHED,
       });
 
       return created;

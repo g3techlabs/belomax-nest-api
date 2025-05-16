@@ -48,6 +48,12 @@ export class PensionerPaycheckRepository {
         },
         include: {
           terms: true,
+          automation: {
+            include: {
+              customer: true,
+              user: true,
+            },
+          },
         },
       });
 
@@ -65,6 +71,7 @@ export class PensionerPaycheckRepository {
         automation: {
           include: {
             customer: true,
+            user: true,
           },
         },
         terms: true,
@@ -90,6 +97,7 @@ export class PensionerPaycheckRepository {
         automation: {
           include: {
             customer: true,
+            user: true,
           },
         },
         terms: true,
