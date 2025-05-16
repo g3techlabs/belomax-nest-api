@@ -4,6 +4,7 @@ import { WebsocketGateway } from '../websocket.gateway';
 import { WsAutomationStatusChangeInput } from './inputs/automation-status-change.input';
 import { WsAutomationDocumentAddedInput } from './inputs/automation-document-added.input';
 import { Automation } from '@prisma/client';
+import { WsAutomationPensionerPaycheckCreationInput } from './inputs/automation-pensioner-paycheck-creation.input';
 
 @Injectable()
 export class WsAutomationsService {
@@ -19,6 +20,28 @@ export class WsAutomationsService {
       .getServer()
       .to(userId)
       .emit('automation:new', { ...data, userId });
+  }
+
+  notifyPensionerPaycheckCreation(
+    data: WsAutomationPensionerPaycheckCreationInput,
+    automationId: string,
+    userId?: string,
+  ) {
+    if (!userId || userId.trim() === '') {
+      this.ws.getServer().emit('automation:pensioner-paycheck-creation', {
+        automationId,
+        ...data,
+      });
+      return;
+    }
+
+    this.ws
+      .getServer()
+      .to(userId)
+      .emit('automation:pensioner-paycheck-creation', {
+        automationId,
+        ...data,
+      });
   }
 
   notifyStatusChange(

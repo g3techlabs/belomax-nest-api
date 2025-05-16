@@ -8,6 +8,7 @@ import { PensionerPaycheckRepository } from '../repositories/pensioner-paycheck.
 import { ChangeStatusAutomationService } from 'src/core/automation/services/change-status-automation.service';
 import { AutomationStatus } from '@prisma/client';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
+import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
 
 @Injectable()
 export class CreatePensionerPaycheckService {
@@ -15,6 +16,7 @@ export class CreatePensionerPaycheckService {
     private readonly prisma: PrismaService,
     private readonly pensionerPaycheckRepository: PensionerPaycheckRepository,
     private readonly changeStatusAutomationService: ChangeStatusAutomationService,
+    private readonly wsAutomationsService: WsAutomationsService,
   ) {}
 
   async execute(data: CreatePensionerPaycheckInput) {
@@ -54,6 +56,14 @@ export class CreatePensionerPaycheckService {
       await this.changeStatusAutomationService.execute(automationId, {
         status: AutomationStatus.FINISHED,
       });
+
+      this.wsAutomationsService.notifyPensionerPaycheckCreation(
+        {
+          pensionerPaycheck: created,
+          pensionerPaycheckId: created.id,
+        },
+        automationId,
+      );
 
       return created;
     } catch (error) {
