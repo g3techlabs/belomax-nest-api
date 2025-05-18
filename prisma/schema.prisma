@@ -165,6 +165,7 @@ model PensionerPaycheck {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([month, year, cpf])
   @@map("pensioner_paycheck")
 }
 
