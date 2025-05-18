@@ -3,8 +3,10 @@ import { TriggerUniquePensionerPaycheckAutomationInput } from '../inputs/trigger
 
 export class GeneratePensionerEarningsReportDTO extends OmitType(
   TriggerUniquePensionerPaycheckAutomationInput,
-  ['customerId'],
+  ['customerId', 'initialMonth', 'initialYear', 'finalMonth', 'finalYear'],
 ) {
+  month: number
+  year: number
   customerName: string;
   automationId: string;
 }

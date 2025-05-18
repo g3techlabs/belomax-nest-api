@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 export class TriggerUniquePensionerPaycheckAutomationInput {
   @IsString()
@@ -17,8 +17,14 @@ export class TriggerUniquePensionerPaycheckAutomationInput {
   pensionerNumber: string;
 
   @IsNumber()
-  month: number;
+  initialMonth: number;
 
   @IsNumber()
-  year: number;
+  initialYear: number;
+
+  @IsNumber()
+  finalMonth: number;
+
+  @IsNumber()
+  finalYear: number;
 }

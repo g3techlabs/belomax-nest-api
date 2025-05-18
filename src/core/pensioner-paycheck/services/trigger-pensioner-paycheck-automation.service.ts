@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotImplementedException,
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
@@ -43,45 +44,30 @@ export class TriggerPensionerPaycheckAutomationService {
       throw new BadRequestException('Cliente não encontrado');
     }
 
-    const automation = await this.createAutomationService.execute({
-      description: `Contracheque de pensionista - ${data.cpf}`,
-      userId,
-      customerId: data.customerId,
-    });
-
-    if (!automation) {
-      throw new NotImplementedException('Falha ao criar automação');
-    }
-
-    this.wsAutomationsService.notifyNewAutomation(automation, userId);
-
-    const queuePayload = {
-      automationId: automation.id,
-      authToken: token,
-      data: [
-        {
-          registration: data.registration,
-          bond: data.bond,
-          cpf: data.cpf,
-          pensionerNumber: data.pensionerNumber,
-          month: this.convertMonth(data.month),
-          year: String(data.year),
-        },
-      ],
-    };
-
-    try {
-      await this.pythonQueue.add('fetch-pensioner-paycheck', queuePayload);
-    } catch (error) {
-      console.error('Erro ao adicionar job à fila:', error);
-      await this.changeStatusAutomationService.execute(automation.id, {
-        status: AutomationStatus.FAILED,
-        // eslint-disable-next-line
-        error: error.message || 'Erro ao adicionar job à fila',
+    let year = data.initialYear;
+    for (let i = data.initialMonth; i <= data.finalMonth && year <= data.finalYear; i++) {
+      if (i > 12) {
+        i = 1;
+        year++;
+      }
+      const automation = await this.createAutomationService.execute({
+        description: `Contracheque de pensionista - ${data.cpf}`,
+        userId,
+        customerId: data.customerId,
       });
-    }
 
-    return automation;
+      if (!automation) {
+        throw new InternalServerErrorException('Falha ao criar automação');
+      }
+
+      try {
+        this.wsAutomationsService.notifyNewAutomation(automation, userId);
+  
+        await this.sendJobsToPythonQueue(data, i, year, token, automation.id);
+      } catch (error) {
+        await this.changeAutomationStatusToFailed(automation.id, error)
+      }
+    }
   }
 
   private convertMonth(month: number): string {
@@ -101,5 +87,44 @@ export class TriggerPensionerPaycheckAutomationService {
       'Dezembro',
     ];
     return months[month] || '';
+  }
+
+  private async sendJobsToPythonQueue(
+    {
+      registration,
+      bond,
+      cpf,
+      pensionerNumber,
+    }: TriggerUniquePensionerPaycheckAutomationInput,
+    month: number,
+    year: number,
+    authToken: string,
+    automationId: string,
+  ) {
+    const queuePayload = {
+      automationId,
+      authToken,
+      data: [
+        {
+          registration: registration,
+          bond: bond,
+          cpf: cpf,
+          pensionerNumber: pensionerNumber,
+          month: this.convertMonth(month),
+          year: String(year),
+        },
+      ],
+    };
+    await this.pythonQueue.add('fetch-pensioner-paycheck', queuePayload);
+  }
+
+  private async changeAutomationStatusToFailed(
+    automationId: string,
+    error: any,
+  ) {
+    await this.changeStatusAutomationService.execute(automationId, {
+      status: AutomationStatus.FAILED,
+      error: error.message || 'Erro ao adicionar job à fila',
+    });
   }
 }

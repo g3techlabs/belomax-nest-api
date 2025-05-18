@@ -5,17 +5,23 @@ import { CreatePensionerPaycheckTermInput } from './create-pensioner-paycheck-te
 import { IntersectionType, OmitType } from '@nestjs/swagger';
 
 export class CreatePensionerPaycheckInput extends IntersectionType(
-  OmitType(TriggerUniquePensionerPaycheckAutomationInput, ['customerId']),
+  OmitType(TriggerUniquePensionerPaycheckAutomationInput, ['customerId', 'initialMonth', 'initialYear', 'finalMonth', 'finalYear']),
   Object,
 ) {
   @IsNumber()
-  consignableMargin: number;
+  month: number
 
   @IsNumber()
-  totalBenefits: number;
+  year: number
 
   @IsNumber()
-  netToReceive: number;
+  consignableMargin: number
+
+  @IsNumber()
+  totalBenefits: number
+
+  @IsNumber()
+  netToReceive: number
 
   @IsString()
   automationId: string;

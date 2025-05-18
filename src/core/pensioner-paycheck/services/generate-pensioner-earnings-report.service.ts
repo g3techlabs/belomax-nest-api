@@ -1,9 +1,8 @@
-import { LaunchedChrome } from './../../../../node_modules/html-pdf-chrome/node_modules/chrome-launcher/dist/chrome-launcher.d';
 import { CreateDocumentService } from './../../document/services/create-document.service';
 import { GeneratePensionerEarningsReportDTO } from './../dtos/generate-pensioner-earnings-report.dto';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
-import * as htmlPdf from 'html-pdf-chrome';
+import puppeteer from 'puppeteer';
 import { MulterFileFactory } from 'src/utils/multer-file-factory';
 
 @Injectable()
@@ -32,10 +31,10 @@ export class GeneratePensionerEarningsReportService {
         data.customerName,
       );
 
-      await this.registerDocument(pdfFile, data.automationId);
+      await this.registerDocument(pdfFile, data.automationId, data.customerName);
     } catch (err) {
       console.error(
-        'Erro inesperado ocorreu ao gerar arquivo de rendimentos de pensionista.',
+        'Erro inesperado ocorreu ao gerar arquivo de rendimentos de pensionista:',
         err,
       );
     }
@@ -47,7 +46,7 @@ export class GeneratePensionerEarningsReportService {
     cpf,
     pensionerNumber,
     month,
-    year,
+    year
   }: GeneratePensionerEarningsReportDTO) {
     const mountedURL =
       this.PENSIONER_SERVICE_URL +
@@ -59,23 +58,21 @@ export class GeneratePensionerEarningsReportService {
       `mes=${month}&` +
       `tipofolha=NORMAL`;
 
-      console.log(mountedURL)
-
     return mountedURL;
   }
 
-  private async getPdfBuffer(
-    mountedURL: string,
-  ): Promise<Buffer<ArrayBufferLike>> {
-    const options: htmlPdf.CreateOptions = {
-      chromePath: '/snap/bin/chromium',
-      clearCache: true,
-    }
+  private async getPdfBuffer(mountedURL: string): Promise<Uint8Array> {
+    const browser = await puppeteer.launch({
+      args: ['--disable-features=HttpsFirstBalancedModeAutoEnable']
+    });
+    const page = await browser.newPage();
 
-    return await htmlPdf.create(mountedURL, options).then((pdf) => pdf.toBuffer());
+    await page.goto(mountedURL);
+
+    return await page.pdf();
   }
 
-  private convertBufferToMulterFile(file: Buffer, customerName: string) {
+  private convertBufferToMulterFile(file: Uint8Array, customerName: string) {
     const fileName = this.mountFileName(customerName);
     return MulterFileFactory.fromBufferOrUint8Array(
       file,
@@ -85,20 +82,18 @@ export class GeneratePensionerEarningsReportService {
   }
 
   private mountFileName(customerName: string) {
-    const today = new Date(Date.now());
-    const day = today.getDay();
-    const month = today.getMonth();
-    const year = today.getFullYear();
-
-    return `COMPROVANTE_PENSIONISTA-${customerName}-${day}-${month}-${year}.pdf`;
+    return `COMPROVANTE_PENSIONISTA-${customerName}.pdf`;
   }
 
-  private async registerDocument(file: Express.Multer.File, automationId: string) {
+  private async registerDocument(
+    file: Express.Multer.File,
+    automationId: string,
+    customerName: string
+  ) {
     await this.createDocumentService.execute({
       automationId,
-      name: file.filename,
+      name: `COMPROVANTE_PENSIONISTA-${customerName}.pdf`,
       file: file,
     });
   }
-
 }

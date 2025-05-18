@@ -48,7 +48,7 @@ export class CreateDocumentService {
       );
     }
 
-    const s3DocumentName = `${data.name.replaceAll(' ', '_')}-${new Date().toISOString()}.${file.originalname.split('.').pop()}`;
+    const s3DocumentName = `${data.name.replaceAll(' ', '_')}-${new Date().toISOString()}.${file.mimetype.split('/').pop()}`;
 
     const fileUploaded = await this.s3AddFileService.execute({
       file: file.buffer,
@@ -87,19 +87,23 @@ export class CreateDocumentService {
         await this.countStatementExtractExpectedDocumentsService.execute(
           createdDocument.automationId,
         );
+    }
 
-      // eslint-disable-next-line
-      const currentDocumentCount = await this.documentRepository.countByAutomationId(automationId);
+    if (automation.pensionerPaycheck) {
+      expectedDocumentCount = 1;
+    }
 
-      if (currentDocumentCount > expectedDocumentCount) {
-        throw new BadRequestException(
-          `A automação já possui o número de documentos esperados: (${expectedDocumentCount}) documentos`,
-        );
-      }
+    const currentDocumentCount =
+      await this.documentRepository.countByAutomationId(automationId);
 
-      if (currentDocumentCount === expectedDocumentCount) {
-        changeAutomationStatus = true;
-      }
+    if (currentDocumentCount > expectedDocumentCount) {
+      throw new BadRequestException(
+        `A automação já possui o número de documentos esperados: (${expectedDocumentCount}) documentos`,
+      );
+    }
+
+    if (currentDocumentCount === expectedDocumentCount) {
+      changeAutomationStatus = true;
     }
 
     if (changeAutomationStatus) {
