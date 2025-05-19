@@ -1,3 +1,5 @@
+import { MergeAllPensionerReportsService } from './../services/merge-all-pensioner-reports.service';
+import { MergeAllPensionerReportsInput } from './../inputs/merge-all-pensioner-reports.input';
 import {
   Body,
   Controller,
@@ -9,6 +11,7 @@ import {
   Get,
   Query,
   Param,
+  Res,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -20,6 +23,7 @@ import { CreatePensionerPaycheckInput } from '../inputs/create-pensioner-paychec
 import { FindManyPensionerPaycheckInput } from '../inputs/find-many-pensioner-paycheck.input';
 import { FindManyPensionerPaycheckService } from '../services/find-many-pensioner-paycheck.service';
 import { FindByIdPensionerPaycheckService } from '../services/find-by-id-pensioner-paycheck.service';
+import { Response } from 'express';
 
 @Controller('pensioner-paychecks')
 export class PensionerPaycheckController {
@@ -28,6 +32,7 @@ export class PensionerPaycheckController {
     private readonly createPensionerPaycheckService: CreatePensionerPaycheckService,
     private readonly findManyPensionerPaycheckService: FindManyPensionerPaycheckService,
     private readonly findByIdPensionerPaycheckService: FindByIdPensionerPaycheckService,
+    private readonly mergeAllPensionerReportsService: MergeAllPensionerReportsService 
   ) {}
 
   @UseGuards(AuthGuard)
@@ -68,5 +73,18 @@ export class PensionerPaycheckController {
   @HttpCode(HttpStatus.OK)
   async findById(@Param('id') id: string) {
     return await this.findByIdPensionerPaycheckService.execute(id);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('merge-files')
+  async mergeAllPensionerReports(@Body() data: MergeAllPensionerReportsInput, @Res() response: Response) {
+    const file = await this.mergeAllPensionerReportsService.execute(data)
+
+    if (!file) return response.status(204).send()
+
+    response.setHeader('Content-Type', 'application/zip');
+    response.setHeader('Content-Disposition', `attachment; filename=${file.name}`);
+
+    file.stream.pipe(response)
   }
 }

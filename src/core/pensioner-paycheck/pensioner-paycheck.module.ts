@@ -13,6 +13,8 @@ import { FindManyPensionerPaycheckService } from './services/find-many-pensioner
 import { FindByIdPensionerPaycheckService } from './services/find-by-id-pensioner-paycheck.service';
 import { GeneratePensionerEarningsReportService } from './services/generate-pensioner-earnings-report.service';
 import { DocumentModule } from '../document/document.module';
+import { MergeAllPensionerReportsService } from './services/merge-all-pensioner-reports.service';
+import { AwsModule } from 'src/infrastructure/aws/aws.module';
 
 @Module({
   imports: [
@@ -27,7 +29,8 @@ import { DocumentModule } from '../document/document.module';
     CustomerModule,
     UserModule,
     WebsocketModule,
-    DocumentModule
+    DocumentModule,
+    AwsModule
   ],
   controllers: [PensionerPaycheckController],
   providers: [
@@ -36,7 +39,8 @@ import { DocumentModule } from '../document/document.module';
     CreatePensionerPaycheckService,
     FindManyPensionerPaycheckService,
     FindByIdPensionerPaycheckService,
-    GeneratePensionerEarningsReportService
+    GeneratePensionerEarningsReportService,
+    MergeAllPensionerReportsService
   ],
   exports: [GeneratePensionerEarningsReportService]
 })

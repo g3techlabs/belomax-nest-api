@@ -29,6 +29,7 @@ import { AddressModule } from '../address/address.module';
     FindByCpfCnpjCustomerService,
   ],
   exports: [
+    CustomerRepository,
     FindByIdCustomerService,
     FindByCpfCnpjCustomerService,
     CreateCustomerService,

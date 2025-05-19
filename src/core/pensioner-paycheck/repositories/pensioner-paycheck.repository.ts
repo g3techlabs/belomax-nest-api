@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
 import { CreatePensionerPaycheckInput } from '../inputs/create-pensioner-paycheck.input';
 import { FindManyPensionerPaycheckInput } from '../inputs/find-many-pensioner-paycheck.input';
+import { PensionerPaycheck } from '../entities/pensioner-paycheck';
 
 @Injectable()
 export class PensionerPaycheckRepository {
@@ -81,7 +82,7 @@ export class PensionerPaycheckRepository {
     });
   }
 
-  async findMany(data: FindManyPensionerPaycheckInput) {
+  async findMany(data: FindManyPensionerPaycheckInput): Promise<PensionerPaycheck[]> {
     const { customerId, name, startDate, endDate } = data;
 
     return await this.prisma.pensionerPaycheck.findMany({
@@ -108,6 +109,37 @@ export class PensionerPaycheckRepository {
       orderBy: {
         createdAt: 'desc',
       },
+    });
+  }
+
+  async findManyOrderedFromDate(data: FindManyPensionerPaycheckInput): Promise<PensionerPaycheck[]> {
+    const { customerId, name, startDate, endDate } = data;
+
+    return await this.prisma.pensionerPaycheck.findMany({
+      where: {
+        ...(customerId && { automation: { customerId } }),
+        ...(name && {
+          automation: {
+            customer: { name: { contains: name, mode: 'insensitive' } },
+          },
+        }),
+        ...(startDate &&
+          endDate && { createdAt: { gte: startDate, lte: endDate } }),
+      },
+      include: {
+        automation: {
+          include: {
+            customer: true,
+            user: true,
+            documents: true,
+          },
+        },
+        terms: true,
+      },
+      orderBy: [
+        { year: 'asc' },
+        { month: 'asc' }
+      ],
     });
   }
 }
