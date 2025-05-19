@@ -18,6 +18,7 @@ import { StatementExtractModule } from './core/statement-extract/statement-extra
 import { DocumentModule } from './core/document/document.module';
 import { AuthModule } from './auth/auth.module';
 import { PythonApiModule } from './infrastructure/api/python-api/python-api.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { PythonApiModule } from './infrastructure/api/python-api/python-api.modu
     QueueModule,
     UserModule,
     StatementExtractModule,
+    
     BullModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         connection: {
@@ -45,6 +47,7 @@ import { PythonApiModule } from './infrastructure/api/python-api/python-api.modu
     DocumentModule,
     AuthModule,
     PythonApiModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
