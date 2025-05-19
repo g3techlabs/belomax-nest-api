@@ -31,7 +31,11 @@ export class GeneratePensionerEarningsReportService {
         data.customerName,
       );
 
-      await this.registerDocument(pdfFile, data.automationId, data.customerName);
+      await this.registerDocument(
+        pdfFile,
+        data.automationId,
+        data.customerName,
+      );
     } catch (err) {
       console.error(
         'Erro inesperado ocorreu ao gerar arquivo de rendimentos de pensionista:',
@@ -46,7 +50,7 @@ export class GeneratePensionerEarningsReportService {
     cpf,
     pensionerNumber,
     month,
-    year
+    year,
   }: GeneratePensionerEarningsReportDTO) {
     const mountedURL =
       this.PENSIONER_SERVICE_URL +
@@ -63,7 +67,11 @@ export class GeneratePensionerEarningsReportService {
 
   private async getPdfBuffer(mountedURL: string): Promise<Uint8Array> {
     const browser = await puppeteer.launch({
-      args: ['--disable-features=HttpsFirstBalancedModeAutoEnable']
+      args: [
+        '--disable-features=HttpsFirstBalancedModeAutoEnable',
+        '--no-sandbox',
+      ],
+      headless: true,
     });
     const page = await browser.newPage();
 
@@ -88,7 +96,7 @@ export class GeneratePensionerEarningsReportService {
   private async registerDocument(
     file: Express.Multer.File,
     automationId: string,
-    customerName: string
+    customerName: string,
   ) {
     await this.createDocumentService.execute({
       automationId,
