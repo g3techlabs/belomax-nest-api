@@ -1,4 +1,3 @@
-import { CustomerRepository } from './../../customer/repositories/customer.repository';
 import { PDFDocument } from 'pdf-lib';
 import { PensionerPaycheck } from '../entities/pensioner-paycheck';
 import { GetAllBucketFilesService } from './../../../infrastructure/aws/s3/services/get-all-bucket-files.service';
@@ -11,35 +10,43 @@ import { Readable } from 'stream';
 export class MergeAllPensionerReportsService {
   constructor(
     private readonly pensionerPaycheckRepository: PensionerPaycheckRepository,
-    private readonly customerRepository: CustomerRepository,
     private readonly getAllBucketFilesService: GetAllBucketFilesService,
   ) {}
 
-  async execute({ customerId }: MergeAllPensionerReportsInput) {
+  async execute(data: MergeAllPensionerReportsInput) {
     try {
-        const pensionerPaychecks = await this.getAllCustomerPaychecks(customerId);
+      const pensionerPaychecks = await this.getAllCustomerPaychecks(data);
 
-        const customerName = this.customerRepository.findById(customerId)
-    
-        const documentsNames = this.getAllDocumentsNames(pensionerPaychecks);
-        
-        const files = await this.getAllFilesFromS3(documentsNames);
+      const documentsNames = this.getAllDocumentsNames(pensionerPaychecks);
 
-        files.forEach((f) => console.log(f.name))
-    
-        const pdfBuffer = await this.mergePdfs(files)
+      const files = await this.getAllFilesFromS3(documentsNames);
 
-        const stream = Readable.from([pdfBuffer])
+      const pdfBuffer = await this.mergePdfs(files);
 
-        return { stream, name: `TODOS_COMPROVANTES_PENSIONISTA-${await customerName}.pdf` };
+      const stream = Readable.from([pdfBuffer]);
+
+      return stream;
     } catch (error) {
-        console.error('Erro ao mesclar comprovantes de rendimentos em um só: ', error)
+      console.error(
+        'Erro ao mesclar comprovantes de rendimentos em um só: ',
+        error,
+      );
     }
   }
 
-  private async getAllCustomerPaychecks(customerId: string) {
+  private async getAllCustomerPaychecks({
+    customerId,
+    initialMonth,
+    initialYear,
+    finalMonth,
+    finalYear,
+  }: MergeAllPensionerReportsInput) {
     return await this.pensionerPaycheckRepository.findManyOrderedFromDate({
       customerId,
+      initialMonth,
+      initialYear,
+      finalMonth,
+      finalYear,
     });
   }
 
@@ -56,7 +63,7 @@ export class MergeAllPensionerReportsService {
   private async mergePdfs(files: { buffer: Buffer; name: string }[]) {
     const pdfs = await this.loadPdfs(files);
 
-    const mergedPdf = await this.mergePdfsIntoFirst(pdfs)
+    const mergedPdf = await this.mergePdfsIntoFirst(pdfs);
 
     return mergedPdf;
   }
@@ -72,10 +79,13 @@ export class MergeAllPensionerReportsService {
 
     for (let i = 1; i < pdfs.length; i++) {
       const currentPdf = pdfs[i];
-      const copiedPages = await firstPdf.copyPages(currentPdf, currentPdf.getPageIndices());
-      copiedPages.forEach((page) => firstPdf.addPage(page))
+      const copiedPages = await firstPdf.copyPages(
+        currentPdf,
+        currentPdf.getPageIndices(),
+      );
+      copiedPages.forEach((page) => firstPdf.addPage(page));
     }
 
-    return await firstPdf.save()
+    return await firstPdf.save();
   }
 }

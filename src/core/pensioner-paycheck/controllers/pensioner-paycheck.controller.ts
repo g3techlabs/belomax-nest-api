@@ -83,8 +83,8 @@ export class PensionerPaycheckController {
     if (!file) return response.status(204).send()
 
     response.setHeader('Content-Type', 'application/zip');
-    response.setHeader('Content-Disposition', `attachment; filename=${file.name}`);
+    response.setHeader('Content-Disposition', `attachment; filename=output.pdf`);
 
-    file.stream.pipe(response)
+    file.pipe(response)
   }
 }
