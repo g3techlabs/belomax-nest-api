@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
 import { MulterFileFactory } from 'src/utils/multer-file-factory';
+import { ChangeStatusAutomationService } from 'src/core/automation/services/change-status-automation.service';
+import { AutomationStatus } from '@prisma/client';
 
 @Injectable()
 export class GeneratePensionerEarningsReportService {
@@ -11,6 +13,7 @@ export class GeneratePensionerEarningsReportService {
   constructor(
     private readonly configService: ConfigService,
     private readonly createDocumentService: CreateDocumentService,
+    private readonly changeStatusAutomationService: ChangeStatusAutomationService,
   ) {
     this.PENSIONER_SERVICE_URL =
       this.configService.get<string>('PENSIONER_EARNING_REPORT_URL') ?? '';
@@ -41,6 +44,13 @@ export class GeneratePensionerEarningsReportService {
         'Erro inesperado ocorreu ao gerar arquivo de rendimentos de pensionista:',
         err,
       );
+      await this.changeStatusAutomationService.execute(data.automationId, {
+        status: AutomationStatus.FAILED,
+        error:
+          'Erro inesperado ocorreu ao gerar arquivo de rendimentos de pensionista:' +
+            // eslint-disable-next-line
+            err?.message || '',
+      });
     }
   }
 

@@ -47,21 +47,16 @@ export class TriggerPensionerPaycheckAutomationService {
     }
 
     let year = data.initialYear;
+    let i = data.initialMonth;
 
-    for (
-      let i = data.initialMonth;
-      i <= data.finalMonth && year <= data.finalYear;
-      i++
+    while (
+      year < data.finalYear ||
+      (year === data.finalYear && i <= data.finalMonth)
     ) {
       if (i > 12) {
         i = 1;
         year++;
       }
-
-      console.log('i', i);
-      console.log('year', year);
-      console.log('data.customerId', data.customerId);
-      console.log('data', data);
 
       try {
         const existingPaycheck = await this.validateExistingPensionerPaycheck({
@@ -71,6 +66,7 @@ export class TriggerPensionerPaycheckAutomationService {
         });
 
         if (existingPaycheck) {
+          i++;
           continue;
         }
       } catch (error) {
@@ -97,6 +93,8 @@ export class TriggerPensionerPaycheckAutomationService {
       } catch (error) {
         await this.changeAutomationStatusToFailed(automation.id, error);
       }
+
+      i++;
     }
   }
 

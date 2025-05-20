@@ -3,6 +3,7 @@ import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service
 import { CreateStatementExtractDataInput } from '../inputs/create-statement-extract.input';
 import { UpdateStatementExtractInput } from '../inputs/update-statement-extract.input';
 import { StatementExtract } from '@prisma/client';
+import { FindManyStatementExtractInput } from '../inputs/find-many-statement-extract.input';
 
 @Injectable()
 export class StatementExtractRepository {
@@ -50,8 +51,41 @@ export class StatementExtractRepository {
     });
   }
 
-  async findMany(): Promise<StatementExtract[]> {
+  async findMany(
+    data: FindManyStatementExtractInput,
+  ): Promise<StatementExtract[]> {
     return await this.prisma.statementExtract.findMany({
+      where: {
+        createdAt: data.dateInterval
+          ? {
+              gte: data.dateInterval.start,
+              lte: data.dateInterval.end,
+            }
+          : undefined,
+        automation: {
+          description: data.description
+            ? {
+                contains: data.description,
+                mode: 'insensitive',
+              }
+            : undefined,
+          customerId: data.customerId ? data.customerId : undefined,
+          userId: data.userId ? data.userId : undefined,
+          status: data.status ? data.status : undefined,
+        },
+        selectedTerms: {
+          some: {
+            statementTerm: {
+              description: data.term
+                ? {
+                    contains: data.term,
+                    mode: 'insensitive',
+                  }
+                : undefined,
+            },
+          },
+        },
+      },
       include: {
         selectedTerms: {
           include: {
