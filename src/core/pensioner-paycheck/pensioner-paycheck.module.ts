@@ -30,7 +30,7 @@ import { AwsModule } from 'src/infrastructure/aws/aws.module';
     UserModule,
     WebsocketModule,
     DocumentModule,
-    AwsModule
+    AwsModule,
   ],
   controllers: [PensionerPaycheckController],
   providers: [
@@ -40,8 +40,8 @@ import { AwsModule } from 'src/infrastructure/aws/aws.module';
     FindManyPensionerPaycheckService,
     FindByIdPensionerPaycheckService,
     GeneratePensionerEarningsReportService,
-    MergeAllPensionerReportsService
+    MergeAllPensionerReportsService,
   ],
-  exports: [GeneratePensionerEarningsReportService]
+  exports: [GeneratePensionerEarningsReportService],
 })
 export class PensionerPaycheckModule {}

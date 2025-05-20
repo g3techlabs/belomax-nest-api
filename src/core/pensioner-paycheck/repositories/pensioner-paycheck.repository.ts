@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
 import { CreatePensionerPaycheckInput } from '../inputs/create-pensioner-paycheck.input';
 import { FindManyPensionerPaycheckInput } from '../inputs/find-many-pensioner-paycheck.input';
+import { FindExistingPensionerPaycheckInput } from '../inputs/find-existing-pensioner-paycheck.input';
 import { PensionerPaycheck } from '../entities/pensioner-paycheck';
 import { MergeAllPensionerReportsInput } from '../inputs/merge-all-pensioner-reports.input';
 import { AutomationStatus } from '@prisma/client';
@@ -110,8 +111,23 @@ export class PensionerPaycheckRepository {
         },
         terms: true,
       },
-      orderBy: {
-        createdAt: 'desc',
+      orderBy: [{ year: 'desc' }, { month: 'desc' }],
+    });
+  }
+
+  async findExistingPensionerPaycheck(
+    data: FindExistingPensionerPaycheckInput,
+  ) {
+    const { customerId, month, year } = data;
+
+    return await this.prisma.pensionerPaycheck.findFirst({
+      where: {
+        automation: {
+          customerId,
+          status: AutomationStatus.FINISHED,
+        },
+        month,
+        year,
       },
     });
   }

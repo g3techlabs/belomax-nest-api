@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  NotImplementedException,
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
@@ -13,6 +12,8 @@ import { AutomationStatus } from '@prisma/client';
 import { ChangeStatusAutomationService } from 'src/core/automation/services/change-status-automation.service';
 import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
 import { TriggerUniquePensionerPaycheckAutomationInput } from '../inputs/trigger-pensioner-paycheck-automation.input';
+import { PensionerPaycheckRepository } from '../repositories/pensioner-paycheck.repository';
+import { FindExistingPensionerPaycheckInput } from '../inputs/find-existing-pensioner-paycheck.input';
 
 @Injectable()
 export class TriggerPensionerPaycheckAutomationService {
@@ -22,6 +23,7 @@ export class TriggerPensionerPaycheckAutomationService {
     private readonly createAutomationService: CreateAutomationService,
     private readonly changeStatusAutomationService: ChangeStatusAutomationService,
     private readonly wsAutomationsService: WsAutomationsService,
+    private readonly pensionerPaycheckRepository: PensionerPaycheckRepository,
     @InjectQueue('belomax-python-queue') private readonly pythonQueue: Queue,
   ) {}
 
@@ -45,13 +47,37 @@ export class TriggerPensionerPaycheckAutomationService {
     }
 
     let year = data.initialYear;
-    for (let i = data.initialMonth; i <= data.finalMonth && year <= data.finalYear; i++) {
+    let i = data.initialMonth;
+
+    while (
+      year < data.finalYear ||
+      (year === data.finalYear && i <= data.finalMonth)
+    ) {
       if (i > 12) {
         i = 1;
         year++;
       }
+
+      try {
+        const existingPaycheck = await this.validateExistingPensionerPaycheck({
+          customerId: data.customerId,
+          month: i,
+          year,
+        });
+
+        if (existingPaycheck) {
+          i++;
+          continue;
+        }
+      } catch (error) {
+        console.error('Erro ao validar contracheque existente:', error);
+        throw new InternalServerErrorException(
+          'Erro ao validar contracheque existente',
+        );
+      }
+
       const automation = await this.createAutomationService.execute({
-        description: `Contracheque de pensionista - ${data.cpf}`,
+        description: `Contracheque de pensionista - ${data.cpf} | ${this.convertMonth(i)}/${year}`,
         userId,
         customerId: data.customerId,
       });
@@ -62,12 +88,29 @@ export class TriggerPensionerPaycheckAutomationService {
 
       try {
         this.wsAutomationsService.notifyNewAutomation(automation, userId);
-  
+
         await this.sendJobsToPythonQueue(data, i, year, token, automation.id);
       } catch (error) {
-        await this.changeAutomationStatusToFailed(automation.id, error)
+        await this.changeAutomationStatusToFailed(automation.id, error);
       }
+
+      i++;
     }
+  }
+
+  private async validateExistingPensionerPaycheck(
+    data: FindExistingPensionerPaycheckInput,
+  ) {
+    console.log(data);
+
+    const existingPensionerPaycheck =
+      await this.pensionerPaycheckRepository.findExistingPensionerPaycheck(
+        data,
+      );
+
+    console.log('existingPensionerPaycheck', existingPensionerPaycheck);
+
+    return !!existingPensionerPaycheck;
   }
 
   private convertMonth(month: number): string {
@@ -124,7 +167,8 @@ export class TriggerPensionerPaycheckAutomationService {
   ) {
     await this.changeStatusAutomationService.execute(automationId, {
       status: AutomationStatus.FAILED,
-      error: error.message || 'Erro ao adicionar job à fila',
+      // eslint-disable-next-line
+      error: error?.message || 'Erro ao adicionar job à fila',
     });
   }
 }

@@ -32,7 +32,7 @@ export class PensionerPaycheckController {
     private readonly createPensionerPaycheckService: CreatePensionerPaycheckService,
     private readonly findManyPensionerPaycheckService: FindManyPensionerPaycheckService,
     private readonly findByIdPensionerPaycheckService: FindByIdPensionerPaycheckService,
-    private readonly mergeAllPensionerReportsService: MergeAllPensionerReportsService 
+    private readonly mergeAllPensionerReportsService: MergeAllPensionerReportsService,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -77,14 +77,20 @@ export class PensionerPaycheckController {
 
   @UseGuards(AuthGuard)
   @Post('merge-files')
-  async mergeAllPensionerReports(@Body() data: MergeAllPensionerReportsInput, @Res() response: Response) {
-    const file = await this.mergeAllPensionerReportsService.execute(data)
+  async mergeAllPensionerReports(
+    @Body() data: MergeAllPensionerReportsInput,
+    @Res() response: Response,
+  ) {
+    const file = await this.mergeAllPensionerReportsService.execute(data);
 
-    if (!file) return response.status(204).send()
+    if (!file) return response.status(204).send();
 
-    response.setHeader('Content-Type', 'application/zip');
-    response.setHeader('Content-Disposition', `attachment; filename=output.pdf`);
+    response.setHeader('Content-Type', 'application/pdf');
+    response.setHeader(
+      'Content-Disposition',
+      `attachment; filename=output.pdf`,
+    );
 
-    file.pipe(response)
+    file.pipe(response);
   }
 }
