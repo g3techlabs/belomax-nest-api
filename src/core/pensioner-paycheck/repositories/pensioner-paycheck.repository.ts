@@ -6,6 +6,7 @@ import { FindExistingPensionerPaycheckInput } from '../inputs/find-existing-pens
 import { PensionerPaycheck } from '../entities/pensioner-paycheck';
 import { MergeAllPensionerReportsInput } from '../inputs/merge-all-pensioner-reports.input';
 import { AutomationStatus } from '@prisma/client';
+import { contains } from 'class-validator';
 
 @Injectable()
 export class PensionerPaycheckRepository {
@@ -88,18 +89,56 @@ export class PensionerPaycheckRepository {
   async findMany(
     data: FindManyPensionerPaycheckInput,
   ): Promise<PensionerPaycheck[]> {
-    const { customerId, name, startDate, endDate } = data;
+    const {
+      discrimination,
+      code,
+      type,
+      minValue,
+      maxValue,
+      minConsignableMargin,
+      maxConsignableMargin,
+      minNetToReceive,
+      maxNetToReceive,
+      initialMonth,
+      initialYear,
+      finalMonth,
+      finalYear,
+      customerId,
+      userId,
+      status,
+    } = data;
 
     return await this.prisma.pensionerPaycheck.findMany({
       where: {
-        ...(customerId && { automation: { customerId } }),
-        ...(name && {
-          automation: {
-            customer: { name: { contains: name, mode: 'insensitive' } },
+        terms: {
+          some: {
+            discrimination: { contains: discrimination },
+            code,
+            type,
+            value: { gte: minValue, lte: maxValue },
           },
-        }),
-        ...(startDate &&
-          endDate && { createdAt: { gte: startDate, lte: endDate } }),
+        },
+        consignableMargin: {
+          gte: minConsignableMargin,
+          lte: maxConsignableMargin,
+        },
+        netToReceive: { gte: minNetToReceive, lte: maxNetToReceive },
+        ...(customerId && { automation: { customerId } }),
+        ...(userId && { automation: { userId } }),
+        ...(status && { automation: { status } }),
+        AND: [
+          {
+            year: initialYear,
+            month: { gte: initialMonth },
+          },
+          {
+            year: finalYear,
+            month: { lte: finalMonth },
+          },
+          {
+            year: { gte: initialYear, lte: finalYear },
+          },
+        ],
       },
       include: {
         automation: {
@@ -111,7 +150,7 @@ export class PensionerPaycheckRepository {
         },
         terms: true,
       },
-      orderBy: [{ year: 'desc' }, { month: 'desc' }],
+      orderBy: [{ month: 'desc' }, { year: 'desc' }],
     });
   }
 
@@ -168,7 +207,7 @@ export class PensionerPaycheckRepository {
         },
         terms: true,
       },
-      orderBy: [{ year: 'asc' }, { month: 'asc' }],
+      orderBy: [{ month: 'asc' }, { year: 'asc' }],
     });
   }
 }
