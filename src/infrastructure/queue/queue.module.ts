@@ -8,9 +8,11 @@ import { HighlightPdfTermsConsumer } from './consumers/highlight-pdf-terms.consu
 import { StatementExtractModule } from 'src/core/statement-extract/statement-extract.module';
 import { ProvideFilledPetitionConsumer } from './consumers/provide-filled-petition.consumer';
 import { DocumentModule } from 'src/core/document/document.module';
+import { GeneratePensionerEarningsReportConsumer } from './consumers/generate-pensioner-earnings-report.consumer';
+import { PensionerPaycheckModule } from 'src/core/pensioner-paycheck/pensioner-paycheck.module';
 
 @Module({
-  imports: [MailModule, StatementExtractModule, DocumentModule],
+  imports: [MailModule, StatementExtractModule, DocumentModule, PensionerPaycheckModule],
   controllers: [],
   providers: [
     SendWelcomeEmailConsumer,
@@ -18,6 +20,7 @@ import { DocumentModule } from 'src/core/document/document.module';
     SendTokenEmailConsumer,
     HighlightPdfTermsConsumer,
     ProvideFilledPetitionConsumer,
+    GeneratePensionerEarningsReportConsumer
   ],
   exports: [SendWelcomeEmailConsumer],
 })

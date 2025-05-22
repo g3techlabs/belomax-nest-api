@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -22,6 +23,7 @@ import { StatementExtract, User } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { CurrentUser } from 'src/auth/current-user';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FindManyStatementExtractInput } from '../inputs/find-many-statement-extract.input';
 
 @Controller('statement-extracts')
 export class StatementExtractController {
@@ -53,8 +55,10 @@ export class StatementExtractController {
   @UseGuards(AuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findMany(): Promise<StatementExtract[]> {
-    return await this.findManyStatementExtractService.execute();
+  async findMany(
+    @Query() data: FindManyStatementExtractInput,
+  ): Promise<StatementExtract[]> {
+    return await this.findManyStatementExtractService.execute(data);
   }
 
   @UseGuards(AuthGuard)

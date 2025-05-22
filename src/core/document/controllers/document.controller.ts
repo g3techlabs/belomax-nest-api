@@ -1,3 +1,5 @@
+import { GetDocumentService } from './../services/get-document.service';
+import { GetAllAutomationFilesService } from './../services/get-all-automation-files.service';
 import { ProvideFilledPetitionService } from './../services/provide-filled-petition.service';
 // @eslint-disable
 import {
@@ -9,6 +11,7 @@ import {
   Param,
   Post,
   Put,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -26,6 +29,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateDocumentService } from '../services/create-document.service';
 import { GetDocumentUrlService } from '../services/get-document-url.service';
 import { ProvideFilledPetitionInput } from '../inputs/provide-filled-petition.input';
+import { GetAllAutomationFilesInput } from '../inputs/get-all-automation-files.input';
+import { Response } from 'express';
+import { Readable } from 'stream';
 
 @Controller('documents')
 export class DocumentController {
@@ -35,7 +41,9 @@ export class DocumentController {
     private readonly findManyDocumentService: FindManyDocumentService,
     private readonly findByIdDocumentService: FindByIdDocumentService,
     private readonly getDocumentUrlService: GetDocumentUrlService,
+    private readonly getDocumentService: GetDocumentService,
     private readonly provideFilledPetitionService: ProvideFilledPetitionService,
+    private readonly getAllAutomationFilesService: GetAllAutomationFilesService,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -80,8 +88,45 @@ export class DocumentController {
     return await this.getDocumentUrlService.execute(id);
   }
 
+  @UseGuards(AuthGuard)
+  @Get(':id/download')
+  @HttpCode(HttpStatus.OK)
+  async downloadDocument(@Param('id') id: string, @Res() response: Response) {
+    const s3Object = await this.getDocumentService.execute(id);
+
+    response.setHeader(
+      'Content-Disposition',
+      `attachment; filename=${s3Object}`,
+    );
+    response.setHeader(
+      'Content-Type',
+      s3Object?.ContentType || 'application/octet-stream',
+    );
+
+    const stream = Readable.from(s3Object?.Body as any);
+    stream.pipe(response);
+  }
+
+  @UseGuards(AuthGuard)
   @Post('/petition')
   async fillPetition(@Body() data: ProvideFilledPetitionInput) {
     return await this.provideFilledPetitionService.execute(data);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/download-everything')
+  @HttpCode(HttpStatus.OK)
+  async downloadAllAutomationFiles(
+    @Body() data: GetAllAutomationFilesInput,
+    @Res() response: Response,
+  ) {
+    const { file, name, finalized } =
+      await this.getAllAutomationFilesService.execute(data);
+
+    response.setHeader('Content-Type', 'application/zip');
+    response.setHeader('Content-Disposition', `attachment; filename=${name}`);
+
+    file.pipe(response);
+    await finalized;
   }
 }

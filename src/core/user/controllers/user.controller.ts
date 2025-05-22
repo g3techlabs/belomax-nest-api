@@ -53,7 +53,7 @@ export class UserController {
     private readonly verifyTokenService: VerifyTokenService,
     private readonly resetPaswordService: ResetPasswordService,
     private readonly setPasswordService: SetPasswordService,
-    private readonly updateActiveStatusService: UpdateActiveStatusService
+    private readonly updateActiveStatusService: UpdateActiveStatusService,
   ) {}
 
   @Post('authenticate')
@@ -109,7 +109,10 @@ export class UserController {
   @UseGuards(AuthGuard, AdminGuard)
   @Patch(':id/change-active-status')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async changeActiveStatus(@Param('id') id: string, @Body() { active }: UpdateActiveStatusRequestInput) {
+  async changeActiveStatus(
+    @Param('id') id: string,
+    @Body() { active }: UpdateActiveStatusRequestInput,
+  ) {
     return await this.updateActiveStatusService.execute({ id, active });
   }
 

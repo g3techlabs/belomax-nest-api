@@ -1,34 +1,27 @@
+import { TriggerUniquePensionerPaycheckAutomationInput } from './trigger-pensioner-paycheck-automation.input';
 import { IsArray, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreatePensionerPaycheckTermInput } from './create-pensioner-paycheck-term.input';
+import { IntersectionType, OmitType } from '@nestjs/swagger';
 
-export class CreatePensionerPaycheckInput {
-  @IsString()
-  registration: string;
-
-  @IsString()
-  bond: string;
-
-  @IsString()
-  cpf: string;
-
-  @IsString()
-  pensionerNumber: string;
-
-  @IsString()
-  month: string;
-
-  @IsString()
-  year: string;
+export class CreatePensionerPaycheckInput extends IntersectionType(
+  OmitType(TriggerUniquePensionerPaycheckAutomationInput, ['customerId', 'initialMonth', 'initialYear', 'finalMonth', 'finalYear']),
+  Object,
+) {
+  @IsNumber()
+  month: number
 
   @IsNumber()
-  consignableMargin: number;
+  year: number
 
   @IsNumber()
-  totalBenefits: number;
+  consignableMargin: number
 
   @IsNumber()
-  netToReceive: number;
+  totalBenefits: number
+
+  @IsNumber()
+  netToReceive: number
 
   @IsString()
   automationId: string;

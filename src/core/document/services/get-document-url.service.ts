@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { S3GetFileService } from '../../../infrastructure/aws/s3/services/get-s3-file.service';
+import { S3GetFileService } from '../../../infrastructure/aws/s3/services/get-file.service';
 import { DocumentRepository } from '../repositories/document.repository';
 import { addMinutes } from 'date-fns';
 

@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
 import { CreatePensionerPaycheckInput } from '../inputs/create-pensioner-paycheck.input';
+import { FindManyPensionerPaycheckInput } from '../inputs/find-many-pensioner-paycheck.input';
+import { FindExistingPensionerPaycheckInput } from '../inputs/find-existing-pensioner-paycheck.input';
+import { PensionerPaycheck } from '../entities/pensioner-paycheck';
+import { MergeAllPensionerReportsInput } from '../inputs/merge-all-pensioner-reports.input';
+import { AutomationStatus } from '@prisma/client';
 
 @Injectable()
 export class PensionerPaycheckRepository {
@@ -47,6 +52,13 @@ export class PensionerPaycheckRepository {
         },
         include: {
           terms: true,
+          automation: {
+            include: {
+              customer: true,
+              user: true,
+              documents: true,
+            },
+          },
         },
       });
 
@@ -55,5 +67,108 @@ export class PensionerPaycheckRepository {
       console.error('❌ Erro ao criar contracheque:', error);
       throw error;
     }
+  }
+
+  async findById(id: string) {
+    return await this.prisma.pensionerPaycheck.findUnique({
+      where: { id },
+      include: {
+        automation: {
+          include: {
+            customer: true,
+            user: true,
+            documents: true,
+          },
+        },
+        terms: true,
+      },
+    });
+  }
+
+  async findMany(
+    data: FindManyPensionerPaycheckInput,
+  ): Promise<PensionerPaycheck[]> {
+    const { customerId, name, startDate, endDate } = data;
+
+    return await this.prisma.pensionerPaycheck.findMany({
+      where: {
+        ...(customerId && { automation: { customerId } }),
+        ...(name && {
+          automation: {
+            customer: { name: { contains: name, mode: 'insensitive' } },
+          },
+        }),
+        ...(startDate &&
+          endDate && { createdAt: { gte: startDate, lte: endDate } }),
+      },
+      include: {
+        automation: {
+          include: {
+            customer: true,
+            user: true,
+            documents: true,
+          },
+        },
+        terms: true,
+      },
+      orderBy: [{ year: 'desc' }, { month: 'desc' }],
+    });
+  }
+
+  async findExistingPensionerPaycheck(
+    data: FindExistingPensionerPaycheckInput,
+  ) {
+    const { customerId, month, year } = data;
+
+    return await this.prisma.pensionerPaycheck.findFirst({
+      where: {
+        automation: {
+          customerId,
+          status: AutomationStatus.FINISHED,
+        },
+        month,
+        year,
+      },
+    });
+  }
+
+  async findManyOrderedFromDate(
+    data: MergeAllPensionerReportsInput,
+  ): Promise<PensionerPaycheck[]> {
+    const { customerId, initialMonth, initialYear, finalMonth, finalYear } =
+      data;
+
+    return await this.prisma.pensionerPaycheck.findMany({
+      where: {
+        ...(customerId && { automation: { customerId } }),
+        automation: {
+          status: AutomationStatus.FINISHED,
+        },
+        AND: [
+          {
+            year: initialYear,
+            month: { gte: initialMonth },
+          },
+          {
+            year: finalYear,
+            month: { lte: finalMonth },
+          },
+          {
+            year: { gte: initialYear, lte: finalYear },
+          },
+        ],
+      },
+      include: {
+        automation: {
+          include: {
+            customer: true,
+            user: true,
+            documents: true,
+          },
+        },
+        terms: true,
+      },
+      orderBy: [{ year: 'asc' }, { month: 'asc' }],
+    });
   }
 }
