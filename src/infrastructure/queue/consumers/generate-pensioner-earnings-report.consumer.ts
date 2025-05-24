@@ -12,6 +12,6 @@ export class GeneratePensionerEarningsReportConsumer {
   async execute(job: Job<GeneratePensionerEarningsReportDTO>) {
     await this.generatePensionerEarningsReportService.execute(job.data);
 
-    return {}
+    return {};
   }
 }
