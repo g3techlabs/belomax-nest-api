@@ -48,7 +48,10 @@ export class CreateDocumentService {
       );
     }
 
-    const s3DocumentName = `${data.name.replaceAll(' ', '_')}-${new Date().toISOString()}.${file.mimetype.split('/').pop()}`;
+    const documentFileMimetype = this.mimetypeToExtension(file.mimetype);
+    console.log('documentFileMimetype', file.mimetype, file.originalname);
+
+    const s3DocumentName = `${data.name.replaceAll(' ', '_')}-${new Date().toISOString()}.${documentFileMimetype}`;
 
     const fileUploaded = await this.s3AddFileService.execute({
       file: file.buffer,
@@ -113,5 +116,23 @@ export class CreateDocumentService {
     }
 
     return createdDocument;
+  }
+
+  private mimetypeToExtension(mimeType: string): string {
+    const mimeTypeMap: { [key: string]: string } = {
+      'application/pdf': 'pdf',
+      'image/jpeg': 'jpg',
+      'image/png': 'png',
+      'image/gif': 'gif',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        'docx',
+      'application/msword': 'doc',
+      'application/vnd.ms-excel': 'xls',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        'xlsx',
+      'text/plain': 'xlsx',
+    };
+
+    return mimeTypeMap[mimeType] ?? mimeType.split('/').pop();
   }
 }

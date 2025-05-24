@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-# copy source and build 
+# copy source and build
 COPY . .
 RUN yarn prisma generate
 RUN yarn build          # -> dist/*
@@ -28,6 +28,7 @@ WORKDIR /usr/src/app
 # copy only the built artefacts and production deps
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/public ./public
 COPY package.json ./
 
 ENV NODE_ENV=production
