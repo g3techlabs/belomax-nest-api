@@ -19,6 +19,7 @@ export class QueueService extends WorkerHost {
 
   @OnWorkerEvent('active')
   onActive(job: Job) {
+    console.log('Job started', job.id, job.name);
     const logger = new Logger('QueueService');
     logger.log(`Processing job ${job.id} of type ${job.name} `);
   }
@@ -33,8 +34,10 @@ export class QueueService extends WorkerHost {
         break;
       case 'highlight-pdf-terms':
         await this.highlightPdfTermsConsumer.execute(job);
+        break;
       case 'generate-pensioner-earnings-report':
         await this.generatePensionerEarningsReportConsumer.execute(job);
+        break;
     }
 
     return {};
