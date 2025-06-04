@@ -1,20 +1,19 @@
 /* eslint-disable */
-
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   NotImplementedException,
 } from '@nestjs/common';
 import { StatementExtractRepository } from '../repositories/statement-extract.repository';
 import { CreateStatementExtractServiceInput } from '../inputs/create-statement-extract.input';
-// import { StatementExtract } from '@prisma/client';
 import { FindUserService } from '../../user/services/find-user.service';
 import { StatementTermRepository } from '../repositories/statement-term.repository';
 import { CreateAutomationService } from '../../automation/services/create-automation.service';
 import { CreateDocumentService } from '../../document/services/create-document.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { AutomationStatus, StatementExtract } from '@prisma/client';
+import { Address, AutomationStatus, StatementExtract } from '@prisma/client';
 import { WsAutomationsService } from 'src/infrastructure/websocket/automations/automation-websocket.service';
 import { HighlightPdfTermInput } from '../inputs/highlight-pdf-term.input';
 import { ChangeStatusAutomationService } from 'src/core/automation/services/change-status-automation.service';
@@ -51,18 +50,14 @@ export class CreateStatementExtractService {
     const userExists = await this.findUserService.execute(userId);
 
     if (!userExists) {
-      throw new BadRequestException('Usuário não encontrado');
+      throw new NotFoundException('Usuário não encontrado');
     }
 
     const customerExists =
       await this.findByIdCustomerService.execute(customerId);
 
     if (!customerExists) {
-      throw new BadRequestException('Cliente não encontrado');
-    }
-
-    if (!customerExists.address) {
-      throw new BadRequestException('Endereço do cliente não encontrado');
+      throw new NotFoundException('Cliente não encontrado');
     }
 
     const selectedTermsDescription: string[] = [];
@@ -168,7 +163,7 @@ export class CreateStatementExtractService {
             occupation: automation.customer?.occupation || 'nao informado',
             rg: automation.customer?.rg || 'nao informado',
           },
-          address: customerExists.address,
+          address: customerExists.address ?? {} as Address,
           automationId: automation.id,
         });
       }

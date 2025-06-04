@@ -43,12 +43,12 @@ export class ProvideFilledPetitionService {
       this.populateFile({
         author,
         address: this.parseAddressToBrazilianFormat({
-          street: address.street,
-          number: address.number,
-          neighborhood: address.neighborhood,
-          city: address.city,
-          state: address.state,
-          zipcode: address.zipcode,
+          street: address.street ?? 'não informado',
+          number: address.number ?? 'não informado',
+          neighborhood: address.neighborhood ?? 'não informado',
+          city: address.city ?? 'não informado',
+          state: address.state ?? 'não informado',
+          zipcode: address.zipcode ?? 'não informado',
           additional: address.additional || undefined,
         }),
         bank: this.getBankInfo(bank),
