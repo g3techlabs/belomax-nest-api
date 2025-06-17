@@ -2,7 +2,7 @@ import { CreateDocumentService } from './../../document/services/create-document
 import { GeneratePensionerEarningsReportDTO } from './../dtos/generate-pensioner-earnings-report.dto';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
-import puppeteer from 'puppeteer';
+import puppeteer, { LaunchOptions } from 'puppeteer';
 import { MulterFileFactory } from 'src/utils/multer-file-factory';
 import { ChangeStatusAutomationService } from 'src/core/automation/services/change-status-automation.service';
 import { AutomationStatus } from '@prisma/client';
@@ -76,13 +76,23 @@ export class GeneratePensionerEarningsReportService {
   }
 
   private async getPdfBuffer(mountedURL: string): Promise<Uint8Array> {
-    const browser = await puppeteer.launch({
+    const executablePath = this.configService.get<string>(
+      'PUPPETEER_EXECUTABLE_PATH',
+    );
+
+    const launchOptions: LaunchOptions = {
       args: [
         '--disable-features=HttpsFirstBalancedModeAutoEnable',
         '--no-sandbox',
       ],
       headless: true,
-    });
+    };
+
+    if (executablePath) {
+      launchOptions.executablePath = executablePath;
+    }
+
+    const browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
 
     await page.goto(mountedURL);
