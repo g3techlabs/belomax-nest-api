@@ -4,9 +4,12 @@ import { TermCoordinates } from '../dtos/term-coordinates';
 import { CreateDocumentService } from '../../document/services/create-document.service';
 import { Injectable } from '@nestjs/common';
 import { Color, PDFDocument, PDFPage, rgb } from 'pdf-lib';
-import { getDocument, PDFDocumentProxy } from 'pdfjs-dist/legacy/build/pdf.mjs';
+// MUDANÇA 1: Remova o import estático que causa o erro.
+// import { getDocument, PDFDocumentProxy } from 'pdfjs-dist/legacy/build/pdf.mjs';
+
+// MUDANÇA 2: Importe APENAS OS TIPOS. Isso não gera código JS e serve só para o TypeScript.
+import type { PDFDocumentProxy, TextItem } from 'pdfjs-dist/types/src/display/api';
 import { HighlightPdfTermInput } from '../inputs/highlight-pdf-term.input';
-import { TextItem } from 'pdfjs-dist/types/src/display/api';
 import { MulterFileFactory } from 'src/utils/multer-file-factory';
 
 @Injectable()
@@ -47,8 +50,18 @@ export class HighlightPdfTermService {
   private async loadDocuments(buffer: Buffer) {
     const pdfData = new Uint8Array(buffer);
 
+    // MUDANÇA 3: Carregue dinamicamente o módulo 'pdfjs-dist' aqui.
+    const { getDocument, GlobalWorkerOptions } = await import(
+      'pdfjs-dist/legacy/build/pdf.mjs'
+    );
+
+    // Configura o worker, essencial para 'pdfjs-dist' rodar em ambiente Node.js
+    GlobalWorkerOptions.workerSrc = 'pdfjs-dist/legacy/build/pdf.worker.js';
+
     const pdfForHighlight = await PDFDocument.load(pdfData);
+    // Agora use a função 'getDocument' que acabamos de carregar.
     const pdfFoSearch = await getDocument({ data: pdfData }).promise;
+
     this.pdfForHighlight = pdfForHighlight;
     this.pdfForSearch = pdfFoSearch;
   }
@@ -108,7 +121,11 @@ export class HighlightPdfTermService {
   }
 
   private convertToMulterFile(file: Uint8Array): Express.Multer.File {
-    const multerFile = MulterFileFactory.fromBufferOrUint8Array(file, 'arquivo.pdf', 'application/pdf');
-    return multerFile
+    const multerFile = MulterFileFactory.fromBufferOrUint8Array(
+      file,
+      'arquivo.pdf',
+      'application/pdf',
+    );
+    return multerFile;
   }
 }
