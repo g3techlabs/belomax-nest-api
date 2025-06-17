@@ -6,7 +6,6 @@ import { FindExistingPensionerPaycheckInput } from '../inputs/find-existing-pens
 import { PensionerPaycheck } from '../entities/pensioner-paycheck';
 import { MergeAllPensionerReportsInput } from '../inputs/merge-all-pensioner-reports.input';
 import { AutomationStatus } from '@prisma/client';
-import { contains } from 'class-validator';
 
 @Injectable()
 export class PensionerPaycheckRepository {

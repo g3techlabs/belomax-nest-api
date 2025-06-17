@@ -1,6 +1,6 @@
 import { AutomationStatus, PensionerPaycheckTermType } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsOptional, IsString, IsNumber, IsEnum, IsNumberString } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsEnum } from 'class-validator';
 
 export class FindManyPensionerPaycheckInput {
   @IsString()
