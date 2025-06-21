@@ -2,7 +2,7 @@ import { CreateDocumentService } from './../../document/services/create-document
 import { GeneratePensionerEarningsReportDTO } from './../dtos/generate-pensioner-earnings-report.dto';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
-import puppeteer, { LaunchOptions } from 'puppeteer';
+import puppeteer, { LaunchOptions } from 'puppeteer-core';
 import { MulterFileFactory } from 'src/utils/multer-file-factory';
 import { ChangeStatusAutomationService } from 'src/core/automation/services/change-status-automation.service';
 import { AutomationStatus } from '@prisma/client';
