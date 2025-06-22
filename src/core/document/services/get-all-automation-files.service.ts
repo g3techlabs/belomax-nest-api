@@ -1,7 +1,7 @@
 import { GetAllBucketFilesService } from './../../../infrastructure/aws/s3/services/get-all-bucket-files.service';
 import { DocumentRepository } from './../repositories/document.repository';
 import { Injectable } from '@nestjs/common';
-import * as archiver from 'archiver';
+import archiver from 'archiver';
 import { GetAllAutomationFilesInput } from '../inputs/get-all-automation-files.input';
 
 @Injectable()

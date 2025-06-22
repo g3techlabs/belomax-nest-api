@@ -8,8 +8,8 @@ import {
 } from '../inputs/provide-filled-petition.input';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as PizZip from 'pizzip';
-import * as DocxTemplater from 'docxtemplater';
+import PizZip from 'pizzip';
+import DocxTemplater from 'docxtemplater';
 import * as numero from 'numero-por-extenso';
 import { MulterFileFactory } from 'src/utils/multer-file-factory';
 import { AutomationStatus, StatementBank } from '@prisma/client';
