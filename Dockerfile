@@ -27,6 +27,27 @@ RUN yarn build          # -> gera a pasta dist/*
 # Usamos a imagem oficial do Puppeteer, que já vem com Node.js E o navegador Chrome instalado e configurado.
 FROM ghcr.io/puppeteer/puppeteer:22.10.0
 
+# ========= INÍCIO DA MUDANÇA PARA ATUALIZAR O NODE.JS (SINTAXE CORRIGIDA) =========
+
+# Trocamos temporariamente para o usuário root para poder instalar pacotes.
+USER root
+
+# Instala o 'curl' para baixar arquivos e define a versão do Node que queremos.
+RUN apt-get update && apt-get install -y curl
+
+# CORREÇÃO: Usando o formato CHAVE=VALOR
+ENV NODE_VERSION=22.13.1
+
+RUN curl -o- "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" | tar -xJ -C /usr/local --strip-components=1
+
+# CORREÇÃO: Usando o formato CHAVE="VALOR" e aspas para clareza
+ENV PATH="/usr/local/bin:${PATH}"
+
+# Trocamos de volta para o usuário não-root por segurança.
+USER pptruser
+
+# ========= FIM DA MUDANÇA PARA ATUALIZAR O NODE.JS =========
+
 # Esta imagem já vem com um usuário não-root chamado "pptruser" por segurança. Vamos usá-lo.
 USER pptruser
 WORKDIR /home/pptruser/app
