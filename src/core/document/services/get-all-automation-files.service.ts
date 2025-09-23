@@ -19,7 +19,7 @@ export class GetAllAutomationFilesService {
     const files = await this.getAllBucketFilesService.execute(documentsName);
 
     if (files) {
-      const finalized = this.setZipFile(files!, archive);
+      const finalized = this.setZipFile(files, archive);
 
       const costumerNameFormatted = this.formatCustomerName(customerName);
       return {
@@ -52,7 +52,7 @@ export class GetAllAutomationFilesService {
     archive: archiver.Archiver,
   ) {
     files.forEach((file) => {
-      console.log(file)
+      // console.log(file)
       archive.append(file.buffer, { name: file.name });
     });
   }

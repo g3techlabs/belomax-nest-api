@@ -1,11 +1,11 @@
 import { IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
 
 export class CreatePensionerPaycheckTermInput {
-  @IsString()
-  month: string;
+  @IsNumber()
+  month: number;
 
-  @IsString()
-  year: string;
+  @IsNumber()
+  year: number;
 
   @IsEnum(['BENEFIT', 'DISCOUNT'])
   @IsString()

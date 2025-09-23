@@ -22,7 +22,6 @@ import { FindByIdDocumentService } from '../services/find-by-id-document.service
 import { UpdateDocumentService } from '../services/update-document.service';
 import { Document } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { FindManyDocumentInput } from '../inputs/find-many-document.input';
 import { CreateDocumentRequestInput } from '../inputs/create-document.input';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -71,7 +70,7 @@ export class DocumentController {
     return await this.findByIdDocumentService.execute(id);
   }
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   async update(

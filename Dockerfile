@@ -1,28 +1,37 @@
-# Etapa 1: Build
+# ────────────────────────────────
+# Stage 1 – build
+# ────────────────────────────────
 FROM node:22-alpine AS builder
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-RUN yarn install
+# copy only manifests first to leverage docker cache
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
+# copy source and build
 COPY . .
-COPY .env .env
+RUN yarn prisma generate
+RUN yarn build          # -> dist/*
 
-RUN npx prisma generate
-RUN npx prisma migrate deploy
-# Não roda build porque queremos rodar `yarn dev`
-
-# Etapa 2: Desenvolvimento
+# ────────────────────────────────
+# Stage 2 – runtime
+# ────────────────────────────────
 FROM node:22-alpine
+
+# create a non‑root user
+RUN addgroup -S app && adduser -S app -G app
+USER app
 
 WORKDIR /usr/src/app
 
-COPY --from=builder /usr/src/app /usr/src/app
+# copy only the built artefacts and production deps
+COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/public ./public
+COPY package.json ./
 
-# expõe porta usada pelo Nest em dev
+ENV NODE_ENV=production
 EXPOSE 3000
 
-ENV NODE_ENV=development
-
-CMD ["yarn", "dev"]
+CMD ["node", "dist/main.js"]

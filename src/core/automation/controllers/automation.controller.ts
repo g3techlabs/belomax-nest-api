@@ -18,7 +18,6 @@ import { UpdateAutomationService } from '../services/update-automation.service';
 import { UpdateAutomationInput } from '../inputs/update-automation.input';
 import { Automation, User } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { ChangeStatusAutomationInput } from '../inputs/change-status-automation.input';
 import { ChangeStatusAutomationService } from '../services/change-status-automation.service';
 import { CancelAutomationRequestInput } from '../inputs/cancel-automation.input';
@@ -66,7 +65,7 @@ export class AutomationController {
     return await this.findByIdAutomationService.execute(id);
   }
 
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   async update(
@@ -92,7 +91,7 @@ export class AutomationController {
   async cancelAutomation(
     @Param('id') id: string,
     @Body() data: CancelAutomationRequestInput,
-    @CurrentUser() user: User, // Replace 'any' with the actual type of the user
+    @CurrentUser() user: User,
   ) {
     return await this.cancelAutomationService.execute({
       automationId: id,
