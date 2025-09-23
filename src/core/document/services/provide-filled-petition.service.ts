@@ -166,6 +166,12 @@ export class ProvideFilledPetitionService {
         address:
           'Setor Bancário Sul, Quadra 1, Bloco G, Bairro Asa Sul Brasília/DF, CEP 70074-900',
       },
+      BB_V2: {
+        name: 'Banco do Brasil S.A',
+        cnpj: '00.000.000/0001-91',
+        address:
+          'Setor Bancário Sul, Quadra 1, Bloco G, Bairro Asa Sul Brasília/DF, CEP 70074-900',
+      },
       CAIXA: {
         name: 'Caixa Econômica Federal',
         cnpj: '00.360.305/0001-04',
