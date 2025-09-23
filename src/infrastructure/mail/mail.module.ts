@@ -17,7 +17,7 @@ import { WelcomeEmail } from './emails/welcome.email';
             user: configService.get<string>('MAIL_USER'),
             pass: configService.get<string>('MAIL_PASS'),
           },
-          secure: true
+          secure: true,
         },
         defaults: {
           from: `B&M <${configService.get<string>('MAIL_USER')}>`,
@@ -28,9 +28,9 @@ import { WelcomeEmail } from './emails/welcome.email';
           options: {
             strict: true,
           },
-        }
+        },
       }),
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
   ],
   controllers: [],

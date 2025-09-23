@@ -37,6 +37,7 @@ enum PensionerPaycheckTermType {
 
 enum StatementBank {
   BB
+  BB_V2
   BRADESCO
   CAIXA
 }
