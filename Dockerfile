@@ -61,5 +61,9 @@ COPY --from=builder /usr/src/app/package.json ./package.json
 ENV NODE_ENV=production
 EXPOSE 3000
 
+COPY entrypoint.sh .
+RUN chmod +x ./entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]
+
 # O comando para iniciar a aplicação que foi compilada na Etapa 1.
 CMD ["node", "dist/main.js"]
