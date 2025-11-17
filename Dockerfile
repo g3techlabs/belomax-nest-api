@@ -29,13 +29,6 @@ FROM ghcr.io/puppeteer/puppeteer:22.10.0
 
 # ========= INÍCIO DA MUDANÇA PARA ATUALIZAR O NODE.JS (SINTAXE CORRIGIDA) =========
 
-# Trocamos temporariamente para o usuário root para poder instalar pacotes.
-USER root
-
-COPY entrypoint.sh .
-RUN chmod +x ./entrypoint.sh
-ENTRYPOINT ["./entrypoint.sh"]
-
 # Instala o 'curl' para baixar arquivos e define a versão do Node que queremos.
 RUN apt-get update && apt-get install -y curl
 
@@ -64,6 +57,13 @@ COPY --from=builder /usr/src/app/package.json ./package.json
 
 ENV NODE_ENV=production
 EXPOSE 3000
+
+# Trocamos temporariamente para o usuário root para poder instalar pacotes.
+USER root
+
+COPY entrypoint.sh .
+RUN chmod +x ./entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]
 
 # O comando para iniciar a aplicação que foi compilada na Etapa 1.
 CMD ["node", "dist/main.js"]
