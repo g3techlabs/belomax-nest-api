@@ -28,6 +28,7 @@ RUN yarn build          # -> gera a pasta dist/*
 FROM ghcr.io/puppeteer/puppeteer:22.10.0
 
 # ========= INÍCIO DA MUDANÇA PARA ATUALIZAR O NODE.JS (SINTAXE CORRIGIDA) =========
+USER root
 
 # Instala o 'curl' para baixar arquivos e define a versão do Node que queremos.
 RUN apt-get update && apt-get install -y curl
