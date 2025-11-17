@@ -1,16 +1,16 @@
 #!/bin/sh
 # entrypoint.sh
 
-# Aborta o script se qualquer comando falhar
 set -e
 
 echo "Running database migrations..."
-# Roda a migration. O Prisma vai usar a DATABASE_URL do ambiente.
-npx prisma migrate deploy
+
+# MUDANÇA AQUI:
+# Em vez de "npx prisma migrate deploy", chame o binário local direto.
+# Isso evita o erro do npm/npx e usa a versão exata instalada no projeto.
+./node_modules/.bin/prisma migrate deploy
 
 echo "Migrations finished."
 echo "Starting the application..."
 
-# O comando "exec $@" executa o comando principal passado para o container
-# (o que estiver no CMD do Dockerfile).
 exec "$@"

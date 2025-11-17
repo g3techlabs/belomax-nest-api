@@ -2,7 +2,7 @@
 # Etapa 1 – Construtor (builder)
 # O objetivo aqui é apenas COMPILAR o código.
 # ────────────────────────────────
-FROM node:22-alpine AS builder
+FROM node:22-bookworm-slim AS builder
 
 WORKDIR /usr/src/app
 
@@ -55,6 +55,7 @@ COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/public ./public
 COPY --from=builder /usr/src/app/package.json ./package.json
+COPY --from=builder /usr/src/app/prisma ./prisma
 
 ENV NODE_ENV=production
 EXPOSE 3000
